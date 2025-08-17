@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bäckerei Leipzig – Frische & Genuss</title>
+    
+    <link rel="stylesheet" href="style.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-controls">
+      <button class="lang-switch" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+  </div>
+  
+  <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Weiss-1-768x498_neu.png" alt="Macis Leipzig Logo">
+  <h1 id="title" data-lang-key="mainTitle">Macis Biobäckerei in Leipzig</h1>
+  <p id="subtitle" data-lang-key="subTitle">Traditionelle Backkunst, jeden Tag frisch</p>
+  <a href="#productGrid" class="order-btn" data-lang-key="orderNowBtn">Jetzt bestellen</a>
+</header>
+
+<div class="cart-icon-container">
+    <button class="cart-icon" id="cartButton" onclick="openOrderForm()">
+      <i class="fas fa-shopping-basket"></i>
+      <span class="cart-icon-text" data-lang-key="yourCart">Dein Warenkorb</span>
+      <span class="cart-count-text" id="cartCount"></span>
+    </button>
+</div>
+
+<main>
+  <div class="filter-controls-container">
+    <nav class="filter-controls" aria-label="Product categories">
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('all', this)" data-lang-key="allBakedGoods"><i class="fas fa-grip-horizontal"></i> Alle Backwaren</button>
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('bread', this)" data-lang-key="bread"><i class="fas fa-bread-slice"></i> Brot</button>
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('broetchen', this)" data-lang-key="rolls"><i class="fas fa-cookie"></i> Brötchen</button>
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('sweet', this)" data-lang-key="sweets"><i class="fas fa-birthday-cake"></i> Süßes</button>
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('holiday', this)" data-lang-key="holidaySpecials"><i class="fas fa-calendar-day"></i> Sonn- & Feiertags</button>
+        <button class="filter-btn" onclick="toggleSearch()" data-lang-key="searchBtn" title="Suche" aria-label="Toggle search bar"><i class="fas fa-search"></i></button>
+    </nav>
+  </div>
+
+<div id="searchBarContainer" class="search-bar-wrapper" style="display:none;">
+  <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" onkeyup="debouncedSearch()" />
+  <button id="clearSearchBtn" onclick="clearSearch()" aria-label="Clear search text">×</button>
+</div>
+
+  <section class="products" id="productGrid">
+    <div class="loading-spinner"></div>
+  </section>
+  <div id="paginationContainer"></div>
+
+    <div class="modal" id="modal">
+    <div class="modal-content card-style">
+      <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">×</button>
+      <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Missing';">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDietary"></p>
+      <p id="modalCal"></p>
+      <p id="modalAllergen"></p>
+      <p id="modalPrice"></p>
+
+      <div class="modal-add-to-cart">
+        <div id="slicingOptionsContainer" style="display: none;">
+          <p class="option-title" data-lang-key="slicingTitle">Schneide-Präferenz</p>
+          <div class="radio-group">
+              <input type="radio" id="sliceNo" name="slicing" value="unsliced" checked>
+              <label for="sliceNo" data-lang-key="slicingUnsliced">Am Stück</label>
+
+              <input type="radio" id="sliceYes" name="slicing" value="sliced">
+              <label for="sliceYes" data-lang-key="slicingSliced">Geschnitten</label>
+          </div>
+        </div>
+
+        <div class="modal-action-row">
+          <input type="number" id="modalProductQuantity" value="1" min="1">
+          <button onclick="addToCartFromModal()" data-lang-key="addToCartBtn"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal" id="orderModal">
+    <div class="modal-content card-style">
+      <button class="close-btn" onclick="closeOrderForm()" aria-label="Close order form dialog">×</button>
+      <h2 data-lang-key="orderTitle">Bestellung</h2>
+     <form id="orderForm" action="https://api.web3forms.com/submit" method="POST">
+        
+        <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
+        
+        <label for="nameInput" data-lang-key="yourName">Dein Name</label>
+        <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required>
+
+        <label for="phoneInput" data-lang-key="phoneNumber">Telefonnummer</label>
+        <input 
+            type="tel" 
+            id="phoneInput" 
+            name="phone" 
+            data-lang-placeholder="phoneNumber" 
+            required
+            pattern="[0-9\s+]*"
+            data-lang-title="phoneHint"
+            inputmode="tel">
+        
+        <label for="emailInput" data-lang-key="emailOptional">E-Mail (optional)</label>
+        <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional">
+
+        <label for="pickupDate" data-lang-key="pickupDateLabel">Abholdatum:</label>
+        <input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()">
+        <div id="date-validation-message"></div>
+
+        <label for="pickupTime" data-lang-key="pickupTimeLabel">Abholzeit:</label>
+        <select id="pickupTime" name="pickupTime" required></select>
+
+        <div id="cartItemsContainer">
+            <h3 data-lang-key="yourCart">Dein Warenkorb</h3>
+          <div id="selectedProductsList"></div>
+        </div>
+        
+        <label for="message" data-lang-key="messageOptional">Nachricht (optional)</label>
+        <textarea id="message" name="message" data-lang-placeholder="messageOptional"></textarea>
+        <button type="submit" class="order-link" data-lang-key="submitBtn" id="submitOrderBtn">Absenden</button>
+      </form>
+    </div>
+  </div>
+
+  <section id="contact-section">
+    <h2 data-lang-key="contactTitle">Kontakt & Öffnungszeiten</h2>
+    <address>
+        <p><strong data-lang-key="addressLabel">Adresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
+        <p><strong data-lang-key="phoneLabel">Telefon:</strong> <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
+        <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:baeckerei@macis-leipzig.de">baeckerei@macis-leipzig.de</a></p>
+    </address>
+    <div style="margin:30px auto; max-width:600px;">
+        <iframe 
+            title="Location of Macis Biobäckerei on Google Maps"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.270921737607!2d12.37250267702891!3d51.34113897177519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f81b4f427381%3A0x86142e424275e8b0!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig!5e0!3m2!1sen!2sde!4v1723420004169!5m2!1sen!2sde" 
+            width="100%" 
+            height="350" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+    <h3 data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
+    <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
+    <p data-lang-key="openingHoursSunday">Sonntag: 8:00 – 12:00 Uhr</p>
+  </section>
+</main>
+
+<footer>
+  <div class="social-buttons">
+    <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon instagram" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://www.facebook.com/macisleipzig" class="social-icon facebook" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  </div>
+  Macis Bio Bäckerei © 2025 – Mit Liebe gebacken
+</footer>
+
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="script.js" defer></script>
+
+</body>
+</html>

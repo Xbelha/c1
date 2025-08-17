@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestellbestätigung – Bäckerei Leipzig</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="thank-you.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+    <main class="thank-you-container">
+        <div class="card-style confirmation-card">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 data-lang-key="thankYouTitle">Vielen Dank!</h1>
+            <p data-lang-key="thankYouSubtitle">Ihre Bestellung wurde erfolgreich an uns übermittelt.</p>
+            
+            <div class="order-id-container">
+                <h3 data-lang-key="yourOrderId">Ihre Bestellnummer:</h3>
+                <p id="orderIdDisplay" class="order-id-code">[ID]</p>
+                <p class="order-id-note" data-lang-key="orderIdNote">Bitte bewahren Sie diese Nummer für Rückfragen auf.</p>
+            </div>
+
+            <div class="order-summary">
+                <h2 data-lang-key="summaryTitle">Bestellübersicht</h2>
+                <div id="orderDetails">
+                    </div>
+            </div>
+
+            <div class="pickup-info">
+                 <p><strong data-lang-key="pickupAddress">Abholadresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
+                 <p><strong data-lang-key="anyQuestions">Fragen zur Bestellung?</strong> Rufen Sie uns an: <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
+            </div>
+
+            <a href="index.html" class="order-btn" data-lang-key="backToHome">Zurück zur Startseite</a>
+        </div>
+    </main>
+
+    <script src="thank-you.js"></script>
+</body>
+</html>
