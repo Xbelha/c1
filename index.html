@@ -215,7 +215,8 @@
                     <label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
                     <textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
+                <!-- FIX: Added flex, items-center, and justify-center to ensure the entire button area is clickable -->
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
             </form>
         </div>
     </div>
