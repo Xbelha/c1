@@ -8,7 +8,7 @@
     <!-- Favicon and PWA Manifest -->
     <link rel="icon" type="image/jpeg" href="https://macis-leipzig.de/wp-content/uploads/2019/03/cropped-macis_Logo_Leipzig_Druck_4c-192x192.jpg">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4D7C0F"> <!-- A nice, modern green -->
+    <meta name="theme-color" content="#4D7C0F">
 
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,44 +20,22 @@
 
     <!-- Custom Styles -->
     <style>
-        /* Define custom fonts and apply base styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB; /* A very light gray background */
+            background-color: #F9FAFB;
         }
         h1, h2, h3, .font-serif {
             font-family: 'Playfair Display', serif;
         }
-
-        /* Custom class for the active filter button */
         .filter-btn.active {
             background-color: #4D7C0F;
             color: white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-
-        /* Custom class for the active favorite button */
         .favorite-btn.active svg {
-            fill: #EF4444; /* Red fill for active heart */
+            fill: #EF4444;
             stroke: #EF4444;
         }
-
-        /* Animation for toast notifications */
-        @keyframes toast-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        .toast.show {
-            animation: toast-in 0.35s cubic-bezier(0.21, 1.02, 0.73, 1);
-        }
-        
-        /* Jiggle animation for cart icon */
         @keyframes jiggle {
             0% { transform: translate(0, 0) rotate(0); }
             25% { transform: translate(2px, -2px) rotate(3deg); }
@@ -68,26 +46,68 @@
         .jiggle {
             animation: jiggle 0.5s ease-in-out;
         }
+        .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
+        .mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Custom scrollbar for filter buttons on mobile */
-        .mobile-scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        /* --- NOTIFICATION STYLES (Top-Right) --- */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .mobile-scrollbar-hide {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+        .notification-toast {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 320px;
+            max-width: 90vw;
+            animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
-
+        .notification-toast img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+        }
+        .notification-toast-content {
+            padding: 12px 16px;
+            flex-grow: 1;
+        }
+        .notification-toast-content p { margin: 0; font-weight: 600; color: #333; }
+        .notification-toast-content span { font-size: 0.9em; color: #666; }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+        
+        .simple-toast {
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <!-- Header Section -->
     <header class="relative text-white text-center flex flex-col items-center justify-center min-h-[60vh] bg-cover bg-center bg-fixed" style="background-image: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg');">
-        <!-- Dark Overlay for better text readability -->
         <div class="absolute inset-0 bg-black/50"></div>
-        
-        <!-- Header Controls (Language and Install) -->
         <div class="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex justify-between items-center z-10">
             <button class="lang-switch bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-white/30" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
             <div class="install-btn-container">
@@ -97,8 +117,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Main Header Content -->
         <div class="z-10 p-4">
             <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Weiss-1-768x498_neu.png" alt="Macis Leipzig Logo" class="w-48 mx-auto mb-6">
             <h1 id="title" data-lang-key="mainTitle" class="text-4xl md:text-6xl font-serif mb-4 text-shadow-lg">Macis Biobäckerei in Leipzig</h1>
@@ -130,7 +148,6 @@
                     <button class="filter-btn flex-shrink-0 flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-full text-sm md:text-base font-semibold text-gray-600 transition-colors duration-300" onclick="toggleSearch()" data-lang-key="searchBtn" title="Suche"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg></button>
                 </div>
             </nav>
-
             <div id="searchBarContainer" class="relative max-w-lg mx-auto" style="display:none;">
                 <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" onkeyup="debouncedSearch()" class="w-full pl-5 pr-12 py-3 rounded-full border-2 border-gray-200 focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-shadow duration-300" />
                 <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-2xl" aria-label="Clear search text" style="display:none;">&times;</button>
@@ -139,11 +156,9 @@
 
         <!-- Product Grid -->
         <section class="products grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="productGrid">
-            <!-- Products will be injected here by JavaScript -->
             <div class="loading-spinner border-4 border-gray-200 border-t-green-600 rounded-full w-12 h-12 animate-spin absolute top-1/2 left-1/2 -mt-6 -ml-6"></div>
         </section>
         
-        <!-- Pagination -->
         <div id="paginationContainer" class="flex justify-center items-center space-x-2 mt-12"></div>
     </main>
 
@@ -174,50 +189,68 @@
         </div>
     </div>
 
-    <!-- Order Form Modal -->
+    <!-- NEW TWO-STEP MODAL -->
     <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderModal" style="display: none;">
-        <div class="modal-content bg-white rounded-2xl p-6 md:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
-            <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" onclick="closeOrderForm()" aria-label="Close order form dialog">&times;</button>
-            <h2 data-lang-key="orderTitle" class="text-3xl font-serif text-center mb-6">Bestellung</h2>
-            <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
-                <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
-                
-                <div>
-                    <label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label>
-                    <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+        <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" onclick="closeOrderForm()" aria-label="Close order form dialog">&times;</button>
+            
+            <!-- Step 1: Cart View -->
+            <div id="cartView">
+                <div class="p-6 border-b">
+                    <h2 data-lang-key="yourCart" class="text-3xl font-serif text-center">Dein Warenkorb</h2>
                 </div>
-                <div>
-                    <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
-                    <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                </div>
-                <div>
-                    <label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label>
-                    <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label>
-                        <input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                    </div>
-                    <div>
-                        <label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label>
-                        <select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select>
+                <div class="p-6 flex-grow overflow-y-auto" style="max-height: 50vh;">
+                    <div id="selectedProductsList" class="space-y-4">
+                        <!-- Cart items will be injected here -->
                     </div>
                 </div>
-                <div id="date-validation-message" class="text-red-600 text-sm font-semibold"></div>
-                
-                <div id="cartItemsContainer" class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <h3 data-lang-key="yourCart" class="text-lg font-semibold mb-3">Dein Warenkorb</h3>
-                    <div id="selectedProductsList" class="space-y-3"></div>
+                <div class="p-6 bg-gray-50 rounded-b-2xl">
+                    <div class="flex justify-between font-bold text-xl mb-4">
+                        <span data-lang-key="totalText">Gesamt:</span>
+                        <span id="cartTotal">0.00 €</span>
+                    </div>
+                    <button onclick="showOrderFormView()" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" id="continueToOrderBtn">Weiter zur Bestellung</button>
                 </div>
-                
-                <div>
-                    <label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
-                    <textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea>
+            </div>
+
+            <!-- Step 2: Form View -->
+            <div id="formView" style="display: none;">
+                <div class="p-6 border-b flex items-center">
+                    <button onclick="showCartView()" class="text-gray-600 hover:text-black mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    </button>
+                    <h2 data-lang-key="orderTitle" class="text-3xl font-serif text-center flex-grow">Bestellung</h2>
                 </div>
-                <!-- FIX: Added flex, items-center, and justify-center to ensure the entire button area is clickable -->
-                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
-            </form>
+                <div class="p-6 flex-grow overflow-y-auto" style="max-height: 65vh;">
+                    <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+                        <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
+                        <div class="relative">
+                            <label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label>
+                            <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="relative">
+                            <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
+                            <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label>
+                                <input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label>
+                                <select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
+                            <textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea>
+                        </div>
+                        <div id="date-validation-message" class="text-red-600 text-sm font-semibold min-h-[2.5rem]"></div>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -234,12 +267,7 @@
                 <iframe 
                     title="Location of Macis Biobäckerei on Google Maps"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.270921737607!2d12.37250267702891!3d51.34113897177519!2m3!1f0!2f0!3f0!3m2!1i1024!i768!4f13.1!3m3!1m2!1s0x47a6f81b4f427381%3A0x86142e424275e8b0!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig!5e0!3m2!1sen!2sde!4v1723420004169!5m2!1sen!2sde" 
-                    width="100%" 
-                    height="400" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
+                    width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
             <h3 data-lang-key="openingHoursTitle" class="text-2xl font-serif mt-12 mb-4">Öffnungszeiten</h3>
@@ -258,10 +286,8 @@
         <p class="text-sm text-gray-500">Macis Bio Bäckerei © 2025 – Mit Liebe gebacken</p>
     </footer>
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[2000] flex flex-col items-center gap-2 pointer-events-none"></div>
+    <div id="toastContainer"></div>
 
-    <!-- Embedded JavaScript -->
     <script>
         // Global state variables
         let products = [];
@@ -283,26 +309,21 @@
         const pickupTimeSelect = document.getElementById('pickupTime');
         const paginationContainer = document.getElementById('paginationContainer');
         const installAppBtn = document.getElementById('installAppBtn');
+        const cartView = document.getElementById('cartView');
+        const formView = document.getElementById('formView');
 
         // PWA Installation Logic
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredInstallPrompt = event;
-            if (installAppBtn) {
-                installAppBtn.style.display = 'inline-flex';
-            }
+            if (installAppBtn) installAppBtn.style.display = 'inline-flex';
         });
 
         if (installAppBtn) {
             installAppBtn.addEventListener('click', () => {
                 if (deferredInstallPrompt) {
                     deferredInstallPrompt.prompt();
-                    deferredInstallPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('User accepted the install prompt');
-                        } else {
-                            console.log('User dismissed the install prompt');
-                        }
+                    deferredInstallPrompt.userChoice.then(() => {
                         deferredInstallPrompt = null;
                         installAppBtn.style.display = 'none';
                     });
@@ -310,44 +331,42 @@
             });
         }
 
-        // Utility Functions
-        function showToast(message, type = '', duration = 3000) {
+        // --- NOTIFICATION & UTILITY FUNCTIONS ---
+        function showToast(data, duration = 3000) {
             const container = document.getElementById('toastContainer');
             if (!container) return;
 
+            const { product, messageKey } = data;
+            const productName = currentLang === 'de' ? product.name_de : product.name_en;
+            const message = translations[currentLang][messageKey] || 'hinzugefügt';
+
             const toast = document.createElement('div');
-            let bgColor = 'bg-gray-800 text-white';
-            let iconHtml = '';
-            if (type === 'success') {
-                bgColor = 'bg-green-600 text-white';
-                iconHtml = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-600 text-white';
-                iconHtml = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
-            }
-
-            toast.className = `toast flex items-center gap-3 px-5 py-3 rounded-full shadow-lg pointer-events-auto ${bgColor}`;
-            toast.innerHTML = `${iconHtml} <span>${message}</span>`;
+            toast.className = 'notification-toast';
+            toast.innerHTML = `
+                <img src="${product.img}" alt="${productName}" onerror="this.onerror=null; this.src='https://placehold.co/70x70/e2e8f0/475569?text=...';">
+                <div class="notification-toast-content">
+                    <p>${productName}</p>
+                    <span>${message}</span>
+                </div>`;
             container.appendChild(toast);
+            setTimeout(() => toast.remove(), duration);
+        }
 
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.style.opacity = '0';
-                toast.addEventListener('transitionend', () => toast.remove());
-            }, duration);
+        function showSimpleToast(message, duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'simple-toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), duration);
         }
 
         function debounce(func, delay = 300) {
             let timer;
             return (...args) => {
                 clearTimeout(timer);
-                timer = setTimeout(() => {
-                    func.apply(this, args);
-                }, delay);
+                timer = setTimeout(() => func.apply(this, args), delay);
             };
         }
 
@@ -359,29 +378,18 @@
                 holidaySpecials: 'Sonn- & Feiertags', favorites: 'Favoriten',
                 orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
                 openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
-                selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.', noProductsAddedAlert: 'Dein Warenkorb ist leer.',
-                addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.', providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
-                orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.', newOrderEmailSubject: 'Neue Bäckerei Bestellung', newOrderEmailBodyTitle: 'Neue Bestellung:',
-                nameEmailBody: 'Name:', emailEmailBody: 'E-Mail:', phoneEmailBody: 'Telefon:', productsEmailBody: 'Produkte:', messageEmailBody: 'Nachricht:',
+                noProductsAddedAlert: 'Dein Warenkorb ist leer.',
+                orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
                 pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
-                pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).', pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
                 addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
-                emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: '-', totalText: 'Gesamt:',
-                prevPage: 'Zurück', nextPage: 'Weiter',
+                messageOptional: 'Nachricht (optional)',
+                totalText: 'Gesamt:', prevPage: 'Zurück', nextPage: 'Weiter',
                 holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
                 phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
-                slicingTitle: "Schneide-Präferenz",
-                slicingUnsliced: "Am Stück",
-                slicingSliced: "Geschnitten",
-                sizeTitle: "Größe",
-                sizeWhole: "Ganzes",
-                sizeHalf: "Halbes",
-                ingredientsTitle: "Zutaten & Allergene",
-                nutritionTitle: "Nährwertangaben",
-                viewDetailsBtn: "Details ansehen",
-                installApp: "App installieren",
-                addedToFavorites: 'Zu Favoriten hinzugefügt',
-                removedFromFavorites: 'Aus Favoriten entfernt'
+                slicingSliced: "Geschnitten", sizeHalf: "Halbes",
+                ingredientsTitle: "Zutaten & Allergene", nutritionTitle: "Nährwertangaben", viewDetailsBtn: "Details ansehen",
+                installApp: "App installieren", addedToFavorites: 'Zu Favoriten hinzugefügt', removedFromFavorites: 'Aus Favoriten entfernt',
+                addedToCartMessage: 'wurde zum Warenkorb hinzugefügt'
             },
             en: {
                 langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
@@ -389,34 +397,22 @@
                 holidaySpecials: 'Sundays & Holidays', favorites: 'Favorites',
                 orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
                 openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
-                selectProductQuantityAlert: 'Please enter a valid quantity.', noProductsAddedAlert: 'Your cart is empty.',
-                addAtLeastOneProductAlert: 'Please add at least one product to the cart.', providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
-                orderSuccessAlert: 'Thank you for your order! We have received it.', newOrderEmailSubject: 'New Bakery Order', newOrderEmailBodyTitle: 'New Order:',
-                nameEmailBody: 'Name:', emailEmailBody: 'Email:', phoneEmailBody: 'Phone:', productsEmailBody: 'Products:', messageEmailBody: 'Message:',
+                noProductsAddedAlert: 'Your cart is empty.',
+                orderSuccessAlert: 'Thank you for your order! We have received it.',
                 pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
-                pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).', pickupTimePast: 'The selected pickup time is in the past.',
                 addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
-                emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: '-', totalText: 'Total:',
-                prevPage: 'Previous', nextPage: 'Next',
+                messageOptional: 'Message (optional)',
+                totalText: 'Total:', prevPage: 'Previous', nextPage: 'Next',
                 holidayProductOnNonHolidayAlert: 'Your order contains Sunday/Holiday-only items. Please select an appropriate day as your pickup date.',
                 phoneHint: "Please only enter numbers, spaces, or '+'.",
-                slicingTitle: "Slicing Preference",
-                slicingUnsliced: "Unsliced",
-                slicingSliced: "Sliced",
-                sizeTitle: "Size",
-                sizeWhole: "Whole",
-                sizeHalf: "Half",
-                ingredientsTitle: "Ingredients & Allergens",
-                nutritionTitle: "Nutritional Information",
-                viewDetailsBtn: "View Details",
-                installApp: "Install App",
-                addedToFavorites: 'Added to favorites',
-                removedFromFavorites: 'Removed from favorites'
+                slicingSliced: "Sliced", sizeHalf: "Half",
+                ingredientsTitle: "Ingredients & Allergens", nutritionTitle: "Nutritional Information", viewDetailsBtn: "View Details",
+                installApp: "Install App", addedToFavorites: 'Added to favorites', removedFromFavorites: 'Removed from favorites',
+                addedToCartMessage: 'was added to your cart'
             }
         };
 
         const publicHolidays = ["01-01", "05-01", "10-03", "10-31", "12-25", "12-26"];
-
         function isPublicHoliday(date) {
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const day = date.getDate().toString().padStart(2, '0');
@@ -435,7 +431,8 @@
             return date.getTime() === goodFriday.getTime() || date.getTime() === easterMonday.getTime();
         }
 
-        // Application Logic
+        // --- APPLICATION LOGIC ---
+
         function displayProducts() {
             productGrid.innerHTML = "";
             const startIndex = (currentPage - 1) * productsPerPage;
@@ -452,7 +449,6 @@
                     const card = document.createElement('div');
                     card.className = 'group product bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer';
                     card.dataset.productId = p.id;
-                    card.style.animationDelay = `${index * 60}ms`;
 
                     let badgeHtml = '';
                     if (p.badge === 'new') {
@@ -462,9 +458,8 @@
                     }
 
                     const dietaryHtml = p.dietary ? `<div class="absolute bottom-3 right-3 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full z-10 ${p.dietary === 'vegan' ? 'bg-green-100 text-green-800' : 'bg-sky-100 text-sky-800'}">${p.dietary}</div>` : '';
-                    
-                    const quantityInCart = cart.filter(item => item.product.id === p.id).reduce((sum, item) => sum + item.quantity, 0);
 
+                    const quantityInCart = cart.filter(item => item.product.id === p.id).reduce((sum, item) => sum + item.quantity, 0);
                     card.innerHTML = `
                         <div class="relative">
                             <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='https://placehold.co/300x224/e2e8f0/475569?text=Image+Missing';">
@@ -489,13 +484,11 @@
                                     <button class="quantity-btn w-10 h-10 border-2 border-gray-200 rounded-full text-xl font-bold text-gray-600 hover:bg-gray-100 transition" aria-label="Increase quantity" data-action="increase" data-product-id="${p.id}">+</button>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                     productGrid.appendChild(card);
                     updateProductCardUI(p.id);
                 });
             }
-
             renderPaginationControls();
             applyLanguage();
         }
@@ -515,11 +508,9 @@
             };
 
             paginationContainer.appendChild(createButton(translations[currentLang].prevPage, currentPage - 1, currentPage === 1));
-
             for (let i = 1; i <= pageCount; i++) {
                 paginationContainer.appendChild(createButton(i, i, false, i === currentPage));
             }
-
             paginationContainer.appendChild(createButton(translations[currentLang].nextPage, currentPage + 1, currentPage === pageCount));
         }
 
@@ -548,16 +539,6 @@
 
             let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
             if (ingredientsString) {
-                let allergens = (currentLang === 'de' ? p.allergen_de : p.allergen_en).split(', ');
-                const allergenMap = {'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],'Soja': ['Soja', 'Soy'],'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],'Sesam': ['Sesam', 'Sesame'],'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']};
-                allergens.forEach(allergen => {
-                    if (allergenMap[allergen]) {
-                        allergenMap[allergen].forEach(ingredientWord => {
-                            const regex = new RegExp(`\\b(${ingredientWord})\\b`, 'gi');
-                            ingredientsString = ingredientsString.replace(regex, '<strong>$1</strong>');
-                        });
-                    }
-                });
                 ingredientsTextElement.innerHTML = ingredientsString;
                 ingredientsContainer.style.display = 'block';
             } else {
@@ -576,27 +557,18 @@
             } else {
                 nutritionContainer.style.display = 'none';
             }
-
-            const modalDietary = document.getElementById('modalDietary');
-            if (p.dietary) {
-                modalDietary.innerHTML = `<span class="inline-block px-3 py-1 rounded-full text-sm font-semibold ${p.dietary === 'vegan' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">${p.dietary}</span>`;
-                modalDietary.style.display = 'block';
-            } else {
-                modalDietary.style.display = 'none';
-            }
             
             document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
             modal.style.display = 'flex';
             applyLanguage();
         }
 
-        function closeModal() {
-            modal.style.display = 'none';
-            currentProductInModal = null;
-        }
+        function closeModal() { modal.style.display = 'none'; currentProductInModal = null; }
 
         function openOrderForm() {
             orderModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            showCartView();
             renderCartItems();
             setMinimumDateTime();
             populatePickupHours();
@@ -605,6 +577,17 @@
 
         function closeOrderForm() {
             orderModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function showCartView() {
+            cartView.style.display = 'block';
+            formView.style.display = 'none';
+        }
+
+        function showOrderFormView() {
+            cartView.style.display = 'none';
+            formView.style.display = 'block';
         }
 
         function filterProducts(cat, element) {
@@ -630,7 +613,6 @@
             currentPage = 1;
             displayProducts();
         }
-
         const debouncedSearch = debounce(searchProducts, 300);
 
         function clearSearch() {
@@ -692,8 +674,7 @@
         function toggleLang() {
             currentLang = currentLang === 'de' ? 'en' : 'de';
             localStorage.setItem('bakeryLang', currentLang);
-            const langName = currentLang === 'de' ? 'Sprache auf Deutsch geändert' : 'Language changed to English';
-            showToast(langName);
+            showSimpleToast(currentLang === 'de' ? 'Sprache auf Deutsch geändert' : 'Language changed to English');
             displayProducts();
         }
 
@@ -726,66 +707,39 @@
         function updateCartQuantity(productId, change, size = 'whole') {
             const product = products.find(p => p.id === productId);
             if (!product) return;
-            
             let existingItem = cart.find(item => item.product.id === productId && item.size === size);
-            let itemAdded = false;
-
+            
             if (existingItem) {
                 existingItem.quantity += change;
                 if (existingItem.quantity <= 0) {
                     cart = cart.filter(item => !(item.product.id === productId && item.size === size));
-                    showToast(currentLang === 'de' ? 'Artikel entfernt' : 'Item removed');
                 } else if (change > 0) {
-                    itemAdded = true;
+                     showToast({ product: product, messageKey: 'addedToCartMessage' });
                 }
             } else if (change > 0) {
                 const newItem = { product, quantity: change, size: size };
                 if (product.category === 'bread') newItem.slicing = 'unsliced';
                 cart.push(newItem);
-                itemAdded = true;
-            }
-
-            if (itemAdded) {
-                const productName = currentLang === 'de' ? product.name_de : product.name_en;
-                showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
-                const cartButton = document.getElementById('cartButton');
-                cartButton.classList.remove('jiggle');
-                void cartButton.offsetWidth;
-                cartButton.classList.add('jiggle');
-            }
-
-            updateCartCount();
-            updateProductCardUI(productId);
-        }
-
-        function addToCartFromModal() {
-            if (!currentProductInModal) return;
-            const quantity = parseInt(document.getElementById('modalProductQuantity').value);
-            if (isNaN(quantity) || quantity < 1) {
-                showToast(translations[currentLang].selectProductQuantityAlert, 'error');
-                return;
+                showToast({ product: product, messageKey: 'addedToCartMessage' });
             }
             
-            let itemInCart = cart.find(item => item.product.id === currentProductInModal.id && item.size === 'whole');
-            
-            if (itemInCart) {
-                itemInCart.quantity += quantity;
-            } else {
-                cart.push({ product: currentProductInModal, quantity, slicing: 'unsliced', size: 'whole' });
-            }
-
-            const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
-            showToast(`${quantity} x ${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
             const cartButton = document.getElementById('cartButton');
             cartButton.classList.remove('jiggle');
             void cartButton.offsetWidth;
             cartButton.classList.add('jiggle');
             
             updateCartCount();
-            updateProductCardUI(currentProductInModal.id);
+            updateProductCardUI(productId);
+            renderCartItems();
+        }
+
+        function addToCartFromModal() {
+            if (!currentProductInModal) return;
+            const quantity = parseInt(document.getElementById('modalProductQuantity').value);
+            updateCartQuantity(currentProductInModal.id, quantity);
             closeModal();
         }
-        
+
         function updateSlicingPreference(itemIndex, isChecked) {
             if (cart[itemIndex]) {
                 cart[itemIndex].slicing = isChecked ? 'sliced' : 'unsliced';
@@ -815,106 +769,81 @@
                 updateProductCardUI(oldItem.product.id);
             }
         }
-
-        function saveFavorites() {
-            localStorage.setItem('bakeryFavorites', JSON.stringify([...favorites]));
-        }
-
+        
+        function saveFavorites() { localStorage.setItem('bakeryFavorites', JSON.stringify([...favorites])); }
         function toggleFavorite(productId) {
             if (favorites.has(productId)) {
                 favorites.delete(productId);
-                showToast(translations[currentLang].removedFromFavorites);
+                showSimpleToast(translations[currentLang].removedFromFavorites);
             } else {
                 favorites.add(productId);
-                showToast(translations[currentLang].addedToFavorites, 'success');
+                showSimpleToast(translations[currentLang].addedToFavorites);
             }
             saveFavorites();
             updateProductCardUI(productId);
-
-            const activeFilter = document.querySelector('.filter-category-btn.active');
-            if (activeFilter && activeFilter.getAttribute('onclick').includes('favs')) {
-                filterProducts('favs', activeFilter);
-            }
         }
 
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submitOrderBtn');
+            const continueBtn = document.getElementById('continueToOrderBtn');
             const isCartEmpty = cart.length === 0;
-            const isDateValid = validateCartAgainstPickupDate();
-
-            if (isCartEmpty || !isDateValid) {
-                submitBtn.disabled = true;
-            } else {
-                submitBtn.disabled = false;
-            }
+            
+            if(continueBtn) continueBtn.disabled = isCartEmpty;
+            if(submitBtn) submitBtn.disabled = isCartEmpty || !validateCartAgainstPickupDate();
         }
 
         function renderCartItems() {
-            const selectedProductsList = document.getElementById('selectedProductsList');
-            if (!selectedProductsList) return;
-            selectedProductsList.innerHTML = '';
+            const listEl = document.getElementById('selectedProductsList');
+            const totalEl = document.getElementById('cartTotal');
+            if (!listEl || !totalEl) return;
+
             let totalPrice = 0;
-            
-            let totalContainer = orderModal.querySelector('.cart-total');
-            if (!totalContainer) {
-                const newTotalContainer = document.createElement('div');
-                newTotalContainer.className = 'cart-total';
-                document.getElementById('cartItemsContainer').appendChild(newTotalContainer);
-                totalContainer = newTotalContainer;
-            }
-
-            const isCartEmpty = cart.length === 0;
-            const formElements = document.querySelectorAll('#orderForm input, #orderForm select, #orderForm textarea');
-            
-            formElements.forEach(el => {
-                if (el.type !== 'hidden') {
-                    el.disabled = isCartEmpty;
-                }
-            });
-
-            if (isCartEmpty) {
-                selectedProductsList.innerHTML = `<p class="text-center text-gray-500">${translations[currentLang].noProductsAddedAlert}</p>`;
-                totalContainer.style.display = 'none';
+            if (cart.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-500 py-8">${translations[currentLang].noProductsAddedAlert}</p>`;
             } else {
-                totalContainer.style.display = 'flex';
+                listEl.innerHTML = '';
                 cart.forEach((item, index) => {
                     const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
                     const itemPrice = pricePerItem * item.quantity;
                     totalPrice += itemPrice;
 
                     let optionsHtml = '';
-                    if (item.product.canBeHalved) {
-                        optionsHtml += `
-                            <div class="flex items-center">
-                                <input type="checkbox" id="sizeHalf-${index}" class="hidden" onchange="updateSizePreference(${index}, this.checked)" ${item.size === 'half' ? 'checked' : ''}>
-                                <label for="sizeHalf-${index}" class="text-xs font-medium px-2 py-1 rounded-full cursor-pointer transition ${item.size === 'half' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}">${translations[currentLang].sizeHalf}</label>
-                            </div>`;
+                    if (item.product.canBeHalved || item.product.category === 'bread') {
+                        optionsHtml += '<div class="flex items-center gap-2 mt-1.5">';
+                        if (item.product.canBeHalved) {
+                            optionsHtml += `
+                                <div>
+                                    <input type="checkbox" id="sizeHalf-${index}" class="hidden peer" onchange="updateSizePreference(${index}, this.checked)" ${item.size === 'half' ? 'checked' : ''}>
+                                    <label for="sizeHalf-${index}" class="text-xs font-medium px-2 py-1 rounded-full cursor-pointer transition bg-gray-200 text-gray-700 peer-checked:bg-green-600 peer-checked:text-white">${translations[currentLang].sizeHalf}</label>
+                                </div>`;
+                        }
+                        if (item.product.category === 'bread') {
+                            optionsHtml += `
+                                <div>
+                                    <input type="checkbox" id="sliceYes-${index}" class="hidden peer" onchange="updateSlicingPreference(${index}, this.checked)" ${item.slicing === 'sliced' ? 'checked' : ''}>
+                                    <label for="sliceYes-${index}" class="text-xs font-medium px-2 py-1 rounded-full cursor-pointer transition bg-gray-200 text-gray-700 peer-checked:bg-green-600 peer-checked:text-white">${translations[currentLang].slicingSliced}</label>
+                                </div>`;
+                        }
+                        optionsHtml += '</div>';
                     }
-                    if (item.product.category === 'bread') {
-                        optionsHtml += `
-                            <div class="flex items-center">
-                                <input type="checkbox" id="sliceYes-${index}" class="hidden" onchange="updateSlicingPreference(${index}, this.checked)" ${item.slicing === 'sliced' ? 'checked' : ''}>
-                                <label for="sliceYes-${index}" class="text-xs font-medium px-2 py-1 rounded-full cursor-pointer transition ${item.slicing === 'sliced' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}">${translations[currentLang].slicingSliced}</label>
-                            </div>`;
-                    }
-                    
+
                     const itemRow = document.createElement('div');
-                    itemRow.className = 'flex justify-between items-start py-2 border-b border-gray-100 last:border-b-0';
+                    itemRow.className = 'flex items-start gap-4 py-3 border-b';
                     itemRow.innerHTML = `
-                        <div>
-                            <p class="font-semibold">${currentLang === 'de' ? item.product.name_de : item.product.name_en} &times; ${item.quantity}</p>
-                            <div class="flex items-center gap-2 mt-1.5">${optionsHtml}</div>
+                        <img src="${item.product.img}" class="w-20 h-20 rounded-md object-cover" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
+                        <div class="flex-grow">
+                            <p class="font-semibold">${currentLang === 'de' ? item.product.name_de : item.product.name_en}</p>
+                            <p class="text-sm text-gray-600">${item.quantity} &times; ${pricePerItem.toFixed(2)} €</p>
+                            ${optionsHtml}
                         </div>
-                        <div class="flex items-center gap-4">
-                            <span class="font-semibold text-gray-800">${itemPrice.toFixed(2)} €</span>
-                            <button type="button" aria-label="Remove item" onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 text-xl">&times;</button>
-                        </div>
-                    `;
-                    selectedProductsList.appendChild(itemRow);
+                        <div class="text-right flex flex-col items-end">
+                            <p class="font-bold">${itemPrice.toFixed(2)} €</p>
+                            <button type="button" onclick="removeFromCart(${index})" class="text-red-500 text-xs hover:underline mt-1">Entfernen</button>
+                        </div>`;
+                    listEl.appendChild(itemRow);
                 });
-                totalContainer.className = 'cart-total flex justify-between font-bold text-lg mt-4 pt-3 border-t-2 border-gray-200';
-                totalContainer.innerHTML = `<span>${translations[currentLang].totalText}</span><span>${totalPrice.toFixed(2)} €</span>`;
             }
+            totalEl.textContent = `${totalPrice.toFixed(2)} €`;
             updateSubmitButtonState();
         }
 
@@ -993,76 +922,35 @@
         function submitOrder(event) {
             event.preventDefault();
             if (!validateCartAgainstPickupDate()) {
-                showToast(translations[currentLang].holidayProductOnNonHolidayAlert, 'error');
+                showSimpleToast(translations[currentLang].holidayProductOnNonHolidayAlert);
                 return;
             }
             const form = event.target;
             const formData = new FormData(form);
-            const submitBtn = document.getElementById('submitOrderBtn');
             const name = formData.get('name');
             const phone = formData.get('phone');
-            const email = formData.get('email') || (currentLang === 'de' ? 'Nicht angegeben' : 'Not provided');
             const pickupDate = formData.get('pickupDate');
             const pickupTime = formData.get('pickupTime');
-            const userMessage = formData.get('message');
+            const message = formData.get('message');
             const orderId = generateOrderId();
-            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart };
+            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, message, cart };
             localStorage.setItem('lastOrder', JSON.stringify(lastOrder));
             
-            const cartSummary = cart.map(item => {
-                let optionText = '';
-                if (item.slicing === 'sliced') optionText += ` (${translations[currentLang].slicingSliced})`;
-                let displayQuantity = item.quantity;
-                if (item.size === 'half') displayQuantity = item.quantity * 0.5;
-                return `${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText}`;
-            }).join('\n');
-            
-            const total = cart.reduce((sum, item) => {
-                const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
-                return sum + (pricePerItem * item.quantity);
-            }, 0).toFixed(2);
-
-            const emailBody = `Bestellnummer: ${orderId}\n--------------------------------\nName: ${name}\nTelefonnummer: ${phone}\nE-Mail: ${email}\nAbholdatum: ${pickupDate} um ${pickupTime}:00 Uhr\nBestelldetails:\n${cartSummary}\nGesamt: ${total} €\n--------------------------------\nNachricht: ${userMessage}`;
-            const dataToSend = new FormData();
-            dataToSend.append('access_key', formData.get('access_key'));
-            dataToSend.append('subject', `Bestellung: #${orderId}`);
-            dataToSend.append('from_name', name);
-            dataToSend.append('text', emailBody);
-            submitBtn.disabled = true;
-            submitBtn.textContent = currentLang === 'de' ? 'Wird gesendet...' : 'Sending...';
-            fetch(form.action, {
-                method: form.method,
-                body: dataToSend,
-                headers: { 'Accept': 'application/json' }
-            }).then(response => {
-                if (response.ok) {
-                    window.location.href = 'thank-you.html';
-                } else {
-                    response.json().then(data => {
-                        const errorMsg = data.message || (currentLang === 'de' ? 'Ein Fehler ist aufgetreten.' : 'An error occurred.');
-                        showToast(errorMsg, 'error');
-                    })
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                showToast(currentLang === 'de' ? 'Die Bestellung konnte nicht gesendet werden.' : 'The order could not be sent.', 'error');
-            }).finally(() => {
-                submitBtn.disabled = false;
-                applyLanguage();
-            });
+            window.location.href = 'thank-you.html';
         }
 
+        // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
-            productGrid.innerHTML = '<div class="loading-spinner border-4 border-gray-200 border-t-green-600 rounded-full w-12 h-12 animate-spin absolute top-1/2 left-1/2 -mt-6 -ml-6 col-span-full"></div>';
+            productGrid.innerHTML = '<div class="loading-spinner col-span-full"></div>';
             fetch('Products.json')
-                .then(response => response.ok ? response.json() : Promise.reject(`HTTP error! status: ${response.status}`))
+                .then(res => res.json())
                 .then(data => {
                     products = data;
                     filterProducts('all', document.querySelector('.filter-category-btn'));
                 })
                 .catch(error => {
-                    console.error('Could not load products:', error);
-                    productGrid.innerHTML = '<p class="col-span-full text-center text-red-600">Products could not be loaded.</p>';
+                    console.error("Failed to load products:", error);
+                    productGrid.innerHTML = '<p>Error loading products.</p>';
                 });
 
             productGrid.addEventListener('click', (event) => {
@@ -1071,27 +959,14 @@
                 const quantityButton = target.closest('.quantity-btn');
                 const productCard = target.closest('.product');
                 
-                if (favoriteButton) {
-                    const productId = parseInt(favoriteButton.dataset.productId);
-                    toggleFavorite(productId);
-                    return;
-                }
-                
+                if (favoriteButton) { toggleFavorite(parseInt(favoriteButton.dataset.productId)); return; }
                 if (quantityButton) {
-                    const productId = parseInt(quantityButton.dataset.productId);
                     const action = quantityButton.dataset.action;
-                    if (action === 'increase') {
-                        updateCartQuantity(productId, 1, 'whole'); 
-                    } else if (action === 'decrease') {
-                        updateCartQuantity(productId, -1, 'whole');
-                    }
+                    const id = parseInt(quantityButton.dataset.productId);
+                    updateCartQuantity(id, action === 'increase' ? 1 : -1);
                     return;
                 }
-
-                if (productCard) {
-                    const productId = parseInt(productCard.dataset.productId);
-                    openModal(productId);
-                }
+                if (productCard) { openModal(parseInt(productCard.dataset.productId)); }
             });
 
             document.getElementById('orderForm').addEventListener('submit', submitOrder);
