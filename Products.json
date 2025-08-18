@@ -9,8 +9,19 @@
     "allergen_en": "Gluten, Soy",
     "category": "bread",
     "price": 6.99,
+    "price_half": 3.50,
+    "canBeHalved": true,
     "badge": "new",
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Roggenmehl, Sauerteig, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, rye flour, sourdough, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "250 kcal",
+      "fat": "1.5g",
+      "carbs": "49g",
+      "protein": "8g"
+    }
   },
   {
     "id": 2,
@@ -22,7 +33,18 @@
     "allergen_en": "Gluten, Dairy",
     "category": "bread",
     "price": 6.69,
-    "dietary": "vegetarian"
+    "price_half": 3.35,
+    "canBeHalved": true,
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Wasser, Roggenmehl, Butter, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, rye flour, butter, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "280 kcal",
+      "fat": "3.5g",
+      "carbs": "52g",
+      "protein": "9g"
+    }
   },
   {
     "id": 3,
@@ -34,7 +56,18 @@
     "allergen_en": "Gluten, Dairy, Eggs",
     "category": "bread",
     "price": 5.99,
-    "dietary": "vegetarian"
+    "price_half": 3.00,
+    "canBeHalved": true,
+    "dietary": "vegetarian",
+    "ingredients_de": "Vollkornmehl, Wasser, Sonnenblumenkerne, Leinsamen, Sesam, Salz, Hefe",
+    "ingredients_en": "Whole wheat flour, water, sunflower seeds, linseeds, sesame, salt, yeast",
+     "nutrition": {
+      "serving_size": "100g",
+      "calories": "320 kcal",
+      "fat": "12g",
+      "carbs": "40g",
+      "protein": "11g"
+    }
   },
   {
     "id": 4,
@@ -46,7 +79,16 @@
     "allergen_en": "Gluten, Sesame",
     "category": "broetchen",
     "price": 0.99,
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Sesam, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, sesame, salt, yeast",
+    "nutrition": {
+      "serving_size": "1 piece (70g)",
+      "calories": "180 kcal",
+      "fat": "2g",
+      "carbs": "35g",
+      "protein": "6g"
+    }
   },
   {
     "id": 5,
@@ -58,7 +100,18 @@
     "allergen_en": "Gluten, Soy",
     "category": "bread",
     "price": 8.69,
-    "dietary": "vegan"
+    "price_half": 4.35,
+    "canBeHalved": true,
+    "dietary": "vegan",
+    "ingredients_de": "Dinkelmehl, Wasser, Soja, Salz, Hefe",
+    "ingredients_en": "Spelt flour, water, soy, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "290 kcal",
+      "fat": "4g",
+      "carbs": "50g",
+      "protein": "10g"
+    }
   },
   {
     "id": 6,
@@ -70,7 +123,16 @@
     "allergen_en": "Gluten, Dairy, Eggs",
     "category": "sweet",
     "price": 4.5,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Zucker, Eier, Milch, Butter, Vanille",
+    "ingredients_en": "Wheat flour, sugar, eggs, milk, butter, vanilla",
+    "nutrition": {
+      "serving_size": "1 slice",
+      "calories": "330 kcal",
+      "fat": "15g",
+      "carbs": "40g",
+      "protein": "7g"
+    }
   },
   {
     "id": 7,
@@ -82,7 +144,16 @@
     "allergen_en": "Gluten, Dairy, Eggs",
     "category": "sweet",
     "price": 2.8,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Butter, Wasser, Zucker, Hefe, Salz, Ei",
+    "ingredients_en": "Wheat flour, butter, water, sugar, yeast, salt, egg",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "280 kcal",
+      "fat": "17g",
+      "carbs": "26g",
+      "protein": "5g"
+    }
   },
   {
     "id": 8,
@@ -94,7 +165,16 @@
     "allergen_en": "Gluten",
     "category": "broetchen",
     "price": 1.5,
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Rapsöl, Salz, Hefe, Gerstenmalzextrakt",
+    "ingredients_en": "Wheat flour, water, rapeseed oil, salt, yeast, barley malt extract",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "220 kcal",
+      "fat": "3g",
+      "carbs": "41g",
+      "protein": "7g"
+    }
   },
   {
     "id": 9,
@@ -106,7 +186,18 @@
     "allergen_en": "Gluten, Nuts",
     "category": "bread",
     "price": 11.59,
-    "dietary": "vegan"
+    "price_half": 5.80,
+    "canBeHalved": true,
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Walnüsse, Roggenmehl, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, walnuts, rye flour, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "380 kcal",
+      "fat": "18g",
+      "carbs": "45g",
+      "protein": "10g"
+    }
   },
   {
     "id": 10,
@@ -118,7 +209,16 @@
     "allergen_en": "Gluten, Dairy",
     "category": "broetchen",
     "price": 1.2,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Dinkelmehl, Wasser, Milch, Butter, Salz, Hefe",
+    "ingredients_en": "Spelt flour, water, milk, butter, salt, yeast",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "210 kcal",
+      "fat": "4g",
+      "carbs": "36g",
+      "protein": "8g"
+    }
   },
   {
     "id": 11,
@@ -130,7 +230,16 @@
     "allergen_en": "Gluten, Dairy, Soy",
     "category": "sweet",
     "price": 3.2,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Butter, Schokolade (Soja), Wasser, Zucker, Hefe, Salz",
+    "ingredients_en": "Wheat flour, butter, chocolate (soy), water, sugar, yeast, salt",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "450 kcal",
+      "fat": "25g",
+      "carbs": "48g",
+      "protein": "7g"
+    }
   },
   {
     "id": 12,
@@ -142,8 +251,19 @@
     "allergen_en": "Gluten",
     "category": "bread",
     "price": 7.99,
+    "price_half": 4.00,
+    "canBeHalved": true,
     "badge": "new",
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Kartoffeln, Wasser, Salz, Hefe",
+    "ingredients_en": "Wheat flour, potatoes, water, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "230 kcal",
+      "fat": "1g",
+      "carbs": "48g",
+      "protein": "7g"
+    }
   },
   {
     "id": 13,
@@ -155,43 +275,81 @@
     "allergen_en": "Gluten",
     "category": "bread",
     "price": 4.5,
-    "dietary": "vegan"
+    "price_half": 2.25,
+    "canBeHalved": true,
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Olivenöl, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, olive oil, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "260 kcal",
+      "fat": "2.5g",
+      "carbs": "51g",
+      "protein": "8g"
+    }
   },
   {
     "id": 14,
     "img": "https://de.rc-cdn.community.thermomix.com/recipeimage/q3g2fubl-04855-946307-cfcd2-nrrujcv4/a044518b-fb63-4a89-80f1-ce4d09a815fe/main/marmorkuchen.jpg",
     "name_de": "Marmor Kuchen",
-    "name_en": "Marmor Kuchen",
+    "name_en": "Marble Cake",
     "cal": 550,
     "allergen_de": "Gluten, Milch, Eier",
     "allergen_en": "Gluten, Dairy, Eggs",
     "category": "sweet",
     "price": 4.9,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Zucker, Butter, Eier, Milch, Kakao, Backpulver",
+    "ingredients_en": "Wheat flour, sugar, butter, eggs, milk, cocoa, baking powder",
+    "nutrition": {
+      "serving_size": "1 slice",
+      "calories": "480 kcal",
+      "fat": "28g",
+      "carbs": "52g",
+      "protein": "6g"
+    }
   },
   {
     "id": 15,
     "img": "https://www.baeckerei-horsthemke.de/wp-content/uploads/2022/07/kuerbiskern-broetchen-auf-einem-holztisch.jpg.webp",
     "name_de": "Saatenbrötchen",
-    "name_en": "Pumpkin Seed Roll",
+    "name_en": "Seed Roll",
     "cal": 310,
     "allergen_de": "Gluten",
     "allergen_en": "Gluten",
     "category": "broetchen",
     "price": 1.09,
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Kürbiskerne, Sonnenblumenkerne, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, pumpkin seeds, sunflower seeds, salt, yeast",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "250 kcal",
+      "fat": "8g",
+      "carbs": "35g",
+      "protein": "9g"
+    }
   },
   {
     "id": 16,
     "img": "https://www.einfachbacken.de/sites/einfachbacken.de/files/2018-07/russischer_zupfkuchen-2-png-converted.jpg",
     "name_de": "Zupf Kuchen",
-    "name_en": "Russian cheesecake",
+    "name_en": "Russian Cheesecake",
     "cal": 480,
     "allergen_de": "Gluten, Milch, Nüsse",
     "allergen_en": "Gluten, Dairy, Nuts",
     "category": "sweet",
     "price": 4.5,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Quark, Zucker, Butter, Eier, Kakao, Mandeln",
+    "ingredients_en": "Wheat flour, quark, sugar, butter, eggs, cocoa, almonds",
+    "nutrition": {
+      "serving_size": "1 slice",
+      "calories": "420 kcal",
+      "fat": "22g",
+      "carbs": "45g",
+      "protein": "12g"
+    }
   },
   {
     "id": 17,
@@ -203,45 +361,85 @@
     "allergen_en": "Gluten, Nuts",
     "category": "bread",
     "price": 7.29,
-    "dietary": "vegan"
+    "price_half": 3.65,
+    "canBeHalved": true,
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Sesam, Sauerteig, Salz",
+    "ingredients_en": "Wheat flour, water, sesame, sourdough, salt",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "280 kcal",
+      "fat": "5g",
+      "carbs": "49g",
+      "protein": "9g"
+    }
   },
   {
     "id": 18,
     "img": "https://img.offers-cdn.net/assets/uploads/offers/de/901439/roggenrose-thumbWebP.webp",
     "name_de": "Roggenrose",
-    "name_en": "Roggenrose",
+    "name_en": "Rye Rose",
     "cal": 290,
     "allergen_de": "Gluten, Milch",
     "allergen_en": "Gluten, Dairy",
     "category": "broetchen",
     "price": 0.89,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Roggenmehl, Weizenmehl, Wasser, Joghurt, Salz, Hefe",
+    "ingredients_en": "Rye flour, wheat flour, water, yoghurt, salt, yeast",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "190 kcal",
+      "fat": "1.5g",
+      "carbs": "38g",
+      "protein": "6g"
+    }
   },
   {
     "id": 19,
     "img": "https://babyrockmyday.com/wp-content/uploads/2017/10/Kadamom-Zimt-Knoten1-740x1110.jpg",
-    "name_de": "kardamom Knoten",
-    "name_en": "cardamom Roll",
+    "name_de": "Kardamom Knoten",
+    "name_en": "Cardamom Knot",
     "cal": 450,
     "allergen_de": "Gluten, Milch, Soja",
     "allergen_en": "Gluten, Dairy, Soy",
     "category": "sweet",
     "price": 3.8,
     "dietary": "vegetarian",
-    "availability": "holiday"
+    "availability": "holiday",
+    "ingredients_de": "Weizenmehl, Milch, Butter, Zucker, Kardamom, Hefe, Salz",
+    "ingredients_en": "Wheat flour, milk, butter, sugar, cardamom, yeast, salt",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "380 kcal",
+      "fat": "18g",
+      "carbs": "48g",
+      "protein": "7g"
+    }
   },
   {
     "id": 20,
     "img": "https://www.fraenkische-rezepte.de/wp-content/uploads/2022/06/karottenbrot.jpg",
     "name_de": "Karottenbrot",
-    "name_en": "Carrots Bread",
+    "name_en": "Carrot Bread",
     "cal": 280,
     "allergen_de": "Gluten",
     "allergen_en": "Gluten",
     "category": "bread",
     "price": 3.8,
+    "price_half": 1.90,
+    "canBeHalved": true,
     "badge": "new",
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Karotten, Wasser, Sonnenblumenkerne, Salz, Hefe",
+    "ingredients_en": "Wheat flour, carrots, water, sunflower seeds, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "240 kcal",
+      "fat": "3g",
+      "carbs": "45g",
+      "protein": "8g"
+    }
   },
   {
     "id": 21,
@@ -253,7 +451,18 @@
     "allergen_en": "Gluten",
     "category": "bread",
     "price": 5.59,
-    "dietary": "vegan"
+    "price_half": 2.80,
+    "canBeHalved": true,
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Oliven, Olivenöl, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, olives, olive oil, salt, yeast",
+    "nutrition": {
+      "serving_size": "100g",
+      "calories": "270 kcal",
+      "fat": "4.5g",
+      "carbs": "50g",
+      "protein": "8g"
+    }
   },
   {
     "id": 22,
@@ -265,19 +474,37 @@
     "allergen_en": "Gluten, Dairy, Eggs",
     "category": "sweet",
     "price": 4.7,
-    "dietary": "vegetarian"
+    "dietary": "vegetarian",
+    "ingredients_de": "Weizenmehl, Zucker, Butter, Eier, Milch, Vanille, Backpulver",
+    "ingredients_en": "Wheat flour, sugar, butter, eggs, milk, vanilla, baking powder",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "350 kcal",
+      "fat": "18g",
+      "carbs": "45g",
+      "protein": "4g"
+    }
   },
   {
     "id": 23,
     "img": "https://www.brotkruemel.com/media/image/e9/de/b2/Weizenbroetchen-ueber-Nacht-1.jpg",
-    "name_de": "weizenbrötchen",
-    "name_en": "wheat Roll",
+    "name_de": "Weizenbrötchen",
+    "name_en": "Wheat Roll",
     "cal": 310,
     "allergen_de": "Gluten",
     "allergen_en": "Gluten",
     "category": "broetchen",
     "price": 0.99,
-    "dietary": "vegan"
+    "dietary": "vegan",
+    "ingredients_de": "Weizenmehl, Wasser, Salz, Hefe",
+    "ingredients_en": "Wheat flour, water, salt, yeast",
+    "nutrition": {
+      "serving_size": "1 piece",
+      "calories": "150 kcal",
+      "fat": "1g",
+      "carbs": "30g",
+      "protein": "5g"
+    }
   },
   {
     "id": 24,
@@ -290,6 +517,15 @@
     "category": "sweet",
     "price": 4.7,
     "dietary": "vegetarian",
-    "availability": "holiday"
+    "availability": "holiday",
+    "ingredients_de": "Weizenmehl, Zucker, Butter, Eier, Zitrone, Puderzucker",
+    "ingredients_en": "Wheat flour, sugar, butter, eggs, lemon, powdered sugar",
+    "nutrition": {
+      "serving_size": "1 slice",
+      "calories": "400 kcal",
+      "fat": "20g",
+      "carbs": "50g",
+      "protein": "5g"
+    }
   }
 ]

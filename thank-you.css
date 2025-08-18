@@ -64,6 +64,7 @@ body {
     letter-spacing: 2px;
     margin: 0;
     font-family: monospace;
+    word-break: break-all;
 }
 
 .order-id-note {
@@ -146,14 +147,33 @@ body {
     text-decoration: underline;
 }
 
+.thank-you-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
-.confirmation-card .order-btn {
-    margin-top: 20px;
+.print-btn {
+    background: #f0f0f0;
+    color: var(--text-color);
+}
+
+.print-btn:hover {
+    background: #e0e0e0;
+}
+
+.print-btn i {
+    margin-right: 8px;
 }
 
 @media (max-width: 600px) {
+    .thank-you-container {
+        padding: 10px;
+    }
     .confirmation-card {
-        padding: 25px;
+        padding: 25px 20px;
     }
     .confirmation-card h1 {
         font-size: 2.2rem;
@@ -161,7 +181,45 @@ body {
     .confirmation-card p {
         font-size: 1rem;
     }
+    .order-id-code {
+        font-size: 1.6rem;
+    }
     .order-summary {
-        padding: 20px;
+        padding: 20px 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .confirmation-card h1 {
+        font-size: 2rem;
+    }
+    .order-id-code {
+        font-size: 1.3rem;
+    }
+    .summary-cart-item, .summary-total, .summary-section p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Print-specific styles */
+@media print {
+    body {
+        background-color: #fff;
+    }
+    .thank-you-container, .confirmation-card {
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        border: none;
+    }
+    .confirmation-icon, .pickup-info, .thank-you-actions {
+        display: none;
+    }
+    .confirmation-card h1, .confirmation-card p {
+        color: #000;
+    }
+    .order-summary, .order-id-container {
+        background-color: #fff;
+        border: 1px solid #ccc;
     }
 }

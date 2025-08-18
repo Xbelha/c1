@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bestellbestätigung – Bäckerei Leipzig</title>
+	<link rel="icon" type="image/jpeg" href="https://macis-leipzig.de/wp-content/uploads/2019/03/cropped-macis_Logo_Leipzig_Druck_4c-192x192.jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="thank-you.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +31,8 @@
             <div class="order-summary">
                 <h2 data-lang-key="summaryTitle">Bestellübersicht</h2>
                 <div id="orderDetails">
-                    </div>
+                    <!-- Order details will be inserted here by JavaScript -->
+                </div>
             </div>
 
             <div class="pickup-info">
@@ -38,7 +40,13 @@
                  <p><strong data-lang-key="anyQuestions">Fragen zur Bestellung?</strong> Rufen Sie uns an: <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
             </div>
 
-            <a href="index.html" class="order-btn" data-lang-key="backToHome">Zurück zur Startseite</a>
+            <!-- Container for action buttons -->
+            <div class="thank-you-actions">
+                <a href="index.html" class="order-btn" data-lang-key="backToHome">Zurück zur Startseite</a>
+                <button id="printBtn" class="order-btn print-btn" data-lang-key="printOrderBtn">
+                    <i class="fas fa-print"></i> <span data-lang-key="printOrderText">Bestellung drucken</span>
+                </button>
+            </div>
         </div>
     </main>
 

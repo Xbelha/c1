@@ -11,7 +11,7 @@
     --shadow: rgba(0, 0, 0, 0.07);
     --shadow-hover: rgba(0, 0, 0, 0.12);
     --card-bg: #ffffff;
-    --section-bg: #f7f7f7; /* Light grey for sections */
+    --section-bg: #f7f7ff; /* Light grey for sections */
     --footer-bg: #f7f7f7;
     --border-color: #e5e5e5;
     --input-bg: #fff;
@@ -76,7 +76,7 @@ header p {
 }
 
 /* Button Styling */
-.order-btn, .order-link {
+.order-btn, .order-link, #installAppBtn {
     background: var(--accent-color);
     color: #fff;
     border: none;
@@ -88,10 +88,13 @@ header p {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex; /* Use inline-flex for alignment */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin: 5px;
 }
-.order-btn:hover, .order-link:hover {
+.order-btn:hover, .order-link:hover, #installAppBtn:hover {
     background: var(--accent-color-hover);
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -171,7 +174,16 @@ header p {
     position: absolute;
     top: 20px;
     left: 20px;
+    right: 20px; /* Make it span the full width */
     z-index: 10;
+    display: flex;
+    justify-content: space-between; /* This will push children to opposite ends */
+    align-items: center;
+    pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+.lang-switch, .install-btn-container {
+    pointer-events: auto; /* Re-enable clicks on the children */
 }
 
 .lang-switch {
@@ -185,9 +197,16 @@ header p {
     border-radius: 30px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: background-color 0.3s ease;
+    transition: background-color: 0.3s ease;
 }
 .lang-switch:hover { background: rgba(255, 255, 255, 0.35); }
+
+/* Install App Button - Initially Hidden */
+#installAppBtn {
+    display: none; /* Hidden by default, shown by JS */
+    padding: 10px 18px;
+    font-size: 1rem;
+}
 
 .cart-icon-container {
     position: fixed;
@@ -300,6 +319,47 @@ main { padding-top: 20px; }
     height: 220px;
     overflow: hidden;
 }
+
+.product-image-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.product:hover .product-image-container::after {
+    opacity: 1;
+}
+
+.view-details-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background-color: white;
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2;
+    white-space: nowrap;
+}
+
+.product:hover .view-details-btn {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
 .product img {
     width: 100%;
     height: 100%;
@@ -525,7 +585,7 @@ main { padding-top: 20px; }
     font-size: 2.2rem;
     margin-bottom: 15px;
 }
-#modalCal, #modalAllergen, #modalDietary {
+#modalDietary {
     margin-bottom: 10px;
     font-size: 1.1rem;
     color: var(--text-color-light);
@@ -566,40 +626,7 @@ main { padding-top: 20px; }
     justify-content: center;
     width: 100%;
 }
-#slicingOptionsContainer {
-    width: 100%;
-    max-width: 300px;
-}
-.option-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin-bottom: 15px;
-    text-align: center;
-}
-.radio-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-.radio-group input[type="radio"] {
-    display: none;
-}
-.radio-group label {
-    padding: 10px 20px;
-    border: 2px solid var(--border-color);
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    flex-grow: 1;
-    text-align: center;
-}
-.radio-group input[type="radio"]:checked + label {
-    background-color: var(--accent-color);
-    color: white !important;
-    border-color: var(--accent-color);
-}
+
 #modalProductQuantity {
     width: 80px;
     padding: 12px;
@@ -730,37 +757,53 @@ main { padding-top: 20px; }
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+}
+
+.cart-item-options-container {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-.cart-item-slicing-group {
+/* *** FINAL, OPTIMIZED STYLES FOR CART OPTION BUTTONS *** */
+.cart-item-option-group {
     display: flex;
-    gap: 8px;
 }
-.cart-item-slicing-group input[type="radio"] {
-    display: none;
+
+.cart-item-option-group input[type="checkbox"] {
+    display: none; /* Hide the original checkbox */
 }
-.cart-item-slicing-group label {
-    padding: 6px 14px;
-    font-size: 0.85rem;
+
+.cart-item-option-group label {
+    padding: 5px 12px; /* Made smaller */
+    font-size: 0.85rem; /* Made smaller */
     font-weight: 500;
+    background-color: #f0f0f0; /* Light gray for OFF state */
     border: 1px solid var(--border-color);
-    color: var(--text-color);
+    color: var(--text-color-light);
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    user-select: none;
 }
-.cart-item-slicing-group input[type="radio"]:not(:checked) + label:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
-.cart-item-slicing-group input[type="radio"]:checked + label {
-    border-color: var(--accent-color);
-    background-color: var(--accent-color);
-    color: #ffffff !important;
+
+.cart-item-option-group input[type="checkbox"]:checked + label {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: white !important; /* White text when selected */
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(88, 117, 58, 0.2);
 }
+
+.cart-item-option-group:hover label {
+    border-color: #aaa;
+}
+
+.cart-item-option-group input[type="checkbox"]:checked:hover + label {
+    background-color: var(--accent-color-hover) !important;
+    border-color: var(--accent-color-hover) !important;
+}
+/* END OF FINAL STYLES */
 
 .cart-item-row button {
     background: none;
@@ -869,27 +912,42 @@ footer {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    header { padding: 100px 15px 60px; }
+    header {
+        padding: 100px 15px 60px;
+    }
     header h1 { font-size: 3.5rem; }
     header p { font-size: 1.2rem; }
-    .header-controls { left: 15px; top: 15px; }
+    .header-controls { left: 15px; top: 15px; right: 15px; }
+    
     .filter-controls {
         border: none;
         box-shadow: none;
         background: transparent;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
         gap: 10px;
-        overflow: visible;
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        padding-left: 15px;
+        padding-right: 15px;
     }
+
+    .filter-controls::-webkit-scrollbar {
+        display: none;
+    }
+    
     .filter-controls .filter-btn {
+        flex-shrink: 0;
         border-right: none;
         border-radius: 25px;
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
         box-shadow: 0 2px 5px var(--shadow);
     }
+    
     .filter-controls .filter-btn:hover,
     .filter-controls .filter-btn.active {
         background-color: var(--accent-color);
@@ -904,7 +962,10 @@ footer {
 }
 
 @media (max-width: 480px) {
-    header { background-attachment: scroll; }
+    header { 
+        background-attachment: scroll; 
+        padding: 80px 15px 40px;
+    }
     header h1 { font-size: 2.8rem; }
     header p { font-size: 1rem; }
     .cart-icon-text { display: none; }
@@ -913,18 +974,21 @@ footer {
     .products { grid-template-columns: 1fr; padding: 0 15px; }
     .product-info h3 { font-size: 1.3rem; }
     .product-price { font-size: 1.2rem; }
+
+    .quantity-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.8rem;
+    }
+
+    .quantity-display {
+        font-size: 1.6rem;
+    }
+
     #modalTitle { font-size: 1.6rem; }
     .modal-add-to-cart { flex-direction: column; gap: 15px; }
     .modal-add-to-cart .modal-action-row { flex-direction: column; gap: 12px; width: 100%;}
     .modal-add-to-cart input, .modal-add-to-cart button { width: 100%; max-width: 220px; }
-
-    .cart-item-slicing-group {
-        gap: 5px;
-    }
-    .cart-item-slicing-group label {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-    }
 }
 .search-bar-wrapper {
   position: relative;
@@ -1000,6 +1064,79 @@ footer {
     color: white;
 }
 
-.toast i {
-    font-size: 1.25rem;
+/* Styles for new modal sections */
+.modal-details-section {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.modal-details-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.modal-details-section p {
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+    line-height: 1.5;
+}
+
+.modal-details-section p strong {
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.nutrition-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+    padding: 3px 0;
+}
+
+.nutrition-row span:first-child {
+    text-transform: capitalize;
+    font-weight: 600;
+}
+/* =================================== */
+/* FAVORITE BUTTON STYLES              */
+/* =================================== */
+
+.favorite-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 3;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.favorite-btn i {
+  color: #a0a0a0; /* Default heart color is light grey */
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+
+.favorite-btn.active i {
+  color: #e53e3e; /* Active (favorited) heart is red */
 }

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const orderDetailsContainer = document.getElementById('orderDetails');
     const orderIdDisplay = document.getElementById('orderIdDisplay');
+    const printBtn = document.getElementById('printBtn');
     const lang = localStorage.getItem('bakeryLang') || 'de';
 
     const translations = {
@@ -19,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
             total: "Gesamt",
             notProvided: "Nicht angegeben",
             yourOrderId: "Ihre Bestellnummer:",
-            orderIdNote: "Bitte bewahren Sie diese Nummer für Rückfragen auf."
+            orderIdNote: "Bitte bewahren Sie diese Nummer für Rückfragen auf.",
+            printOrderText: "Bestellung drucken"
         },
         en: {
             thankYouTitle: "Thank You!",
@@ -36,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
             total: "Total",
             notProvided: "Not provided",
             yourOrderId: "Your Order ID:",
-            orderIdNote: "Please keep this ID for any inquiries."
+            orderIdNote: "Please keep this ID for any inquiries.",
+            printOrderText: "Print Order"
         }
     };
 
@@ -45,27 +48,45 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-lang-key]').forEach(el => {
         const key = el.dataset.langKey;
         if (translations[lang][key]) {
-            el.textContent = translations[lang][key];
+            const target = el.querySelector('span') || el;
+            target.textContent = translations[lang][key];
         }
     });
 
     const lastOrder = JSON.parse(localStorage.getItem('lastOrder'));
 
     if (lastOrder && orderIdDisplay) {
-        // Display the Order ID
         orderIdDisplay.textContent = lastOrder.orderId || 'N/A';
     }
 
     if (lastOrder && orderDetailsContainer) {
-        const { orderId, name, phone, pickupDate, pickupTime, cart } = lastOrder;
-        const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0).toFixed(2);
+        const { name, phone, pickupDate, pickupTime, cart } = lastOrder;
+        
+        // *** MODIFICATION START: Corrected logic for price and quantity ***
+        
+        // 1. Correctly calculate the total price
+        const total = cart.reduce((sum, item) => {
+            const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+            return sum + (pricePerItem * item.quantity);
+        }, 0).toFixed(2);
 
-        const cartSummaryHTML = cart.map(item =>
-            `<div class="summary-cart-item">
-                <span>${item.quantity} x ${lang === 'de' ? item.product.name_de : item.product.name_en}</span>
-                <span>(${(item.product.price * item.quantity).toFixed(2)} €)</span>
-            </div>`
-        ).join('');
+        // 2. Correctly generate the HTML for each cart item
+        const cartSummaryHTML = cart.map(item => {
+            let displayQuantity = item.quantity;
+            if (item.size === 'half') {
+                displayQuantity = item.quantity * 0.5;
+            }
+
+            const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+            const itemPrice = pricePerItem * item.quantity;
+
+            return `<div class="summary-cart-item">
+                        <span>${displayQuantity} x ${lang === 'de' ? item.product.name_de : item.product.name_en}</span>
+                        <span>(${itemPrice.toFixed(2)} €)</span>
+                    </div>`;
+        }).join('');
+        
+        // *** MODIFICATION END ***
 
         orderDetailsContainer.innerHTML = `
             <div class="summary-section">
@@ -85,6 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     } else if (orderDetailsContainer) {
         orderDetailsContainer.innerHTML = `<p>Keine Bestelldetails gefunden.</p>`;
+    }
+    
+    // Add event listener for the print button
+    if(printBtn) {
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
     }
 
     // Clear the cart and order details from local storage after displaying them
