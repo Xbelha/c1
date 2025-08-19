@@ -22,6 +22,9 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB;
         }
+        html {
+            scroll-behavior: smooth;
+        }
         h1, h2, h3, .font-serif {
             font-family: 'Playfair Display', serif;
         }
@@ -47,43 +50,21 @@
         .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
         .mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- NOTIFICATION STYLES (Top-Right) --- */
+        /* --- NOTIFICATION STYLES (Bottom-Left) --- */
         #toastContainer {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 20px;
+            left: 20px;
             z-index: 2000;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            pointer-events: none;
         }
-        .notification-toast {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 320px;
-            max-width: 90vw;
-            animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-        .notification-toast img {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-        }
-        .notification-toast-content {
-            padding: 12px 16px;
-            flex-grow: 1;
-        }
-        .notification-toast-content p { margin: 0; font-weight: 600; color: #333; }
-        .notification-toast-content span { font-size: 0.9em; color: #666; }
         
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(100%); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
@@ -97,7 +78,8 @@
             border-radius: 25px;
             font-size: 0.9rem;
             font-weight: 500;
-            animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
     </style>
 </head>
@@ -118,7 +100,7 @@
             <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Weiss-1-768x498_neu.png" alt="Macis Leipzig Logo" class="w-48 mx-auto mb-6">
             <h1 id="title" data-lang-key="mainTitle" class="text-4xl md:text-6xl font-serif mb-4 text-shadow-lg">Macis Biobäckerei in Leipzig</h1>
             <p id="subtitle" data-lang-key="subTitle" class="text-lg md:text-xl text-shadow">Traditionelle Backkunst, jeden Tag frisch</p>
-            <a href="#productGrid" class="mt-8 inline-block bg-green-600 hover:bg-green-700 transition-transform hover:scale-105 duration-300 rounded-full px-8 py-4 text-lg font-bold shadow-lg" data-lang-key="orderNowBtn">Jetzt bestellen</a>
+            <a href="#productGrid" id="orderNowLink" class="mt-8 inline-block bg-green-600 hover:bg-green-700 transition-transform hover:scale-105 duration-300 rounded-full px-8 py-4 text-lg font-bold shadow-lg" data-lang-key="orderNowBtn">Jetzt bestellen</a>
         </div>
     </header>
 
@@ -221,6 +203,11 @@
                             <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
                             <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
+                        <!-- ADDED EMAIL FIELD -->
+                        <div class="relative">
+                            <label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label>
+                            <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label>
@@ -254,7 +241,7 @@
             <div class="my-8 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
                 <iframe 
                     title="Location of Macis Biobäckerei on Google Maps"
-                    src="http://googleusercontent.com/maps.google.com/6" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.26245428612!2d12.37006231584167!3d51.3392339796076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f81c96954e6d%3A0x5f9b44c8e7dce5a!2sMACIS%20Biomarkt%20und%20Restaurant!5e0!3m2!1sde!2sde!4v1672604859828!5m2!1sde!2sde" 
                     width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
@@ -299,6 +286,8 @@
         const installAppBtn = document.getElementById('installAppBtn');
         const cartView = document.getElementById('cartView');
         const formView = document.getElementById('formView');
+        const orderNowLink = document.getElementById('orderNowLink');
+
 
         // PWA Installation Logic
         window.addEventListener('beforeinstallprompt', (event) => {
@@ -318,28 +307,21 @@
                 }
             });
         }
-
-        // --- NOTIFICATION & UTILITY FUNCTIONS ---
-        function showToast(data, duration = 3000) {
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-
-            const { product, messageKey } = data;
-            const productName = currentLang === 'de' ? product.name_de : product.name_en;
-            const message = translations[currentLang][messageKey] || 'hinzugefügt';
-
-            const toast = document.createElement('div');
-            toast.className = 'notification-toast';
-            toast.innerHTML = `
-                <img src="${product.img}" alt="${productName}" onerror="this.onerror=null; this.src='https://placehold.co/70x70/e2e8f0/475569?text=...';">
-                <div class="notification-toast-content">
-                    <p>${productName}</p>
-                    <span>${message}</span>
-                </div>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), duration);
+        
+        // --- SMOOTH SCROLL FOR "JETZT BESTELLEN" ---
+        if (orderNowLink) {
+            orderNowLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         }
 
+
+        // --- NOTIFICATION & UTILITY FUNCTIONS ---
         function showSimpleToast(message, duration = 3000) {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -370,14 +352,14 @@
                 orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
                 pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
                 addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
-                messageOptional: 'Nachricht (optional)',
+                emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
                 totalText: 'Gesamt:', prevPage: 'Zurück', nextPage: 'Weiter',
                 holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
                 phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
                 slicingSliced: "Geschnitten", sizeHalf: "Halbes",
                 ingredientsTitle: "Zutaten & Allergene", nutritionTitle: "Nährwertangaben", viewDetailsBtn: "Details ansehen",
                 installApp: "App installieren", addedToFavorites: 'Zu Favoriten hinzugefügt', removedFromFavorites: 'Aus Favoriten entfernt',
-                addedToCartMessage: 'wurde zum Warenkorb hinzugefügt'
+                addedToCartMessage: 'hinzugefügt'
             },
             en: {
                 langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
@@ -389,14 +371,14 @@
                 orderSuccessAlert: 'Thank you for your order! We have received it.',
                 pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
                 addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
-                messageOptional: 'Message (optional)',
+                emailOptional: 'Email (optional)', messageOptional: 'Message (optional)',
                 totalText: 'Total:', prevPage: 'Previous', nextPage: 'Next',
                 holidayProductOnNonHolidayAlert: 'Your order contains Sunday/Holiday-only items. Please select an appropriate day as your pickup date.',
                 phoneHint: "Please only enter numbers, spaces, or '+'.",
                 slicingSliced: "Sliced", sizeHalf: "Half",
                 ingredientsTitle: "Ingredients & Allergens", nutritionTitle: "Nutritional Information", viewDetailsBtn: "View Details",
                 installApp: "Install App", addedToFavorites: 'Added to favorites', removedFromFavorites: 'Removed from favorites',
-                addedToCartMessage: 'was added to your cart'
+                addedToCartMessage: 'added to cart'
             }
         };
 
@@ -702,13 +684,15 @@
                 if (existingItem.quantity <= 0) {
                     cart = cart.filter(item => !(item.product.id === productId && item.size === size));
                 } else if (change > 0) {
-                     showToast({ product: product, messageKey: 'addedToCartMessage' });
+                     const message = `${currentLang === 'de' ? product.name_de : product.name_en} ${translations[currentLang].addedToCartMessage}`;
+                     showSimpleToast(message);
                 }
             } else if (change > 0) {
                 const newItem = { product, quantity: change, size: size };
                 if (product.category === 'bread') newItem.slicing = 'unsliced';
                 cart.push(newItem);
-                showToast({ product: product, messageKey: 'addedToCartMessage' });
+                const message = `${currentLang === 'de' ? product.name_de : product.name_en} ${translations[currentLang].addedToCartMessage}`;
+                showSimpleToast(message);
             }
             
             const cartButton = document.getElementById('cartButton');
@@ -907,6 +891,7 @@
             return `${dayOfYear}${randomPart}`;
         }
 
+        // --- FIXED SUBMIT ORDER FUNCTION ---
         function submitOrder(event) {
             event.preventDefault();
             if (!validateCartAgainstPickupDate()) {
@@ -915,16 +900,77 @@
             }
             const form = event.target;
             const formData = new FormData(form);
+            const submitBtn = document.getElementById('submitOrderBtn');
+
             const name = formData.get('name');
             const phone = formData.get('phone');
+            const email = formData.get('email') || (currentLang === 'de' ? 'Nicht angegeben' : 'Not provided');
             const pickupDate = formData.get('pickupDate');
             const pickupTime = formData.get('pickupTime');
-            const message = formData.get('message');
+            const userMessage = formData.get('message');
             const orderId = generateOrderId();
-            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, message, cart };
+            
+            // Save order to local storage for thank you page
+            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart };
             localStorage.setItem('lastOrder', JSON.stringify(lastOrder));
             
-            window.location.href = 'thank-you.html';
+            // Prepare data for email submission
+            const cartSummary = cart.map(item => {
+                let optionText = '';
+                if (item.slicing === 'sliced') optionText += ` (${translations[currentLang].slicingSliced})`;
+                let displayQuantity = item.size === 'half' ? item.quantity * 0.5 : item.quantity;
+                return `${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText}`;
+            }).join('\n');
+
+            const total = cart.reduce((sum, item) => {
+                const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+                return sum + (pricePerItem * item.quantity);
+            }, 0).toFixed(2);
+
+            const emailBody = `
+Bestellnummer: ${orderId}
+--------------------------------
+Name: ${name}
+Telefonnummer: ${phone}
+E-Mail: ${email}
+Abholdatum: ${pickupDate} um ${pickupTime}:00 Uhr
+--------------------------------
+Bestelldetails:
+${cartSummary}
+Gesamt: ${total} €
+--------------------------------
+Nachricht: 
+${userMessage || '-'}`;
+            
+            const dataToSend = new FormData();
+            dataToSend.append('access_key', formData.get('access_key'));
+            dataToSend.append('subject', ` Bestellung: #${orderId}`);
+            dataToSend.append('from_name', name);
+            dataToSend.append('text', emailBody);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${currentLang === 'de' ? 'Wird gesendet...' : 'Sending...'}`;
+
+            fetch(form.action, {
+                method: form.method,
+                body: dataToSend,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = 'thank-you.html';
+                } else {
+                    response.json().then(data => {
+                        console.error("Submission error data:", data);
+                        showSimpleToast(currentLang === 'de' ? 'Ein Fehler ist aufgetreten.' : 'An error occurred.');
+                    });
+                }
+            }).catch(error => {
+                console.error('Submission fetch error:', error);
+                showSimpleToast(currentLang === 'de' ? 'Die Bestellung konnte nicht gesendet werden.' : 'The order could not be sent.');
+            }).finally(() => {
+                submitBtn.disabled = false;
+                applyLanguage(); // To reset button text
+            });
         }
 
         // Initial Load
