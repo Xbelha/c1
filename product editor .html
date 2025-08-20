@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product JSON Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .form-section {
+            transition: all 0.3s ease-in-out;
+        }
+        #productForm.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0;
+            padding: 0;
+        }
+        #productForm {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 2000px; /* Large enough for content */
+        }
+        .product-card:hover .controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">Product Editor</h1>
+            <p class="text-lg text-gray-600 mt-2">Load, edit, add, and save your product list.</p>
+        </header>
+
+        <!-- Main Controls -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <label for="file-upload" class="cursor-pointer bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow flex items-center gap-2">
+                    <i class="fas fa-upload"></i>
+                    Load Products.json
+                </label>
+                <input id="file-upload" type="file" class="hidden" accept=".json">
+                <span id="fileName" class="text-gray-500">No file loaded.</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="addNewProductBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors shadow flex items-center gap-2" disabled>
+                    <i class="fas fa-plus"></i>
+                    Add New Product
+                </button>
+                <button id="downloadBtn" class="bg-gray-800 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors shadow flex items-center gap-2" disabled>
+                    <i class="fas fa-download"></i>
+                    Download JSON
+                </button>
+            </div>
+        </div>
+
+        <!-- Product Form (Initially Hidden) -->
+        <div id="productForm" class="form-section hidden bg-white p-8 rounded-2xl shadow-lg mb-8 mt-8">
+            <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center">Add New Product</h2>
+            <form id="editForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Hidden input for product ID -->
+                <input type="hidden" id="productId">
+
+                <!-- Form Fields -->
+                <div>
+                    <label for="name_de" class="block text-sm font-medium text-gray-700">Name (German)</label>
+                    <input type="text" id="name_de" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
+                </div>
+                <div>
+                    <label for="name_en" class="block text-sm font-medium text-gray-700">Name (English)</label>
+                    <input type="text" id="name_en" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
+                </div>
+                 <div>
+                    <label for="img" class="block text-sm font-medium text-gray-700">Image URL</label>
+                    <input type="text" id="img" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
+                </div>
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <select id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
+                        <option value="bread">bread</option>
+                        <option value="broetchen">broetchen</option>
+                        <option value="sweet">sweet</option>
+                        <option value="holiday">holiday</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700">Price (€)</label>
+                    <input type="number" id="price" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
+                </div>
+                <div>
+                    <label for="price_half" class="block text-sm font-medium text-gray-700">Half Price (€) (Optional)</label>
+                    <input type="number" id="price_half" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
+                </div>
+                <div>
+                    <label for="allergen_de" class="block text-sm font-medium text-gray-700">Allergens (German, comma-separated)</label>
+                    <input type="text" id="allergen_de" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
+                </div>
+                <div>
+                    <label for="allergen_en" class="block text-sm font-medium text-gray-700">Allergens (English, comma-separated)</label>
+                    <input type="text" id="allergen_en" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
+                </div>
+                <div class="md:col-span-2 lg:col-span-3">
+                    <label for="ingredients_de" class="block text-sm font-medium text-gray-700">Ingredients (German, comma-separated)</label>
+                    <textarea id="ingredients_de" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"></textarea>
+                </div>
+                <div class="md:col-span-2 lg:col-span-3">
+                    <label for="ingredients_en" class="block text-sm font-medium text-gray-700">Ingredients (English, comma-separated)</label>
+                    <textarea id="ingredients_en" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"></textarea>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="md:col-span-2 lg:col-span-3 flex justify-end gap-4 mt-4">
+                    <button type="button" id="cancelBtn" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors">Cancel</button>
+                    <button type="submit" id="saveBtn" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Save Product</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Product List -->
+        <div id="productList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let products = [];
+        let editingProductId = null;
+
+        // --- DOM ELEMENT REFERENCES ---
+        const fileUpload = document.getElementById('file-upload');
+        const fileNameSpan = document.getElementById('fileName');
+        const addNewProductBtn = document.getElementById('addNewProductBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const productFormContainer = document.getElementById('productForm');
+        const formTitle = document.getElementById('formTitle');
+        const editForm = document.getElementById('editForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const productList = document.getElementById('productList');
+
+        // --- EVENT LISTENERS ---
+
+        // Listen for file upload
+        fileUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            fileNameSpan.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    products = JSON.parse(content);
+                    // Ensure products have unique IDs
+                    if (products.length > 0 && !products[0].id) {
+                        products.forEach((p, index) => p.id = index + 1);
+                    }
+                    renderProducts();
+                    enableButtons();
+                } catch (error) {
+                    alert('Error parsing JSON file. Please check the file format.');
+                    console.error("JSON Parse Error:", error);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Show form to add a new product
+        addNewProductBtn.addEventListener('click', () => {
+            editingProductId = null;
+            formTitle.textContent = 'Add New Product';
+            editForm.reset();
+            showForm();
+        });
+
+        // Handle form submission (for both adding and editing)
+        editForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            saveProduct();
+        });
+
+        // Hide form on cancel
+        cancelBtn.addEventListener('click', () => {
+            hideForm();
+        });
+
+        // Handle download button click
+        downloadBtn.addEventListener('click', () => {
+            downloadJsonFile();
+        });
+
+        // --- CORE FUNCTIONS ---
+
+        /**
+         * Renders the list of products to the DOM.
+         */
+        function renderProducts() {
+            productList.innerHTML = ''; // Clear existing list
+            if (products.length === 0) {
+                productList.innerHTML = `<p class="text-gray-500 col-span-full text-center">Load a Products.json file to get started.</p>`;
+                return;
+            }
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card bg-white p-4 rounded-xl shadow-md relative group';
+                card.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <img src="${product.img || 'https://placehold.co/64x64/e2e8f0/475569?text=No+Img'}" alt="${product.name_de}" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-lg">${product.name_de}</h3>
+                            <p class="text-sm text-gray-500">${product.name_en}</p>
+                            <p class="text-sm font-semibold text-indigo-600 mt-1">ID: ${product.id} | €${product.price}</p>
+                        </div>
+                    </div>
+                    <div class="controls absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="edit-btn bg-blue-500 text-white w-8 h-8 rounded-full hover:bg-blue-600 flex items-center justify-center" data-id="${product.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="delete-btn bg-red-500 text-white w-8 h-8 rounded-full hover:bg-red-600 flex items-center justify-center" data-id="${product.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                productList.appendChild(card);
+            });
+
+            // Add event listeners for the new edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    editProduct(id);
+                });
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    deleteProduct(id);
+                });
+            });
+        }
+
+        /**
+         * Populates and shows the form to edit a product.
+         * @param {number} id The ID of the product to edit.
+         */
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            editingProductId = id;
+            formTitle.textContent = `Editing: ${product.name_de}`;
+
+            // Populate form fields
+            document.getElementById('productId').value = product.id;
+            document.getElementById('name_de').value = product.name_de || '';
+            document.getElementById('name_en').value = product.name_en || '';
+            document.getElementById('img').value = product.img || '';
+            document.getElementById('category').value = product.category || 'bread';
+            document.getElementById('price').value = product.price || 0;
+            document.getElementById('price_half').value = product.price_half || '';
+            document.getElementById('allergen_de').value = product.allergen_de || '';
+            document.getElementById('allergen_en').value = product.allergen_en || '';
+            document.getElementById('ingredients_de').value = product.ingredients_de || '';
+            document.getElementById('ingredients_en').value = product.ingredients_en || '';
+            
+            showForm();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * Deletes a product from the list after confirmation.
+         * @param {number} id The ID of the product to delete.
+         */
+        function deleteProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            if (confirm(`Are you sure you want to delete "${product.name_de}"?`)) {
+                products = products.filter(p => p.id !== id);
+                renderProducts();
+            }
+        }
+
+        /**
+         * Saves a product (either new or edited) to the state.
+         */
+        function saveProduct() {
+            // Helper to get value or null if empty
+            const getValue = id => document.getElementById(id).value.trim() || null;
+            const getFloatValue = id => {
+                const val = document.getElementById(id).value;
+                return val ? parseFloat(val) : null;
+            };
+
+            const productData = {
+                id: editingProductId || getNextId(),
+                name_de: getValue('name_de'),
+                name_en: getValue('name_en'),
+                img: getValue('img'),
+                category: getValue('category'),
+                price: getFloatValue('price'),
+                price_half: getFloatValue('price_half'),
+                allergen_de: getValue('allergen_de'),
+                allergen_en: getValue('allergen_en'),
+                ingredients_de: getValue('ingredients_de'),
+                ingredients_en: getValue('ingredients_en'),
+                // Add other fields from your JSON structure here
+                // For simplicity, we'll keep the optional ones that might not be in the form
+            };
+
+            // Remove null properties for cleaner JSON
+            Object.keys(productData).forEach(key => {
+                if (productData[key] === null) {
+                    delete productData[key];
+                }
+            });
+
+            if (editingProductId) {
+                // Update existing product
+                const index = products.findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    // Preserve any extra properties not in the form
+                    products[index] = { ...products[index], ...productData };
+                }
+            } else {
+                // Add new product
+                products.push(productData);
+            }
+
+            renderProducts();
+            hideForm();
+        }
+
+        /**
+         * Triggers the download of the current product list as a JSON file.
+         */
+        function downloadJsonFile() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "Products.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // --- UTILITY & UI FUNCTIONS ---
+
+        function showForm() {
+            productFormContainer.classList.remove('hidden');
+        }
+
+        function hideForm() {
+            productFormContainer.classList.add('hidden');
+            editForm.reset();
+            editingProductId = null;
+        }
+
+        function enableButtons() {
+            addNewProductBtn.disabled = false;
+            downloadBtn.disabled = false;
+        }
+
+        function getNextId() {
+            if (products.length === 0) return 1;
+            const maxId = Math.max(...products.map(p => p.id || 0));
+            return maxId + 1;
+        }
+        
+    </script>
+
+</body>
+</html>
