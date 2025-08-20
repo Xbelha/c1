@@ -203,7 +203,6 @@
                             <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
                             <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
-                        <!-- ADDED EMAIL FIELD -->
                         <div class="relative">
                             <label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label>
                             <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
@@ -507,13 +506,36 @@
             const nutritionContainer = document.getElementById('modalNutrition');
             const ingredientsTextElement = document.getElementById('modalIngredientsText');
 
+            // --- START OF CORRECTED ALLERGEN LOGIC ---
             let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
             if (ingredientsString) {
+                const allergensRaw = (currentLang === 'de' ? p.allergen_de : p.allergen_en) || '';
+                const allergens = allergensRaw.split(',').map(a => a.trim().toLowerCase());
+
+                const allergenMap = {
+                    'gluten': ['weizenmehl', 'roggenmehl', 'dinkelmehl', 'vollkornmehl', 'gerstenmalzextrakt', 'wheat flour', 'rye flour', 'spelt flour', 'whole wheat flour', 'barley malt extract'],
+                    'soja': ['soja', 'soy'],
+                    'milch': ['milch', 'butter', 'joghurt', 'quark', 'dairy', 'milk', 'butter', 'yoghurt', 'quark'],
+                    'eier': ['eier', 'ei', 'eggs', 'egg'],
+                    'sesam': ['sesam', 'sesame'],
+                    'nüsse': ['walnüsse', 'mandeln', 'nüsse', 'nuts', 'walnuts', 'almonds']
+                };
+
+                allergens.forEach(allergen => {
+                    if (allergenMap[allergen]) {
+                        allergenMap[allergen].forEach(termToHighlight => {
+                            const regex = new RegExp(`\\b(${termToHighlight})\\b`, 'gi');
+                            ingredientsString = ingredientsString.replace(regex, '<strong>$1</strong>');
+                        });
+                    }
+                });
+
                 ingredientsTextElement.innerHTML = ingredientsString;
                 ingredientsContainer.style.display = 'block';
             } else {
                 ingredientsContainer.style.display = 'none';
             }
+            // --- END OF CORRECTED ALLERGEN LOGIC ---
 
             if (p.nutrition) {
                 const nutritionTable = document.getElementById('modalNutritionTable');

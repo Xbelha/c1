@@ -111,7 +111,7 @@ const translations = {
     prevPage: 'Zurück', nextPage: 'Weiter',
     holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
     phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
-    slicingTitle: "Schneide-Präferenz",
+    slicingTitle: "Schneide-Prferenz",
     slicingUnsliced: "Am Stück",
     slicingSliced: "Geschnitten",
     sizeTitle: "Größe",
@@ -301,16 +301,34 @@ function openModal(productId) {
 
     let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
     if (ingredientsString) {
-        let allergens = (currentLang === 'de' ? p.allergen_de : p.allergen_en).split(', ');
-        const allergenMap = {'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],'Soja': ['Soja', 'Soy'],'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],'Sesam': ['Sesam', 'Sesame'],'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']};
+        const allergensRaw = (currentLang === 'de' ? p.allergen_de : p.allergen_en) || '';
+        // Robust parsing of allergen list (handles "Gluten, Soja" and "Gluten,Soja")
+        const allergens = allergensRaw.split(',').map(a => a.trim().toLowerCase());
+
+        // Map with lowercase keys for consistent matching
+        const allergenMap = {
+            'gluten': ['weizenmehl', 'roggenmehl', 'dinkelmehl', 'vollkornmehl', 'gerstenmalzextrakt', 'wheat flour', 'rye flour', 'spelt flour', 'whole wheat flour', 'barley malt extract'],
+            'soja': ['soja', 'soy'],
+            'milch': ['milch', 'butter', 'joghurt', 'quark', 'dairy', 'milk', 'butter', 'yoghurt', 'quark'],
+            'eier': ['eier', 'ei', 'eggs', 'egg'],
+            'sesam': ['sesam', 'sesame'],
+            'nüsse': ['walnüsse', 'mandeln', 'nüsse', 'nuts', 'walnuts', 'almonds']
+        };
+
+        // Iterate through each allergen found in the product data
         allergens.forEach(allergen => {
+            // Check if this allergen exists in our map
             if (allergenMap[allergen]) {
-                allergenMap[allergen].forEach(ingredientWord => {
-                    const regex = new RegExp(`\\b(${ingredientWord})\\b`, 'gi');
+                // If it does, iterate through all corresponding ingredient terms
+                allergenMap[allergen].forEach(termToHighlight => {
+                    // Create a case-insensitive regex for the specific term
+                    const regex = new RegExp(`\\b(${termToHighlight})\\b`, 'gi');
+                    // Replace all occurrences of this term in the ingredients string
                     ingredientsString = ingredientsString.replace(regex, '<strong>$1</strong>');
                 });
             }
         });
+
         ingredientsTextElement.innerHTML = ingredientsString;
         ingredientsContainer.style.display = 'block';
     } else {
@@ -340,6 +358,7 @@ function openModal(productId) {
     modal.style.display = 'flex';
     applyLanguage();
 }
+
 
 function closeModal() {
   modal.style.display = 'none';
