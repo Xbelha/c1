@@ -62,21 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lastOrder && orderDetailsContainer) {
         const { name, phone, pickupDate, pickupTime, cart } = lastOrder;
         
-        // *** MODIFICATION START: Corrected logic for price and quantity ***
-        
-        // 1. Correctly calculate the total price
         const total = cart.reduce((sum, item) => {
             const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
             return sum + (pricePerItem * item.quantity);
         }, 0).toFixed(2);
 
-        // 2. Correctly generate the HTML for each cart item
         const cartSummaryHTML = cart.map(item => {
             let displayQuantity = item.quantity;
             if (item.size === 'half') {
                 displayQuantity = item.quantity * 0.5;
             }
-
             const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
             const itemPrice = pricePerItem * item.quantity;
 
@@ -85,8 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>(${itemPrice.toFixed(2)} €)</span>
                     </div>`;
         }).join('');
-        
-        // *** MODIFICATION END ***
 
         orderDetailsContainer.innerHTML = `
             <div class="summary-section">
@@ -108,14 +101,23 @@ document.addEventListener('DOMContentLoaded', () => {
         orderDetailsContainer.innerHTML = `<p>Keine Bestelldetails gefunden.</p>`;
     }
     
-    // Add event listener for the print button
     if(printBtn) {
         printBtn.addEventListener('click', () => {
             window.print();
         });
     }
 
-    // Clear the cart and order details from local storage after displaying them
+    // NEW LOGIC: Save to history, then clear cart and temporary order
+    if (lastOrder) {
+        let pastOrders = JSON.parse(localStorage.getItem('pastOrders')) || [];
+        pastOrders.unshift(lastOrder); // Add the new order to the beginning of the list
+        if (pastOrders.length > 5) { // Keep only the last 5 orders
+            pastOrders.pop();
+        }
+        localStorage.setItem('pastOrders', JSON.stringify(pastOrders));
+    }
+
+    // Clear the cart and the temporary order details from local storage
     localStorage.removeItem('cart');
     localStorage.removeItem('lastOrder');
 });

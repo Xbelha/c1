@@ -18,9 +18,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
+        :root {
+            --accent-color: #58753a;
+            --accent-color-hover: #4a6332;
+            --main-bg: #F9FAFB;
+            --card-bg: #ffffff;
+            --text-color: #1a1a1a;
+            --text-color-light: #555555;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB;
+            background-color: var(--main-bg);
+            color: var(--text-color);
         }
         html {
             scroll-behavior: smooth;
@@ -29,7 +38,7 @@
             font-family: 'Playfair Display', serif;
         }
         .filter-btn.active {
-            background-color: #4D7C0F;
+            background-color: var(--accent-color);
             color: white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
@@ -50,7 +59,6 @@
         .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
         .mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- NOTIFICATION STYLES (Bottom-Left) --- */
         #toastContainer {
             position: fixed;
             bottom: 20px;
@@ -81,14 +89,21 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             animation: slideInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
+        .order-details-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <header class="relative text-white text-center flex flex-col items-center justify-center min-h-[60vh] bg-cover bg-center bg-fixed" style="background-image: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg');">
+    <header id="mainHeader" class="relative text-white text-center flex flex-col items-center justify-center min-h-[60vh] bg-cover bg-center bg-fixed" style="background-image: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg');">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex justify-between items-center z-10">
-            <button class="lang-switch bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-white/30" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button id="orderHistoryBtn" class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-white/30" data-lang-key="myOrdersBtn">Meine Bestellungen</button>
+            </div>
             <div class="install-btn-container">
                 <button id="installAppBtn" class="hidden items-center gap-2 bg-green-700 hover:bg-green-800 transition rounded-full px-4 py-2 text-sm font-semibold">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
@@ -115,7 +130,7 @@
     <main class="py-12 md:py-16">
         <div class="container mx-auto px-4">
             <nav class="filter-controls-container flex justify-center mb-8">
-                <div class="filter-controls flex space-x-2 bg-white p-1.5 rounded-full shadow-sm border border-gray-200 overflow-x-auto mobile-scrollbar-hide">
+                <div id="filterControls" class="filter-controls flex space-x-2 bg-white p-1.5 rounded-full shadow-sm border border-gray-200 overflow-x-auto mobile-scrollbar-hide">
                     <button class="filter-btn filter-category-btn active flex-shrink-0 flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-full text-sm md:text-base font-semibold text-gray-600 transition-colors duration-300" onclick="filterProducts('all', this)" data-lang-key="allBakedGoods"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> Alle Backwaren</button>
                     <button class="filter-btn filter-category-btn flex-shrink-0 flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-full text-sm md:text-base font-semibold text-gray-600 transition-colors duration-300" onclick="filterProducts('bread', this)" data-lang-key="bread"><i class="fas fa-bread-slice"></i> Brot</button>
                     <button class="filter-btn filter-category-btn flex-shrink-0 flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-full text-sm md:text-base font-semibold text-gray-600 transition-colors duration-300" onclick="filterProducts('broetchen', this)" data-lang-key="rolls"><i class="fas fa-cookie"></i> Brötchen</button>
@@ -138,92 +153,76 @@
         <div id="paginationContainer" class="flex justify-center items-center space-x-2 mt-12"></div>
     </main>
 
-    <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="modal" style="display: none;">
-        <div class="modal-content bg-white rounded-2xl p-6 md:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
-            <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" onclick="closeModal()" aria-label="Close product details dialog">×</button>
-            <div class="text-center">
-                <img id="modalImg" src="" alt="" loading="lazy" class="w-full h-64 object-cover rounded-xl mb-6 shadow-md" onerror="this.onerror=null; this.src='https://placehold.co/400x250/e2e8f0/475569?text=Image+Missing';">
-                <h3 id="modalTitle" class="text-3xl font-serif mb-2"></h3>
-                <div id="modalDietary" class="mb-4"></div>
-                <p id="modalPrice" class="text-2xl font-bold text-green-700 mb-6"></p>
-
-                <div id="modalIngredients" class="modal-details-section text-left p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4">
-                    <h4 data-lang-key="ingredientsTitle" class="font-bold text-lg mb-2">Zutaten</h4>
-                    <p id="modalIngredientsText" class="text-gray-600 text-sm leading-relaxed"></p>
-                </div>
-                <div id="modalNutrition" class="modal-details-section text-left p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <h4 data-lang-key="nutritionTitle" class="font-bold text-lg mb-2">Nährwertangaben</h4>
-                    <div id="modalNutritionTable" class="text-sm"></div>
-                </div>
-
-                <div class="modal-add-to-cart mt-8 flex items-center justify-center gap-4">
-                    <input type="number" id="modalProductQuantity" value="1" min="1" class="w-20 text-center text-lg font-bold border-2 border-gray-200 rounded-lg p-3 focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none">
-                    <button onclick="addToCartFromModal()" data-lang-key="addToCartBtn" class="flex-1 bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition-transform hover:scale-105 shadow"></button>
+    <!-- MODALS CONTAINER -->
+    <div id="modalsContainer">
+        <!-- Product Details Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="modal" style="display: none;">
+            <div class="modal-content bg-white rounded-2xl p-6 md:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
+                <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" onclick="closeModal()" aria-label="Close product details dialog">×</button>
+                <div class="text-center">
+                    <img id="modalImg" src="" alt="" loading="lazy" class="w-full h-64 object-cover rounded-xl mb-6 shadow-md" onerror="this.onerror=null; this.src='https://placehold.co/400x250/e2e8f0/475569?text=Image+Missing';">
+                    <h3 id="modalTitle" class="text-3xl font-serif mb-2"></h3>
+                    <div id="modalDietary" class="mb-4"></div>
+                    <p id="modalPrice" class="text-2xl font-bold text-green-700 mb-6"></p>
+                    <div id="modalIngredients" class="modal-details-section text-left p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4">
+                        <h4 data-lang-key="ingredientsTitle" class="font-bold text-lg mb-2">Zutaten</h4>
+                        <p id="modalIngredientsText" class="text-gray-600 text-sm leading-relaxed"></p>
+                    </div>
+                    <div id="modalNutrition" class="modal-details-section text-left p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h4 data-lang-key="nutritionTitle" class="font-bold text-lg mb-2">Nährwertangaben</h4>
+                        <div id="modalNutritionTable" class="text-sm"></div>
+                    </div>
+                    <div class="modal-add-to-cart mt-8 flex items-center justify-center gap-4">
+                        <input type="number" id="modalProductQuantity" value="1" min="1" class="w-20 text-center text-lg font-bold border-2 border-gray-200 rounded-lg p-3 focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none">
+                        <button onclick="addToCartFromModal()" data-lang-key="addToCartBtn" class="flex-1 bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition-transform hover:scale-105 shadow"></button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderModal" style="display: none;">
-        <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col">
-            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" onclick="closeOrderForm()" aria-label="Close order form dialog">×</button>
-            
-            <div id="cartView">
-                <div class="p-6 border-b">
-                    <h2 data-lang-key="yourCart" class="text-3xl font-serif text-center">Dein Warenkorb</h2>
-                </div>
-                <div class="p-6 flex-grow overflow-y-auto" style="max-height: 50vh;">
-                    <div id="selectedProductsList" class="space-y-4">
-                        </div>
-                </div>
-                <div class="p-6 bg-gray-50 rounded-b-2xl">
-                    <div class="flex justify-between font-bold text-xl mb-4">
-                        <span data-lang-key="totalText">Gesamt:</span>
-                        <span id="cartTotal">0.00 €</span>
+        <!-- Order Form Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderModal" style="display: none;">
+            <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col">
+                <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" onclick="closeOrderForm()" aria-label="Close order form dialog">×</button>
+                <div id="cartView">
+                    <div class="p-6 border-b"><h2 data-lang-key="yourCart" class="text-3xl font-serif text-center">Dein Warenkorb</h2></div>
+                    <div class="p-6 flex-grow overflow-y-auto" style="max-height: 50vh;"><div id="selectedProductsList" class="space-y-4"></div></div>
+                    <div class="p-6 bg-gray-50 rounded-b-2xl">
+                        <div class="flex justify-between font-bold text-xl mb-4"><span data-lang-key="totalText">Gesamt:</span><span id="cartTotal">0.00 €</span></div>
+                        <button onclick="showOrderFormView()" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" id="continueToOrderBtn">Weiter zur Bestellung</button>
                     </div>
-                    <button onclick="showOrderFormView()" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" id="continueToOrderBtn">Weiter zur Bestellung</button>
+                </div>
+                <div id="formView" style="display: none;">
+                    <div class="p-6 border-b flex items-center">
+                        <button onclick="showCartView()" class="text-gray-600 hover:text-black mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
+                        <h2 data-lang-key="orderTitle" class="text-3xl font-serif text-center flex-grow">Bestellung</h2>
+                    </div>
+                    <div class="p-6 flex-grow overflow-y-auto" style="max-height: 65vh;">
+                        <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+                            <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
+                            <div><label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label><input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
+                            <div><label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label><input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
+                            <div><label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label><input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label><input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
+                                <div><label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label><select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select></div>
+                            </div>
+                            <div><label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label><textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea></div>
+                            <div id="date-validation-message" class="text-red-600 text-sm font-semibold min-h-[2.5rem]"></div>
+                            <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div id="formView" style="display: none;">
-                <div class="p-6 border-b flex items-center">
-                    <button onclick="showCartView()" class="text-gray-600 hover:text-black mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                    </button>
-                    <h2 data-lang-key="orderTitle" class="text-3xl font-serif text-center flex-grow">Bestellung</h2>
-                </div>
-                <div class="p-6 flex-grow overflow-y-auto" style="max-height: 65vh;">
-                    <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
-                        <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
-                        <div class="relative">
-                            <label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label>
-                            <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        <div class="relative">
-                            <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
-                            <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        <div class="relative">
-                            <label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label>
-                            <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label>
-                                <input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div>
-                                <label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label>
-                                <select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
-                            <textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea>
-                        </div>
-                        <div id="date-validation-message" class="text-red-600 text-sm font-semibold min-h-[2.5rem]"></div>
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
-                    </form>
+        <!-- Order History Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderHistoryModal" style="display: none;">
+            <div class="bg-white rounded-2xl max-w-2xl w-full relative max-h-[90vh] flex flex-col">
+                <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" onclick="closeOrderHistoryModal()" aria-label="Close order history dialog">×</button>
+                <div class="p-6 border-b"><h2 data-lang-key="orderHistoryTitle" class="text-3xl font-serif text-center">Bestellverlauf</h2></div>
+                <div id="orderHistoryList" class="p-6 flex-grow overflow-y-auto" style="max-height: 65vh;">
+                    <!-- History items will be injected here -->
                 </div>
             </div>
         </div>
@@ -238,11 +237,7 @@
                 <p><strong data-lang-key="emailLabel" class="font-semibold text-gray-800">E-Mail:</strong> <a href="mailto:baeckerei@macis-leipzig.de" class="hover:text-green-700 hover:underline">baeckerei@macis-leipzig.de</a></p>
             </address>
             <div class="my-8 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-                <iframe 
-                    title="Location of Macis Biobäckerei on Google Maps"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d185.26112305187138!2d12.372121456978144!3d51.33749045984679!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f9f310ab1c17%3A0xa5cd115fc8171f2c!2sMacis%20Leipzig%20-%20Biob%C3%A4ckerei!5e0!3m2!1sde!2sde!4v1755562430791!5m2!1sde!2sde" 
-                    width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                <iframe title="Location of Macis Biobäckerei on Google Maps" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d185.26112305187138!2d12.372121456978144!3d51.33749045984679!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f9f310ab1c17%3A0xa5cd115fc8171f2c!2sMacis%20Leipzig%20-%20Biob%C3%A4ckerei!5e0!3m2!1sde!2sde!4v1755562430791!5m2!1sde!2sde" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             <h3 data-lang-key="openingHoursTitle" class="text-2xl font-serif mt-12 mb-4">Öffnungszeiten</h3>
             <div class="text-gray-600 space-y-1">
@@ -257,26 +252,30 @@
             <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md text-gray-600 hover:text-green-700 hover:shadow-lg transition-all" target="_blank" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372.527-.205.973-.478 1.417-.923.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.231 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>
             <a href="https://www.facebook.com/macisleipzig" class="social-icon w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md text-gray-600 hover:text-green-700 hover:shadow-lg transition-all" target="_blank" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg></a>
         </div>
+        <div class="mb-4">
+            <button class="lang-switch text-gray-600 hover:text-green-700 font-semibold hover:underline" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+        </div>
         <p class="text-sm text-gray-500">Macis Bio Bäckerei © 2025 – Mit Liebe gebacken</p>
     </footer>
 
     <div id="toastContainer"></div>
 
     <script>
-        // Global state variables
+        // --- FULL SCRIPT ---
         let products = [];
         let currentLang = localStorage.getItem('bakeryLang') || 'de';
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let favorites = new Set(JSON.parse(localStorage.getItem('bakeryFavorites')) || []);
+        let pastOrders = JSON.parse(localStorage.getItem('pastOrders')) || [];
         let currentProductInModal = null;
         let currentPage = 1;
         const productsPerPage = 12;
         let currentFilteredProducts = [];
         let deferredInstallPrompt = null;
 
-        // DOM element references
         const modal = document.getElementById('modal');
         const orderModal = document.getElementById('orderModal');
+        const orderHistoryModal = document.getElementById('orderHistoryModal');
         const productGrid = document.getElementById('productGrid');
         const cartCountSpan = document.getElementById('cartCount');
         const pickupDateInput = document.getElementById('pickupDate');
@@ -286,41 +285,122 @@
         const cartView = document.getElementById('cartView');
         const formView = document.getElementById('formView');
         const orderNowLink = document.getElementById('orderNowLink');
+        const orderHistoryBtn = document.getElementById('orderHistoryBtn');
 
+        const translations = {
+            de: {
+                langSwitch: 'Sprache ändern', mainTitle: 'Macis Biobäckerei in Leipzig', subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
+                orderNowBtn: 'Jetzt bestellen', allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: 'Suche',
+                holidaySpecials: 'Sonn- & Feiertags', favorites: 'Favoriten',
+                orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
+                openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
+                noProductsAddedAlert: 'Dein Warenkorb ist leer.',
+                orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
+                pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
+                addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
+                emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
+                totalText: 'Gesamt:', prevPage: 'Zurück', nextPage: 'Weiter',
+                holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
+                phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
+                slicingSliced: "Geschnitten", sizeHalf: "Halbes",
+                ingredientsTitle: "Zutaten & Allergene", nutritionTitle: "Nährwertangaben", viewDetailsBtn: "Details ansehen",
+                installApp: "App installieren", addedToFavorites: 'Zu Favoriten hinzugefügt', removedFromFavorites: 'Aus Favoriten entfernt',
+                addedToCartMessage: 'hinzugefügt',
+                myOrdersBtn: 'Meine Bestellungen', orderHistoryTitle: 'Bestellverlauf', noPastOrders: 'Keine früheren Bestellungen gefunden.',
+                reorderBtn: 'Erneut bestellen', orderOn: 'Bestellung vom', detailsBtn: 'Details',
+            },
+            en: {
+                langSwitch: 'Change Language', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
+                orderNowBtn: 'Order Now', allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: 'Search',
+                holidaySpecials: 'Sundays & Holidays', favorites: 'Favorites',
+                orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
+                openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
+                noProductsAddedAlert: 'Your cart is empty.',
+                orderSuccessAlert: 'Thank you for your order! We have received it.',
+                pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
+                addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
+                emailOptional: 'Email (optional)', messageOptional: 'Message (optional)',
+                totalText: 'Total:', prevPage: 'Previous', nextPage: 'Next',
+                holidayProductOnNonHolidayAlert: 'Your order contains Sunday/Holiday-only items. Please select an appropriate day as your pickup date.',
+                phoneHint: "Please only enter numbers, spaces, or '+'.",
+                slicingSliced: "Sliced", sizeHalf: "Half",
+                ingredientsTitle: "Ingredients & Allergens", nutritionTitle: "Nutritional Information", viewDetailsBtn: "View Details",
+                installApp: "Install App", addedToFavorites: 'Added to favorites', removedFromFavorites: 'Removed from favorites',
+                addedToCartMessage: 'added to cart',
+                myOrdersBtn: 'My Orders', orderHistoryTitle: 'Order History', noPastOrders: 'No past orders found.',
+                reorderBtn: 'Re-order', orderOn: 'Order from', detailsBtn: 'Details',
+            }
+        };
+        
+        function openOrderHistoryModal() {
+            const listEl = document.getElementById('orderHistoryList');
+            listEl.innerHTML = '';
+            if (pastOrders.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-500 py-8">${translations[currentLang].noPastOrders}</p>`;
+            } else {
+                pastOrders.forEach(order => {
+                    const total = order.cart.reduce((sum, item) => {
+                        const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+                        return sum + (pricePerItem * item.quantity);
+                    }, 0).toFixed(2);
 
-        // PWA Installation Logic
-        window.addEventListener('beforeinstallprompt', (event) => {
-            event.preventDefault();
-            deferredInstallPrompt = event;
-            if (installAppBtn) installAppBtn.style.display = 'inline-flex';
-        });
+                    const itemsHtml = order.cart.map(item => {
+                        let displayQuantity = item.size === 'half' ? item.quantity * 0.5 : item.quantity;
+                        return `<li class="text-sm text-gray-600">${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}</li>`;
+                    }).join('');
 
-        if (installAppBtn) {
-            installAppBtn.addEventListener('click', () => {
-                if (deferredInstallPrompt) {
-                    deferredInstallPrompt.prompt();
-                    deferredInstallPrompt.userChoice.then(() => {
-                        deferredInstallPrompt = null;
-                        installAppBtn.style.display = 'none';
-                    });
-                }
-            });
+                    const orderCard = document.createElement('div');
+                    orderCard.className = 'p-4 border rounded-lg mb-4';
+                    orderCard.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-lg">${translations[currentLang].orderOn} ${order.pickupDate}</p>
+                                <p class="text-sm text-gray-500">ID: ${order.orderId} | Total: ${total} €</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleOrderDetails('${order.orderId}')" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition text-sm">${translations[currentLang].detailsBtn}</button>
+                                <button onclick="reorderFromHistory('${order.orderId}')" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition text-sm">${translations[currentLang].reorderBtn}</button>
+                            </div>
+                        </div>
+                        <div id="details-${order.orderId}" class="order-details-list pt-3 mt-3 border-t border-gray-200">
+                            <ul class="list-disc list-inside">${itemsHtml}</ul>
+                        </div>
+                    `;
+                    listEl.appendChild(orderCard);
+                });
+            }
+            orderHistoryModal.style.display = 'flex';
         }
         
-        // --- SMOOTH SCROLL FOR "JETZT BESTELLEN" ---
-        if (orderNowLink) {
-            orderNowLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function toggleOrderDetails(orderId) {
+            const detailsDiv = document.getElementById(`details-${orderId}`);
+            if (detailsDiv) {
+                if (detailsDiv.style.maxHeight && detailsDiv.style.maxHeight !== '0px') {
+                    detailsDiv.style.maxHeight = '0px';
+                } else {
+                    detailsDiv.style.maxHeight = detailsDiv.scrollHeight + "px";
                 }
-            });
+            }
         }
 
+        function closeOrderHistoryModal() {
+            orderHistoryModal.style.display = 'none';
+        }
 
-        // --- NOTIFICATION & UTILITY FUNCTIONS ---
+        function reorderFromHistory(orderId) {
+            const orderToReorder = pastOrders.find(o => o.orderId === orderId);
+            if (orderToReorder) {
+                cart = JSON.parse(JSON.stringify(orderToReorder.cart));
+                updateCartCount();
+                filterProducts('all', document.querySelector('.filter-category-btn[onclick*="all"]'));
+                closeOrderHistoryModal();
+                openOrderForm();
+                showSimpleToast("Order items added to your cart!");
+            }
+        }
+
+        orderHistoryBtn.addEventListener('click', openOrderHistoryModal);
+
         function showSimpleToast(message, duration = 3000) {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -338,48 +418,6 @@
                 timer = setTimeout(() => func.apply(this, args), delay);
             };
         }
-
-        // Translations and Data
-        const translations = {
-            de: {
-                langSwitch: 'Deutsch', mainTitle: 'Macis Biobäckerei in Leipzig', subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
-                orderNowBtn: 'Jetzt bestellen', allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: 'Suche',
-                holidaySpecials: 'Sonn- & Feiertags', favorites: 'Favoriten',
-                orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
-                openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
-                noProductsAddedAlert: 'Dein Warenkorb ist leer.',
-                orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
-                pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
-                addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
-                emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
-                totalText: 'Gesamt:', prevPage: 'Zurück', nextPage: 'Weiter',
-                holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
-                phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
-                slicingSliced: "Geschnitten", sizeHalf: "Halbes",
-                ingredientsTitle: "Zutaten & Allergene", nutritionTitle: "Nährwertangaben", viewDetailsBtn: "Details ansehen",
-                installApp: "App installieren", addedToFavorites: 'Zu Favoriten hinzugefügt', removedFromFavorites: 'Aus Favoriten entfernt',
-                addedToCartMessage: 'hinzugefügt'
-            },
-            en: {
-                langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
-                orderNowBtn: 'Order Now', allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: 'Search',
-                holidaySpecials: 'Sundays & Holidays', favorites: 'Favorites',
-                orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
-                openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
-                noProductsAddedAlert: 'Your cart is empty.',
-                orderSuccessAlert: 'Thank you for your order! We have received it.',
-                pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
-                addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
-                emailOptional: 'Email (optional)', messageOptional: 'Message (optional)',
-                totalText: 'Total:', prevPage: 'Previous', nextPage: 'Next',
-                holidayProductOnNonHolidayAlert: 'Your order contains Sunday/Holiday-only items. Please select an appropriate day as your pickup date.',
-                phoneHint: "Please only enter numbers, spaces, or '+'.",
-                slicingSliced: "Sliced", sizeHalf: "Half",
-                ingredientsTitle: "Ingredients & Allergens", nutritionTitle: "Nutritional Information", viewDetailsBtn: "View Details",
-                installApp: "Install App", addedToFavorites: 'Added to favorites', removedFromFavorites: 'Removed from favorites',
-                addedToCartMessage: 'added to cart'
-            }
-        };
 
         const publicHolidays = ["01-01", "05-01", "10-03", "10-31", "12-25", "12-26"];
         function isPublicHoliday(date) {
@@ -399,8 +437,6 @@
             easterMonday.setDate(easterSunday.getDate() + 1);
             return date.getTime() === goodFriday.getTime() || date.getTime() === easterMonday.getTime();
         }
-
-        // --- APPLICATION LOGIC ---
 
         function displayProducts() {
             productGrid.innerHTML = "";
@@ -506,7 +542,6 @@
             const nutritionContainer = document.getElementById('modalNutrition');
             const ingredientsTextElement = document.getElementById('modalIngredientsText');
 
-            // --- START OF CORRECTED ALLERGEN LOGIC ---
             let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
             if (ingredientsString) {
                 const allergensRaw = (currentLang === 'de' ? p.allergen_de : p.allergen_en) || '';
@@ -535,7 +570,6 @@
             } else {
                 ingredientsContainer.style.display = 'none';
             }
-            // --- END OF CORRECTED ALLERGEN LOGIC ---
 
             if (p.nutrition) {
                 const nutritionTable = document.getElementById('modalNutritionTable');
@@ -913,7 +947,6 @@
             return `${dayOfYear}${randomPart}`;
         }
 
-        // --- FIXED SUBMIT ORDER FUNCTION ---
         function submitOrder(event) {
             event.preventDefault();
             if (!validateCartAgainstPickupDate()) {
@@ -932,11 +965,9 @@
             const userMessage = formData.get('message');
             const orderId = generateOrderId();
             
-            // Save order to local storage for thank you page
-            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart };
+            const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart: JSON.parse(JSON.stringify(cart)) };
             localStorage.setItem('lastOrder', JSON.stringify(lastOrder));
             
-            // Prepare data for email submission
             const cartSummary = cart.map(item => {
                 let optionText = '';
                 if (item.slicing === 'sliced') optionText += ` (${translations[currentLang].slicingSliced})`;
@@ -991,11 +1022,10 @@ ${userMessage || '-'}`;
                 showSimpleToast(currentLang === 'de' ? 'Die Bestellung konnte nicht gesendet werden.' : 'The order could not be sent.');
             }).finally(() => {
                 submitBtn.disabled = false;
-                applyLanguage(); // To reset button text
+                applyLanguage();
             });
         }
 
-        // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
             productGrid.innerHTML = '<div class="loading-spinner col-span-full"></div>';
             fetch('Products.json')
