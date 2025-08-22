@@ -4,51 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bestellbestätigung – Bäckerei Leipzig</title>
-	<link rel="icon" type="image/jpeg" href="https://macis-leipzig.de/wp-content/uploads/2019/03/cropped-macis_Logo_Leipzig_Druck_4c-192x192.jpg">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="thank-you.css">
+    
+    <!-- Favicon and Manifest -->
+    <link rel="icon" type="image/jpeg" href="https://macis-leipzig.de/wp-content/uploads/2019/03/cropped-macis_Logo_Leipzig_Druck_4c-192x192.jpg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#58753a">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --accent-color: #58753a;
+            --accent-color-hover: #4a6332;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .confirmation-icon {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s forwards;
+            transform: scale(0);
+            opacity: 0;
+        }
+        /* Print-specific styles */
+        @media print {
+            body {
+                background-color: #fff !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                padding: 0 !important;
+            }
+            .print-bg-white {
+                 background-color: #fff !important;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
 
-    <main class="thank-you-container">
-        <div class="card-style confirmation-card">
-            <div class="confirmation-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h1 data-lang-key="thankYouTitle">Vielen Dank!</h1>
-            <p data-lang-key="thankYouSubtitle">Ihre Bestellung wurde erfolgreich an uns übermittelt.</p>
+    <header class="mb-8 no-print">
+        <a href="index.html">
+            <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Druck_4c-150x150.jpg" alt="Macis Leipzig Logo" class="w-24 h-24 rounded-full shadow-md">
+        </a>
+    </header>
+
+    <main class="w-full max-w-2xl">
+        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 text-center print-card">
             
-            <div class="order-id-container">
-                <h3 data-lang-key="yourOrderId">Ihre Bestellnummer:</h3>
-                <p id="orderIdDisplay" class="order-id-code">[ID]</p>
-                <p class="order-id-note" data-lang-key="orderIdNote">Bitte bewahren Sie diese Nummer für Rückfragen auf.</p>
+            <!-- Confirmation Icon and Title -->
+            <div class="confirmation-icon w-20 h-20 mx-auto mb-5 flex items-center justify-center bg-green-100 rounded-full">
+                <i class="fas fa-check-circle text-5xl" style="color: var(--accent-color);"></i>
+            </div>
+            <h1 data-lang-key="thankYouTitle" class="text-4xl sm:text-5xl font-serif text-gray-800 mb-3">Vielen Dank!</h1>
+            <p data-lang-key="thankYouSubtitle" class="text-lg text-gray-500 mb-8">Ihre Bestellung wurde erfolgreich an uns übermittelt.</p>
+            
+            <!-- Order ID -->
+            <div class="bg-gray-50 rounded-xl p-4 mb-8 border border-gray-200 print-bg-white">
+                <h3 data-lang-key="yourOrderId" class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Ihre Bestellnummer:</h3>
+                <p id="orderIdDisplay" class="text-3xl font-bold tracking-widest" style="color: var(--accent-color); font-family: monospace;">[ID]</p>
+                <p class="text-xs text-gray-400 mt-2" data-lang-key="orderIdNote">Bitte bewahren Sie diese Nummer für Rückfragen auf.</p>
             </div>
 
-            <div class="order-summary">
-                <h2 data-lang-key="summaryTitle">Bestellübersicht</h2>
-                <div id="orderDetails">
+            <!-- Order Summary -->
+            <div class="text-left border-t border-gray-200 pt-6">
+                <h2 data-lang-key="summaryTitle" class="text-2xl font-serif text-center mb-6">Bestellübersicht</h2>
+                <div id="orderDetails" class="space-y-6">
                     <!-- Order details will be inserted here by JavaScript -->
                 </div>
             </div>
 
-            <div class="pickup-info">
-                 <p><strong data-lang-key="pickupAddress">Abholadresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
-                 <p><strong data-lang-key="anyQuestions">Fragen zur Bestellung?</strong> Rufen Sie uns an: <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
+            <!-- Pickup Info -->
+            <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-left space-y-2 print-bg-white">
+                 <p><strong data-lang-key="pickupAddress" class="font-semibold">Abholadresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
+                 <p><strong data-lang-key="anyQuestions" class="font-semibold">Fragen zur Bestellung?</strong> Rufen Sie uns an: <a href="tel:+4934122287523" class="hover:underline font-semibold" style="color: var(--accent-color);">+49 341 222 875 23</a></p>
             </div>
 
-            <!-- Container for action buttons -->
-            <div class="thank-you-actions">
-                <a href="index.html" class="order-btn" data-lang-key="backToHome">Zurück zur Startseite</a>
-                <button id="printBtn" class="order-btn print-btn" data-lang-key="printOrderBtn">
-                    <i class="fas fa-print"></i> <span data-lang-key="printOrderText">Bestellung drucken</span>
+            <!-- Action Buttons -->
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 no-print">
+                <a href="index.html" data-lang-key="backToHome" class="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow">Zurück zur Startseite</a>
+                <button id="printBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition">
+                    <i class="fas fa-print"></i>
+                    <span data-lang-key="printOrderText">Bestellung drucken</span>
                 </button>
             </div>
         </div>
     </main>
+    
+    <footer class="text-center py-6 text-sm text-gray-400 no-print">
+        <p>Macis Bio Bäckerei © 2025</p>
+    </footer>
 
     <script src="thank-you.js"></script>
 </body>
