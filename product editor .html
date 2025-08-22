@@ -3,433 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product JSON Editor</title>
+    <title> Macis Editor (Pro)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
+        :root, [data-theme="light"] {
+            --brand-color: #4f46e5; --brand-color-light: #6366f1;
+            --background-start: #f0f3ff; --background-end: #dbeafe;
+            --card-background: rgba(255, 255, 255, 0.6);
+            --text-main: #1e293b; --text-light: #64748b;
+            --border-color: rgba(203, 213, 225, 0.8);
+            --shadow-color: rgba(100, 116, 139, 0.12);
+            --modal-bg: rgba(248, 250, 252, 0.85);
+        }
+        [data-theme="dark"] {
+            --brand-color: #818cf8; --brand-color-light: #a78bfa;
+            --background-start: #1e293b; --background-end: #0f172a;
+            --card-background: rgba(30, 41, 59, 0.6);
+            --text-main: #f1f5f9; --text-light: #94a3b8;
+            --border-color: rgba(51, 65, 85, 0.9);
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --modal-bg: rgba(15, 23, 42, 0.85);
+        }
+        @keyframes aurora { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes stagger-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-image: linear-gradient(125deg, var(--background-start), var(--background-end));
+            background-size: 400% 400%;
+            animation: aurora 20s ease infinite;
+            color: var(--text-main);
+            transition: background-color 0.3s ease;
         }
-        .form-section {
-            transition: all 0.3s ease-in-out;
+        .glass-card {
+            background-color: var(--card-background);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            transition: all 0.2s ease-in-out;
         }
-        #productForm.hidden {
-            opacity: 0;
-            transform: translateY(-20px);
-            max-height: 0;
-            overflow: hidden;
-            margin-top: 0;
-            padding: 0;
+        .product-card { animation: stagger-in 0.5s both; cursor: grab; }
+        .product-card:active { cursor: grabbing; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px var(--shadow-color); }
+        .sortable-ghost { opacity: 0.4; }
+        .modal-overlay { background-color: rgba(30, 41, 59, 0.5); }
+        .modal-content {
+            background-color: var(--modal-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
         }
-        #productForm {
-            opacity: 1;
-            transform: translateY(0);
-            max-height: 2000px; /* Large enough for content */
+        input[type="checkbox"].custom {
+            appearance: none; -webkit-appearance: none;
+            border: 2px solid var(--border-color);
+            border-radius: 6px; width: 22px; height: 22px;
+            outline: none; transition: all 0.2s; cursor: pointer;
+            background-color: rgba(255,255,255,0.2);
         }
-        .product-card:hover .controls {
-            opacity: 1;
+        input[type="checkbox"].custom:checked { background-color: var(--brand-color); border-color: var(--brand-color); position: relative; }
+        input[type="checkbox"].custom:checked::after { content: '✓'; font-size: 16px; font-weight: 900; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        select.custom-select {
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' class='w-5 h-5'%3E%3Cpath fill-rule='evenodd' d='M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
         }
+        .theme-btn-active { background-color: var(--brand-color); color: white; }
+        #toastContainer { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { padding: 1rem 1.5rem; border-radius: 0.5rem; color: white; font-weight: 600; box-shadow: 0 4px 6px -1px var(--shadow-color); opacity: 0; transform: translateX(100%); animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards; }
+        .toast.success { background-color: #16a34a; }
+        .toast.info { background-color: #4f46e5; }
+        .toast button { margin-left: 1rem; font-weight: bold; background: rgba(0,0,0,0.2); padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
     </style>
 </head>
-<body class="text-gray-800">
+<body>
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900">Product Editor</h1>
-            <p class="text-lg text-gray-600 mt-2">Load, edit, add, and save your product list.</p>
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                 <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">Macis Product Editor</h1>
+                 <p class="text-lg text-slate-500 mt-2"> manage your products.</p>
+            </div>
+            <div class="flex items-center gap-2 p-1 rounded-full glass-card">
+                <button id="theme-light" class="p-2 w-10 h-10 rounded-full text-amber-500"><i class="fas fa-sun"></i></button>
+                <button id="theme-dark" class="p-2 w-10 h-10 rounded-full text-slate-400"><i class="fas fa-moon"></i></button>
+            </div>
         </header>
 
-        <!-- Main Controls -->
-        <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <label for="file-upload" class="cursor-pointer bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow flex items-center gap-2">
-                    <i class="fas fa-upload"></i>
-                    Load Products.json
-                </label>
-                <input id="file-upload" type="file" class="hidden" accept=".json">
-                <span id="fileName" class="text-gray-500">No file loaded.</span>
+        <div class="glass-card p-6 rounded-xl mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+             <label for="file-upload" class="bg-indigo-600 hover:bg-indigo-500 cursor-pointer text-white font-bold py-2 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105">
+                <i class="fas fa-upload"></i><span>Load JSON</span>
+            </label>
+            <input id="file-upload" type="file" class="hidden" accept=".json">
+            <span id="fileName" class="text-slate-500 italic text-center md:text-left col-span-1">No file loaded.</span>
+            <button id="addNewProductBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105" disabled>
+                <i class="fas fa-plus"></i><span>Add Product</span>
+            </button>
+            <button id="downloadBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105" disabled>
+                <i class="fas fa-download"></i><span>Download</span>
+            </button>
+        </div>
+        
+        <div class="glass-card p-6 rounded-xl mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div class="relative md:col-span-2">
+                <input type="text" id="searchBar" placeholder="Search products..." class="w-full p-3 pl-10 text-base rounded-lg bg-transparent border border-transparent focus:border-[var(--brand-color)] focus:ring-2 focus:ring-[var(--brand-color)]" disabled>
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
             </div>
-            <div class="flex items-center gap-4">
-                <button id="addNewProductBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors shadow flex items-center gap-2" disabled>
-                    <i class="fas fa-plus"></i>
-                    Add New Product
-                </button>
-                <button id="downloadBtn" class="bg-gray-800 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors shadow flex items-center gap-2" disabled>
-                    <i class="fas fa-download"></i>
-                    Download JSON
-                </button>
+            <div id="filterContainer" class="hidden">
+                 <select id="categoryFilter" class="custom-select w-full p-3 text-base rounded-lg bg-transparent border border-[var(--border-color)] focus:border-[var(--brand-color)] focus:ring-2 focus:ring-[var(--brand-color)]"></select>
             </div>
+            <div>
+                <select id="sortByFilter" class="custom-select w-full p-3 text-base rounded-lg bg-transparent border border-[var(--border-color)] focus:border-[var(--brand-color)] focus:ring-2 focus:ring-[var(--brand-color)]" disabled>
+                    <option value="manual_sort">Manual Sort</option>
+                    <option value="id_asc">ID</option>
+                    <option value="modified_desc">Last Modified (Newest)</option>
+                    <option value="price_desc">Price (High to Low)</option>
+                    <option value="price_asc">Price (Low to High)</option>
+                    <option value="name_asc">Name (A-Z)</option>
+                </select>
+            </div>
+            <button id="bulkEditBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 hidden md:col-start-4 transition-all transform hover:scale-105">
+                <i class="fas fa-edit"></i><span>Bulk Edit</span>
+            </button>
         </div>
-
-        <!-- Product Form (Initially Hidden) -->
-        <div id="productForm" class="form-section hidden bg-white p-8 rounded-2xl shadow-lg mb-8 mt-8">
-            <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center">Add New Product</h2>
-            <form id="editForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Hidden input for product ID -->
-                <input type="hidden" id="productId">
-
-                <!-- Form Fields -->
-                <div>
-                    <label for="name_de" class="block text-sm font-medium text-gray-700">Name (German)</label>
-                    <input type="text" id="name_de" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
-                </div>
-                <div>
-                    <label for="name_en" class="block text-sm font-medium text-gray-700">Name (English)</label>
-                    <input type="text" id="name_en" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
-                </div>
-                 <div>
-                    <label for="img" class="block text-sm font-medium text-gray-700">Image URL</label>
-                    <input type="text" id="img" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                </div>
-                 <div>
-                    <label for="cal" class="block text-sm font-medium text-gray-700">Calories (cal)</label>
-                    <input type="number" id="cal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                </div>
-                <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                    <select id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                        <option value="bread">bread</option>
-                        <option value="broetchen">broetchen</option>
-                        <option value="sweet">sweet</option>
-                        <option value="holiday">holiday</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="dietary" class="block text-sm font-medium text-gray-700">Dietary</label>
-                    <select id="dietary" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                        <option value="">None</option>
-                        <option value="vegan">Vegan</option>
-                        <option value="vegetarian">Vegetarian</option>
-                    </select>
-                </div>
-                 <div>
-                    <label for="badge" class="block text-sm font-medium text-gray-700">Badge</label>
-                    <select id="badge" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                        <option value="">None</option>
-                        <option value="new">New</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="price" class="block text-sm font-medium text-gray-700">Price (€)</label>
-                    <input type="number" id="price" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" required>
-                </div>
-                <div>
-                    <label for="price_half" class="block text-sm font-medium text-gray-700">Half Price (€) (Optional)</label>
-                    <input type="number" id="price_half" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                </div>
-                 <div class="flex items-center pt-6">
-                    <input type="checkbox" id="canBeHalved" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                    <label for="canBeHalved" class="ml-2 block text-sm text-gray-900">Can Be Halved</label>
-                </div>
-                <div>
-                    <label for="allergen_de" class="block text-sm font-medium text-gray-700">Allergens (German, comma-separated)</label>
-                    <input type="text" id="allergen_de" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                </div>
-                <div>
-                    <label for="allergen_en" class="block text-sm font-medium text-gray-700">Allergens (English, comma-separated)</label>
-                    <input type="text" id="allergen_en" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                </div>
-                <div class="md:col-span-2 lg:col-span-3">
-                    <label for="ingredients_de" class="block text-sm font-medium text-gray-700">Ingredients (German, comma-separated)</label>
-                    <textarea id="ingredients_de" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"></textarea>
-                </div>
-                <div class="md:col-span-2 lg:col-span-3">
-                    <label for="ingredients_en" class="block text-sm font-medium text-gray-700">Ingredients (English, comma-separated)</label>
-                    <textarea id="ingredients_en" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"></textarea>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="md:col-span-2 lg:col-span-3 flex justify-end gap-4 mt-4">
-                    <button type="button" id="cancelBtn" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors">Cancel</button>
-                    <button type="submit" id="saveBtn" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Save Product</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Product List -->
-        <div id="productList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Products will be dynamically inserted here -->
-        </div>
-
+        
+        <div id="productForm" class="hidden fixed top-0 left-0 w-full h-full z-40 modal-overlay items-center justify-center p-4"></div>
+        <div id="bulkEditModal" class="hidden fixed top-0 left-0 w-full h-full z-40 modal-overlay items-center justify-center p-4"></div>
+        <div id="productList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </div>
-
+    
+    <div id="toastContainer"></div>
+    
     <script>
-        // --- STATE MANAGEMENT ---
-        let products = [];
-        let editingProductId = null;
+        // --- STATE & DOM REFS ---
+        let products = [], editingProductId = null, lastDeletedProduct = null, selectedProductIds = new Set();
+        const fileUpload = document.getElementById('file-upload'), fileNameSpan = document.getElementById('fileName');
+        const addNewProductBtn = document.getElementById('addNewProductBtn'), downloadBtn = document.getElementById('downloadBtn');
+        const searchBar = document.getElementById('searchBar'), filterContainer = document.getElementById('filterContainer');
+        const categoryFilter = document.getElementById('categoryFilter'), sortByFilter = document.getElementById('sortByFilter'), productFormContainer = document.getElementById('productForm');
+        const productList = document.getElementById('productList'), toastContainer = document.getElementById('toastContainer');
+        const bulkEditBtn = document.getElementById('bulkEditBtn'), bulkEditModal = document.getElementById('bulkEditModal');
+        const themeLightBtn = document.getElementById('theme-light'), themeDarkBtn = document.getElementById('theme-dark');
 
-        // --- DOM ELEMENT REFERENCES ---
-        const fileUpload = document.getElementById('file-upload');
-        const fileNameSpan = document.getElementById('fileName');
-        const addNewProductBtn = document.getElementById('addNewProductBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const productFormContainer = document.getElementById('productForm');
-        const formTitle = document.getElementById('formTitle');
-        const editForm = document.getElementById('editForm');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const productList = document.getElementById('productList');
-
-        // --- EVENT LISTENERS ---
-
-        // Listen for file upload
-        fileUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            fileNameSpan.textContent = file.name;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const content = e.target.result;
-                    products = JSON.parse(content);
-                    // Ensure products have unique IDs
-                    if (products.length > 0 && !products[0].id) {
-                        products.forEach((p, index) => p.id = index + 1);
-                    }
-                    renderProducts();
-                    enableButtons();
-                } catch (error) {
-                    alert('Error parsing JSON file. Please check the file format.');
-                    console.error("JSON Parse Error:", error);
-                }
-            };
-            reader.readAsText(file);
+        // --- EVENT LISTENERS & INITIALIZATION ---
+        fileUpload.addEventListener('change', handleFileUpload);
+        addNewProductBtn.addEventListener('click', showAddForm);
+        downloadBtn.addEventListener('click', downloadJsonFile);
+        searchBar.addEventListener('input', () => updateDisplay());
+        categoryFilter.addEventListener('change', () => updateDisplay());
+        sortByFilter.addEventListener('change', () => updateDisplay());
+        bulkEditBtn.addEventListener('click', showBulkEditModal);
+        themeLightBtn.addEventListener('click', () => setTheme('light'));
+        themeDarkBtn.addEventListener('click', () => setTheme('dark'));
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+            loadFromLocalStorage();
+            initDragAndDrop();
         });
 
-        // Show form to add a new product
-        addNewProductBtn.addEventListener('click', () => {
-            editingProductId = null;
-            formTitle.textContent = 'Add New Product';
-            editForm.reset();
-            showForm();
-        });
-
-        // Handle form submission (for both adding and editing)
-        editForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            saveProduct();
-        });
-
-        // Hide form on cancel
-        cancelBtn.addEventListener('click', () => {
-            hideForm();
-        });
-
-        // Handle download button click
-        downloadBtn.addEventListener('click', () => {
-            downloadJsonFile();
-        });
-
-        // --- CORE FUNCTIONS ---
-
-        /**
-         * Renders the list of products to the DOM.
-         */
-        function renderProducts() {
-            productList.innerHTML = ''; // Clear existing list
-            if (products.length === 0) {
-                productList.innerHTML = `<p class="text-gray-500 col-span-full text-center">Load a Products.json file to get started.</p>`;
-                return;
-            }
-            products.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'product-card bg-white p-4 rounded-xl shadow-md relative group';
-                
-                let dietaryBadge = '';
-                if (product.dietary === 'vegan') {
-                    dietaryBadge = `<span class="text-xs font-bold text-white bg-green-600 px-2 py-1 rounded-full">Vegan</span>`;
-                } else if (product.dietary === 'vegetarian') {
-                    dietaryBadge = `<span class="text-xs font-bold text-white bg-blue-500 px-2 py-1 rounded-full">Vegetarian</span>`;
-                }
-
-                let badge = '';
-                if (product.badge === 'new') {
-                    badge = `<span class="text-xs font-bold text-white bg-pink-500 px-2 py-1 rounded-full ml-2">New</span>`;
-                }
-
-                card.innerHTML = `
-                    <div class="flex items-start gap-4">
-                        <img src="${product.img || 'https://placehold.co/64x64/e2e8f0/475569?text=No+Img'}" alt="${product.name_de}" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
-                        <div class="flex-grow">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <h3 class="font-bold text-lg">${product.name_de}</h3>
-                                    ${badge}
-                                </div>
-                                ${dietaryBadge}
-                            </div>
-                            <p class="text-sm text-gray-500">${product.name_en}</p>
-                            <p class="text-sm font-semibold text-indigo-600 mt-1">ID: ${product.id} | €${product.price} | ${product.cal || 'N/A'} cal</p>
-                        </div>
-                    </div>
-                    <div class="controls absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="edit-btn bg-blue-500 text-white w-8 h-8 rounded-full hover:bg-blue-600 flex items-center justify-center" data-id="${product.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="delete-btn bg-red-500 text-white w-8 h-8 rounded-full hover:bg-red-600 flex items-center justify-center" data-id="${product.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                `;
-                productList.appendChild(card);
-            });
-
-            // Add event listeners for the new edit and delete buttons
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.currentTarget.dataset.id);
-                    editProduct(id);
-                });
-            });
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.currentTarget.dataset.id);
-                    deleteProduct(id);
-                });
-            });
-        }
-
-        /**
-         * Populates and shows the form to edit a product.
-         * @param {number} id The ID of the product to edit.
-         */
-        function editProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-
-            editingProductId = id;
-            formTitle.textContent = `Editing: ${product.name_de}`;
-
-            // Populate form fields
-            document.getElementById('productId').value = product.id;
-            document.getElementById('name_de').value = product.name_de || '';
-            document.getElementById('name_en').value = product.name_en || '';
-            document.getElementById('img').value = product.img || '';
-            document.getElementById('cal').value = product.cal || '';
-            document.getElementById('category').value = product.category || 'bread';
-            document.getElementById('dietary').value = product.dietary || '';
-            document.getElementById('badge').value = product.badge || '';
-            document.getElementById('price').value = product.price || 0;
-            document.getElementById('price_half').value = product.price_half || '';
-            document.getElementById('canBeHalved').checked = product.canBeHalved || false;
-            document.getElementById('allergen_de').value = product.allergen_de || '';
-            document.getElementById('allergen_en').value = product.allergen_en || '';
-            document.getElementById('ingredients_de').value = product.ingredients_de || '';
-            document.getElementById('ingredients_en').value = product.ingredients_en || '';
-            
-            showForm();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        /**
-         * Deletes a product from the list after confirmation.
-         * @param {number} id The ID of the product to delete.
-         */
-        function deleteProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-
-            if (confirm(`Are you sure you want to delete "${product.name_de}"?`)) {
-                products = products.filter(p => p.id !== id);
-                renderProducts();
-            }
-        }
-
-        /**
-         * Saves a product (either new or edited) to the state.
-         */
-        function saveProduct() {
-            // Helper to get value or null if empty
-            const getValue = id => document.getElementById(id).value.trim() || null;
-            const getFloatValue = id => {
-                const val = document.getElementById(id).value;
-                return val ? parseFloat(val) : null;
-            };
-             const getIntValue = id => {
-                const val = document.getElementById(id).value;
-                return val ? parseInt(val, 10) : null;
-            };
-
-            const productData = {
-                id: editingProductId || getNextId(),
-                name_de: getValue('name_de'),
-                name_en: getValue('name_en'),
-                img: getValue('img'),
-                cal: getIntValue('cal'),
-                category: getValue('category'),
-                dietary: getValue('dietary'),
-                badge: getValue('badge'),
-                price: getFloatValue('price'),
-                price_half: getFloatValue('price_half'),
-                canBeHalved: document.getElementById('canBeHalved').checked,
-                allergen_de: getValue('allergen_de'),
-                allergen_en: getValue('allergen_en'),
-                ingredients_de: getValue('ingredients_de'),
-                ingredients_en: getValue('ingredients_en'),
-            };
-
-            // Remove null properties for cleaner JSON
-            Object.keys(productData).forEach(key => {
-                if (productData[key] === null || productData[key] === false && key !== 'canBeHalved') {
-                    delete productData[key];
+        // --- DRAG AND DROP ---
+        function initDragAndDrop() {
+            new Sortable(productList, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                onEnd: (evt) => {
+                    const movedItem = products.find(p => p.id === parseInt(evt.item.dataset.id));
+                    products.splice(evt.oldIndex, 1);
+                    products.splice(evt.newIndex, 0, movedItem);
+                    
+                    products.forEach((p, index) => { p.sortOrder = index; });
+                    saveToLocalStorage();
+                    sortByFilter.value = 'manual_sort';
+                    showToast('Order saved!', 'info');
                 }
             });
-
-            if (editingProductId) {
-                // Update existing product
-                const index = products.findIndex(p => p.id === editingProductId);
-                if (index !== -1) {
-                    // Preserve any extra properties not in the form
-                    products[index] = { ...products[index], ...productData };
-                }
-            } else {
-                // Add new product
-                products.push(productData);
-            }
-
-            renderProducts();
-            hideForm();
-        }
-
-        /**
-         * Triggers the download of the current product list as a JSON file.
-         */
-        function downloadJsonFile() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "Products.json");
-            document.body.appendChild(downloadAnchorNode); // required for firefox
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-
-        // --- UTILITY & UI FUNCTIONS ---
-
-        function showForm() {
-            productFormContainer.classList.remove('hidden');
-        }
-
-        function hideForm() {
-            productFormContainer.classList.add('hidden');
-            editForm.reset();
-            editingProductId = null;
-        }
-
-        function enableButtons() {
-            addNewProductBtn.disabled = false;
-            downloadBtn.disabled = false;
-        }
-
-        function getNextId() {
-            if (products.length === 0) return 1;
-            const maxId = Math.max(...products.map(p => p.id || 0));
-            return maxId + 1;
         }
         
-    </script>
+        // --- CORE LOGIC ---
+        function updateDisplay() {
+            const category = categoryFilter.value;
+            const searchTerm = searchBar.value.toLowerCase();
+            const sortBy = sortByFilter.value;
 
+            let displayProducts = [...products];
+            
+            if (category !== 'all') displayProducts = displayProducts.filter(p => p.category === category);
+            if (searchTerm) displayProducts = displayProducts.filter(p => (p.name_de?.toLowerCase().includes(searchTerm)) || (p.name_en?.toLowerCase().includes(searchTerm)) || (p.id.toString().includes(searchTerm)));
+
+            switch(sortBy) {
+                case 'modified_desc': displayProducts.sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || '')); break;
+                case 'price_desc': displayProducts.sort((a, b) => (b.price || 0) - (a.price || 0)); break;
+                case 'price_asc': displayProducts.sort((a, b) => (a.price || 0) - (b.price || 0)); break;
+                case 'name_asc': displayProducts.sort((a, b) => (a.name_de || '').localeCompare(b.name_de || '')); break;
+                case 'id_asc': displayProducts.sort((a, b) => a.id - b.id); break;
+                case 'manual_sort': default: displayProducts.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)); break;
+            }
+            
+            renderProducts(displayProducts);
+        }
+
+        function renderProducts(productsToRender = products) {
+            productList.innerHTML = '';
+            if (productsToRender.length === 0) {
+                productList.innerHTML = `<div class="col-span-full text-center p-12 glass-card rounded-xl"><i class="fas fa-box-open text-5xl text-slate-400 mb-4"></i><h3 class="text-xl font-semibold">No Products Found</h3><p class="text-slate-500">Try adjusting your search or filter.</p></div>`;
+                return;
+            }
+            productsToRender.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card glass-card p-4 rounded-xl relative flex flex-col';
+                card.style.animationDelay = `${index * 50}ms`;
+                card.dataset.id = product.id; // For drag and drop
+                const isSelected = selectedProductIds.has(product.id);
+                let badgeHTML = '';
+                if(product.badge === 'new') badgeHTML = `<span class="absolute top-0 right-0 -mt-2 -mr-2 px-3 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">NEW</span>`;
+                let dietaryIcon = '';
+                if(product.dietary === 'vegan') dietaryIcon = `<div class="absolute bottom-2 left-2 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold" title="Vegan">V</div>`;
+                else if(product.dietary === 'vegetarian') dietaryIcon = `<div class="absolute bottom-2 left-2 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold" title="Vegetarian">VG</div>`;
+                card.innerHTML = `<div class="absolute top-3 left-3 z-10"><input type="checkbox" class="custom product-checkbox" data-id="${product.id}" ${isSelected ? 'checked' : ''}></div><div class="relative w-full h-40 mb-4"><img src="${product.img || 'https://placehold.co/300x200/e2e8f0/64748b?text=No+Image'}" alt="${product.name_de}" class="w-full h-full object-cover rounded-lg shadow-lg">${badgeHTML}${dietaryIcon}</div><div class="flex-grow"><span class="text-xs font-bold text-indigo-500 uppercase">${product.category || 'Uncategorized'}</span><h3 class="font-bold text-lg mt-1">${product.name_de}</h3></div><div class="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border-color)]"><p class="text-2xl font-extrabold">€${product.price?.toFixed(2)}</p><div class="flex gap-2"><button class="duplicate-btn bg-white/50 backdrop-blur-sm text-[var(--text-main)] w-8 h-8 rounded-full hover:bg-white flex items-center justify-center transition-colors" data-id="${product.id}" title="Duplicate"><i class="fas fa-copy"></i></button><button class="edit-btn bg-white/50 backdrop-blur-sm text-[var(--text-main)] w-8 h-8 rounded-full hover:bg-white flex items-center justify-center transition-colors" data-id="${product.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button><button class="delete-btn bg-white/50 backdrop-blur-sm text-[var(--text-main)] w-8 h-8 rounded-full hover:bg-white flex items-center justify-center transition-colors" data-id="${product.id}" title="Delete"><i class="fas fa-trash-alt"></i></button></div></div>`;
+                productList.appendChild(card);
+            });
+            document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', e => editProduct(parseInt(e.currentTarget.dataset.id))));
+            document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', e => deleteProduct(parseInt(e.currentTarget.dataset.id))));
+            document.querySelectorAll('.duplicate-btn').forEach(btn => btn.addEventListener('click', e => duplicateProduct(parseInt(e.currentTarget.dataset.id))));
+            productList.addEventListener('change', handleProductSelection);
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+            const form = event.target;
+            const id = editingProductId || (products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1);
+            const productData = { id, sortOrder: editingProductId ? products.find(p=>p.id===id).sortOrder : products.length, lastModified: new Date().toISOString(), name_de: form.name_de.value.trim(), name_en: form.name_en.value.trim(), img: form.img.value.trim(), cal: parseInt(form.cal.value) || null, category: form.category.value.trim(), price: parseFloat(form.price.value), dietary: form.dietary.value, badge: form.badge.value, price_half: parseFloat(form.price_half.value) || null, canBeHalved: form.canBeHalved.checked, availability: form.availability.checked ? "holiday" : null, allergen_de: form.allergen_de.value.trim(), allergen_en: form.allergen_en.value.trim(), ingredients_de: form.ingredients_de.value.trim(), ingredients_en: form.ingredients_en.value.trim() };
+            const nutritionData = { serving_size: form.serving_size.value.trim(), calories: form.calories.value.trim(), fat: form.fat.value.trim(), carbs: form.carbs.value.trim(), protein: form.protein.value.trim() };
+            if (Object.values(nutritionData).some(val => val)) productData.nutrition = nutritionData;
+            Object.keys(productData).forEach(key => (productData[key] === null || productData[key] === '' || productData[key] === false) && key !== 'canBeHalved' && delete productData[key]);
+            if (editingProductId) { const index = products.findIndex(p => p.id === editingProductId); products[index] = { ...products[index], ...productData }; } else { products.push(productData); }
+            showToast(`Product "${productData.name_de}" saved!`, 'success');
+            saveToLocalStorage();
+            populateFilters();
+            updateDisplay();
+            hideForm();
+        }
+        
+        function duplicateProduct(id) {
+            const originalProduct = products.find(p => p.id === id);
+            if (!originalProduct) return;
+            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            const newProduct = { ...JSON.parse(JSON.stringify(originalProduct)), id: newId, name_de: `${originalProduct.name_de} (Copy)`, sortOrder: products.length, lastModified: new Date().toISOString() };
+            products.push(newProduct);
+            saveToLocalStorage();
+            updateDisplay();
+            showToast(`Duplicated "${originalProduct.name_de}"!`, 'info');
+            editProduct(newId);
+        }
+
+        function deleteProduct(id) { const index = products.findIndex(p => p.id === id); if (index === -1) return; lastDeletedProduct = { ...products[index], originalIndex: index }; products.splice(index, 1); showUndoToast(`Product "${lastDeletedProduct.name_de}" deleted.`); saveToLocalStorage(); populateFilters(); updateDisplay(); }
+
+        function renderAndShowForm() {
+            const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort();
+            let datalistContent = '';
+            categories.forEach(cat => { datalistContent += `<option value="${cat}"></option>`; });
+            productFormContainer.innerHTML = `<div class="glass-card modal-content p-8 rounded-xl shadow-lg w-full max-w-6xl max-h-full overflow-y-auto"><h2 id="formTitle" class="text-2xl font-bold mb-6 text-center"></h2><form id="editForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4"><input type="hidden" name="id"><div><label class="block text-sm font-medium mb-1">Name (DE)</label><input type="text" name="name_de" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]" required></div><div><label class="block text-sm font-medium mb-1">Name (EN)</label><input type="text" name="name_en" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]" required></div><div class="lg:col-span-2"><label class="block text-sm font-medium mb-1">Image URL</label><input type="text" name="img" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">Category</label><input type="text" name="category" list="category-list" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"><datalist id="category-list">${datalistContent}</datalist></div><div><label class="block text-sm font-medium mb-1">Price (€)</label><input type="number" name="price" step="0.01" min="0" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]" required></div><div><label class="block text-sm font-medium mb-1">Half Price (€)</label><input type="number" name="price_half" step="0.01" min="0" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div class="grid grid-cols-2 items-center self-end pb-2 gap-4"><div><input type="checkbox" name="canBeHalved" class="custom"><label class="ml-2">Halved</label></div><div><input type="checkbox" name="availability" class="custom"><label class="ml-2">Holiday</label></div></div><div><label class="block text-sm font-medium mb-1">Dietary</label><select name="dietary" class="custom-select w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"><option value="">None</option><option value="vegan">Vegan</option><option value="vegetarian">Vegetarian</option></select></div><div><label class="block text-sm font-medium mb-1">Badge</label><select name="badge" class="custom-select w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"><option value="">None</option><option value="new">New</option></select></div><div class="lg:col-span-2"><label class="block text-sm font-medium mb-1">Total Calories (cal)</label><input type="number" name="cal" min="0" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Allergens (DE)</label><input type="text" name="allergen_de" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Allergens (EN)</label><input type="text" name="allergen_en" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Ingredients (DE)</label><textarea name="ingredients_de" rows="2" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></textarea></div><div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Ingredients (EN)</label><textarea name="ingredients_en" rows="2" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></textarea></div><hr class="lg:col-span-4 my-2 border-[var(--border-color)]"><div class="lg:col-span-4 font-bold text-lg">Nutrition Facts</div><div><label class="block text-sm font-medium mb-1">Serving Size</label><input type="text" name="serving_size" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">Calories</label><input type="text" name="calories" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">Fat</label><input type="text" name="fat" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">Carbs</label><input type="text" name="carbs" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">Protein</label><input type="text" name="protein" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div class="lg:col-span-4 flex justify-end gap-4 mt-4"><button type="button" id="cancelBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg">Cancel</button><button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg shadow-lg">Save Product</button></div></form></div>`;
+            document.getElementById('editForm').addEventListener('submit', saveProduct);
+            document.getElementById('cancelBtn').addEventListener('click', hideForm);
+            productFormContainer.classList.remove('hidden'); productFormContainer.classList.add('flex');
+        }
+        function showAddForm() { editingProductId = null; renderAndShowForm(); document.getElementById('formTitle').textContent = 'Add New Product'; }
+        function editProduct(id) { const product = products.find(p => p.id === id); if (!product) return; editingProductId = id; renderAndShowForm(); document.getElementById('formTitle').textContent = `Editing: ${product.name_de}`; const form = document.getElementById('editForm'); Object.keys(product).forEach(key => { if(form[key]) { if(form[key].type === 'checkbox') form[key].checked = product[key]; else form[key].value = product[key] || ''; }}); if (product.nutrition) Object.keys(product.nutrition).forEach(key => { if(form[key]) form[key].value = product.nutrition[key] || ''; }); form.availability.checked = product.availability === 'holiday'; }
+        function hideForm() { productFormContainer.innerHTML = ''; productFormContainer.classList.add('hidden'); productFormContainer.classList.remove('flex'); editingProductId = null; }
+        function showBulkEditModal() { bulkEditModal.innerHTML = `<div class="glass-card modal-content p-8 rounded-xl shadow-lg w-full max-w-md"><h2 class="text-2xl font-bold mb-6 text-center">Bulk Edit Products</h2><form id="bulkEditForm" class="space-y-4"><div><label for="bulk_category" class="block text-sm font-medium mb-1">New Category</label><input type="text" id="bulk_category" list="category-list" placeholder="Leave blank" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"></div><div><label class="block text-sm font-medium mb-1">New Dietary Status</label><select id="bulk_dietary" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"><option value="">Keep Unchanged</option><option value="none-option">None</option><option value="vegan">Vegan</option><option value="vegetarian">Vegetarian</option></select></div><div><label class="block text-sm font-medium mb-1">New Badge</label><select id="bulk_badge" class="w-full p-2 rounded-md bg-transparent border border-[var(--border-color)]"><option value="">Keep Unchanged</option><option value="none-option">None</option><option value="new">New</option></select></div><div class="flex justify-end gap-4 mt-6"><button type="button" id="cancelBulkEditBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg">Cancel</button><button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg shadow-lg">Apply</button></div></form></div>`; bulkEditModal.classList.remove('hidden'); bulkEditModal.querySelector('#bulkEditForm').addEventListener('submit', handleBulkEdit); bulkEditModal.querySelector('#cancelBulkEditBtn').addEventListener('click', () => bulkEditModal.classList.add('hidden')); }
+        function handleBulkEdit(event) { event.preventDefault(); const form = event.target; const newCategory = form.bulk_category.value.trim(), newDietary = form.bulk_dietary.value, newBadge = form.bulk_badge.value; let updatedCount = 0; products.forEach(p => { if (selectedProductIds.has(p.id)) { p.lastModified = new Date().toISOString(); if (newCategory) p.category = newCategory; if (newDietary) p.dietary = newDietary === 'none-option' ? '' : newDietary; if (newBadge) p.badge = newBadge === 'none-option' ? '' : newBadge; updatedCount++; } }); if (updatedCount > 0) { showToast(`${updatedCount} products updated.`, 'success'); saveToLocalStorage(); populateFilters(); updateDisplay(); } bulkEditModal.classList.add('hidden'); }
+        function handleProductSelection(event) { if (event.target.classList.contains('product-checkbox')) { const id = parseInt(event.target.dataset.id); if (event.target.checked) selectedProductIds.add(id); else selectedProductIds.delete(id); bulkEditBtn.classList.toggle('hidden', selectedProductIds.size === 0); } }
+        function enableButtons() { addNewProductBtn.disabled = false; downloadBtn.disabled = false; searchBar.disabled = false; sortByFilter.disabled = false; }
+        function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; fileNameSpan.textContent = file.name; const reader = new FileReader(); reader.onload = (e) => { try { products = JSON.parse(e.target.result); const now = new Date().toISOString(); products.forEach((p, index) => { if (!p.id) p.id = Math.round(Math.random() * 10000); if(!p.lastModified) p.lastModified = now; if(!p.sortOrder) p.sortOrder = index; }); saveToLocalStorage(); populateFilters(); updateDisplay(); enableButtons(); } catch (error) { showToast('Error parsing JSON file.', 'error'); } }; reader.readAsText(file); }
+        function downloadJsonFile() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2)); const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "Products.json"); a.click(); a.remove(); }
+        function saveToLocalStorage() { localStorage.setItem('productData', JSON.stringify(products)); }
+        function loadFromLocalStorage() { const data = localStorage.getItem('productData'); if (data) { products = JSON.parse(data); fileNameSpan.textContent = "Loaded from session."; enableButtons(); populateFilters(); updateDisplay(); } }
+        function populateFilters() { const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort(); const previouslySelected = categoryFilter.value; categoryFilter.innerHTML = '<option value="all">All Categories</option>'; categories.forEach(cat => { categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`; }); let finalSelection = 'all'; if (categories.includes(previouslySelected)) finalSelection = previouslySelected; categoryFilter.value = finalSelection; filterContainer.classList.toggle('hidden', categories.length === 0); return finalSelection; }
+        function showToast(message, type = 'info') { const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message; toastContainer.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+        function showUndoToast(message) { const toast = document.createElement('div'); toast.className = 'toast info'; const text = document.createElement('span'); text.textContent = message; const undoBtn = document.createElement('button'); undoBtn.textContent = 'Undo'; undoBtn.onclick = () => { if(lastDeletedProduct) { products.splice(lastDeletedProduct.originalIndex, 0, lastDeletedProduct); lastDeletedProduct = null; saveToLocalStorage(); populateFilters(); updateDisplay(); toast.remove(); } }; toast.appendChild(text); toast.appendChild(undoBtn); toastContainer.appendChild(toast); setTimeout(() => { if (toast.parentElement) toast.remove(); lastDeletedProduct = null; }, 7000); }
+        function setTheme(theme) { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('theme', theme); if (theme === 'dark') { themeDarkBtn.classList.add('theme-btn-active'); themeLightBtn.classList.remove('theme-btn-active'); } else { themeLightBtn.classList.add('theme-btn-active'); themeDarkBtn.classList.remove('theme-btn-active'); } }
+    </script>
 </body>
 </html>
