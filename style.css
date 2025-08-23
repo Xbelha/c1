@@ -1,4 +1,17 @@
-/* CSS Custom Properties (Variables) */
+/*
+================================================================
+STYLE.CSS - REFINED & IMPROVED
+================================================================
+Here are the key improvements made to this stylesheet:
+- Better Organization: Sections are clearly defined for easier navigation.
+- Visual Polish: Added subtle transitions for smoother interactions.
+- Modern Reset: Included a modern CSS reset for better cross-browser consistency.
+- Enhanced Readability: Improved comments and formatting.
+- Color Palette Refinement: Added a subtle border/divider color for better UI separation.
+================================================================
+*/
+
+/* --- CSS Custom Properties (Variables) --- */
 :root {
     --accent-color: #58753a;
     --accent-color-hover: #4a6332;
@@ -6,56 +19,93 @@
     --card-bg: #ffffff;
     --text-color: #1a1a1a;
     --text-color-light: #555555;
+    --border-color: #E5E7EB; /* New: Subtle color for borders and dividers */
+    --danger-color: #EF4444; /* New: For favorite button and other alerts */
+
+    /* Added for consistency */
+    --standard-border-radius: 0.75rem; /* 12px */
+    --standard-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-/* Base Styles */
+/*
+================================================================
+BASE & RESET STYLES
+- A modern reset for consistency across all browsers.
+================================================================
+*/
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--main-bg);
     color: var(--text-color);
+    line-height: 1.6; /* Improved readability */
 }
-html {
-    scroll-behavior: smooth;
-}
+
 h1, h2, h3, .font-serif {
     font-family: 'Playfair Display', serif;
 }
 
-/* Header */
+/*
+================================================================
+LAYOUT & GLOBAL COMPONENTS
+================================================================
+*/
+
+/* --- Header --- */
 #mainHeader {
     background-image: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg');
+    background-size: cover;
+    background-position: center;
 }
 
-/* Filter Buttons */
+/* --- Modals --- */
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border-radius: var(--standard-border-radius);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+#selectedProductsContainer,
+#formView .overflow-y-auto,
+#orderHistoryList {
+    max-height: 65vh;
+}
+
+/*
+================================================================
+UI COMPONENTS
+================================================================
+*/
+
+/* --- Buttons --- */
+.filter-btn, .favorite-btn {
+    transition: all 0.2s ease-in-out; /* Smooth transitions for all buttons */
+}
+
 .filter-btn.active {
     background-color: var(--accent-color);
     color: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: var(--standard-box-shadow);
+    transform: translateY(-2px); /* Subtle lift effect */
 }
 
-/* Favorite Button Icon */
 .favorite-btn.active svg {
-    fill: #EF4444;
-    stroke: #EF4444;
+    fill: var(--danger-color);
+    stroke: var(--danger-color);
 }
 
-/* Animations */
-@keyframes jiggle {
-    0% { transform: translate(0, 0) rotate(0); }
-    25% { transform: translate(2px, -2px) rotate(3deg); }
-    50% { transform: translate(-2px, 2px) rotate(-3deg); }
-    75% { transform: translate(1px, -1px) rotate(1deg); }
-    100% { transform: translate(0, 0) rotate(0); }
-}
-.jiggle {
-    animation: jiggle 0.5s ease-in-out;
-}
-
-/* Utility for hiding scrollbar on mobile */
-.mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
-.mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Toast Notifications */
+/* --- Toast Notifications --- */
 #toastContainer {
     position: fixed;
     bottom: 20px;
@@ -66,105 +116,72 @@ h1, h2, h3, .font-serif {
     gap: 10px;
     pointer-events: none;
 }
-@keyframes slideInUp {
-    from { opacity: 0; transform: translateY(100%); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(20px); }
-}
+
 .simple-toast {
     background-color: #333;
     color: white;
     padding: 12px 20px;
-    border-radius: 25px;
+    border-radius: 9999px; /* Pill shape */
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: slideInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.4s 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
-/* Order History Details */
+/* --- Order History --- */
 .order-details-list {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
+    border-top: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
 }
 
-/* Element Visibility */
-#searchBarContainer, 
-#modal, 
-#orderModal, 
-#formView, 
+/*
+================================================================
+UTILITIES & VISIBILITY
+================================================================
+*/
+#searchBarContainer,
+#modal,
+#orderModal,
+#formView,
 #clearSearchBtn,
 #orderHistoryModal {
     display: none;
 }
 
-/* Modal and Cart Sizing */
-#selectedProductsContainer {
-    max-height: 50vh;
+.mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
+.mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+
+/*
+================================================================
+ANIMATIONS
+================================================================
+*/
+@keyframes jiggle {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    25% { transform: translate(2px, -2px) rotate(3deg); }
+    50% { transform: translate(-2px, 2px) rotate(-3deg); }
+    75% { transform: translate(1px, -1px) rotate(1deg); }
 }
-#formView .overflow-y-auto {
-    max-height: 65vh;
-}
-#orderHistoryList {
-    max-height: 65vh;
-}
-.modal-content {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-/* --- Mobile Cart Button Enhancements --- */
-@media (max-width: 639px) {
-  .cart-icon-container {
-    position: fixed;
-    bottom: 1rem; /* 16px */
-    right: 1rem;  /* 16px */
-    z-index: 50;
-  }
-
-  .cart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 80px;
-    padding: 0;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-
-    /* This makes the button a perfect circle */
-    border-radius: 9999px;
-  }
-
-  .cart-icon svg {
-    width: 48px;
-    height: 48px;
-
-    /* ** THE FIX **
-    This nudges the icon to the right. 
-    Change the `2px` value to a different number (e.g., 1px, 3px) 
-    until it looks perfectly centered to you.
-    */
-    transform: translateX(2px);
-  }
-
-  .cart-icon-text {
-    display: none;
-  }
-
-  .cart-count-text {
-    top: -4px;
-    right: -4px;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }
+.jiggle {
+    animation: jiggle 0.5s ease-in-out;
 }
 
-/* Floating Badge Animation */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+}
+
+/* --- Floating Badge Animation --- */
 @keyframes float-up {
   0% {
     opacity: 1;
@@ -181,7 +198,7 @@ h1, h2, h3, .font-serif {
   top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #EF4444; /* red-500 */
+  background-color: var(--danger-color);
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -191,4 +208,65 @@ h1, h2, h3, .font-serif {
   pointer-events: none;
   animation: float-up 1.5s ease-out forwards;
   z-index: 60;
+}
+
+
+/*
+================================================================
+MOBILE-SPECIFIC ENHANCEMENTS
+================================================================
+*/
+@media (max-width: 639px) {
+  .cart-icon-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 50;
+  }
+
+  .cart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    background-color: var(--accent-color); /* Added background color */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border-radius: 9999px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+  }
+
+  .cart-icon:hover {
+      transform: scale(1.1); /* Grow on hover */
+      background-color: var(--accent-color-hover);
+  }
+
+  .cart-icon svg {
+    width: 48px;
+    height: 48px;
+    transform: translateX(2px);
+    color: white; /* Ensure icon is visible on new background */
+  }
+
+  .cart-icon-text {
+    display: none;
+  }
+
+  .cart-count-text {
+    position: absolute; /* Ensure it's positioned relative to the container */
+    top: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    background-color: var(--danger-color); /* Use danger color for consistency */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid white; /* Makes the badge pop */
+  }
 }
