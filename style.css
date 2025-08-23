@@ -1,13 +1,13 @@
 /*
 ================================================================
-STYLE.CSS - REFINED & IMPROVED
+STYLE.CSS - REFINED & IMPROVED V3
 ================================================================
-Here are the key improvements made to this stylesheet:
+Here are the key improvements made in this version:
+- Desktop Cart Button: Positioned in the bottom-right for consistency.
+- Floating Badge: Disabled the animation on desktop to be less intrusive.
 - Better Organization: Sections are clearly defined for easier navigation.
 - Visual Polish: Added subtle transitions for smoother interactions.
 - Modern Reset: Included a modern CSS reset for better cross-browser consistency.
-- Enhanced Readability: Improved comments and formatting.
-- Color Palette Refinement: Added a subtle border/divider color for better UI separation.
 ================================================================
 */
 
@@ -104,6 +104,59 @@ UI COMPONENTS
     fill: var(--danger-color);
     stroke: var(--danger-color);
 }
+
+/* --- Cart Button (Desktop) --- */
+.cart-icon-container {
+    position: fixed;
+    bottom: 1.5rem; /* CHANGED: Moved to bottom */
+    right: 1.5rem;
+    z-index: 1000;
+}
+
+.cart-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 9999px;
+    box-shadow: var(--standard-box-shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.cart-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.cart-icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-color);
+}
+
+.cart-icon-text {
+    font-weight: 500;
+    color: var(--text-color);
+    display: inline; /* Ensure it's visible by default */
+}
+
+.cart-count-text {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
 
 /* --- Toast Notifications --- */
 #toastContainer {
@@ -210,35 +263,42 @@ ANIMATIONS
   z-index: 60;
 }
 
+/*
+================================================================
+DESKTOP-SPECIFIC ENHANCEMENTS (min-width: 640px)
+================================================================
+*/
+@media (min-width: 640px) {
+    /* Hides the floating badge animation on desktop screens */
+    .floating-badge {
+        display: none;
+    }
+}
+
 
 /*
 ================================================================
-MOBILE-SPECIFIC ENHANCEMENTS
+MOBILE-SPECIFIC ENHANCEMENTS (max-width: 639px)
 ================================================================
 */
 @media (max-width: 639px) {
   .cart-icon-container {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 50;
+    /* Position is already correct from desktop, no change needed */
   }
 
   .cart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* Mobile-specific sizing and styling */
     width: 80px;
     height: 80px;
     padding: 0;
-    background-color: var(--accent-color); /* Added background color */
+    background-color: var(--accent-color);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    border-radius: 9999px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+    justify-content: center;
+    gap: 0; /* Remove gap on mobile */
   }
 
   .cart-icon:hover {
-      transform: scale(1.1); /* Grow on hover */
+      transform: scale(1.1);
       background-color: var(--accent-color-hover);
   }
 
@@ -246,27 +306,21 @@ MOBILE-SPECIFIC ENHANCEMENTS
     width: 48px;
     height: 48px;
     transform: translateX(2px);
-    color: white; /* Ensure icon is visible on new background */
+    color: white;
   }
 
   .cart-icon-text {
-    display: none;
+    display: none; /* Hide text on mobile */
   }
 
   .cart-count-text {
-    position: absolute; /* Ensure it's positioned relative to the container */
+    position: absolute; /* Position relative to the container */
     top: -4px;
     right: -4px;
     width: 24px;
     height: 24px;
     font-size: 12px;
-    background-color: var(--danger-color); /* Use danger color for consistency */
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border: 2px solid white; /* Makes the badge pop */
+    background-color: var(--danger-color);
+    border: 2px solid white;
   }
 }
