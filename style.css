@@ -76,13 +76,11 @@ LAYOUT & GLOBAL COMPONENTS
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* * NOTE: The conflicting line that broke the sticky footer has been removed from here.
-* The flexbox classes in index.html now control the scrolling behavior correctly.
-*/
+#selectedProductsContainer,
+#formView .overflow-y-auto,
 #orderHistoryList {
     max-height: 65vh;
 }
-
 
 /*
 ================================================================
