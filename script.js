@@ -218,12 +218,26 @@ function displayProducts() {
 
             let badgeHtml = '';
             if (p.badge === 'new') {
-                badgeHtml = `<div class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10">${currentLang === 'de' ? 'Neu!' : 'New!'}</div>`;
+                badgeHtml = `<div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">${currentLang === 'de' ? 'Neu!' : 'New!'}</div>`;
             } else if (p.availability === 'holiday') {
                 badgeHtml = `<div class="absolute top-3 left-3 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10">${currentLang === 'de' ? 'Feiertag' : 'Holiday'}</div>`;
             }
 
-            const dietaryHtml = p.dietary ? `<div class="absolute bottom-3 right-3 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full z-10 ${p.dietary === 'vegan' ? 'bg-green-100 text-green-800' : 'bg-sky-100 text-sky-800'}">${p.dietary}</div>` : '';
+            let dietaryHtml = '';
+            if (p.dietary) {
+                let dietaryClasses = '';
+                switch (p.dietary.toLowerCase()) {
+                    case 'vegan':
+                        dietaryClasses = 'bg-lime-500 text-white'; // Vibrant Lime Green
+                        break;
+                    case 'vegetarian':
+                        dietaryClasses = 'bg-green-500 text-white'; // Green
+                        break;
+                    default:
+                        dietaryClasses = 'bg-sky-100 text-sky-800'; // Fallback for other tags
+                }
+                dietaryHtml = `<div class="absolute bottom-3 right-3 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full z-10 ${dietaryClasses}">${p.dietary}</div>`;
+            }
 
             const quantityInCart = cart.filter(item => item.product.id === p.id).reduce((sum, item) => sum + item.quantity, 0);
             card.innerHTML = `
