@@ -104,30 +104,44 @@
         </div>
 
         <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderModal">
-            <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
                 <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Close order form dialog">×</button>
                 
-                <div id="cartView">
-                    <div class="p-4 sm:p-6 border-b">
-                        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">Dein Warenkorb</h2>
-                    </div>
-                    <div class="p-4 sm:p-6 flex-grow overflow-y-auto" id="selectedProductsContainer">
-                        <div id="selectedProductsList" class="space-y-4">
-                            </div>
-                    </div>
-                    <div class="p-4 sm:p-6 bg-gray-50 rounded-b-2xl border-t">
-                        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
-                            <span data-lang-key="totalText">Gesamt:</span>
-                            <span id="cartTotal">0.00 €</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                            <button id="emptyCartBtn" class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">Warenkorb leeren</button>
-                            <button id="continueToOrderBtn" class="w-full sm:flex-grow bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">Weiter zur Bestellung</button>
-                        </div>
-                    </div>
-                </div>
+  <div id="cartView" class="flex flex-col flex-grow min-h-0">
+    <!-- header -->
+    <div class="p-4 sm:p-6 border-b flex-shrink-0">
+        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">
+            Dein Warenkorb
+        </h2>
+    </div>
+
+    <!-- scrollable product list -->
+    <div class="p-4 sm:p-6 flex-grow overflow-y-auto pb-32" id="selectedProductsContainer">
+        <div id="selectedProductsList" class="space-y-4"></div>
+    </div>
+
+    <!-- sticky footer -->
+    <div class="p-4 sm:p-6 bg-gray-50 border-t flex-shrink-0 sticky bottom-0">
+        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
+            <span data-lang-key="totalText">Gesamt:</span>
+            <span id="cartTotal">0.00 €</span>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+            <button id="emptyCartBtn"
+                class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">
+                Warenkorb leeren
+            </button>
+            <button id="continueToOrderBtn"
+                class="w-full sm:flex-grow bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">
+                Weiter zur Bestellung
+            </button>
+        </div>
+    </div>
+</div>
+
+
         
-                <div id="formView">
+                <div id="formView" class="flex flex-col flex-grow min-h-0">
                     <div class="p-4 sm:p-6 border-b flex items-center">
                         <button data-action="showCartView" class="text-gray-600 hover:text-black mr-2 sm:mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
                         <h2 data-lang-key="orderTitle" class="text-2xl sm:text-3xl font-serif text-center flex-grow">Bestellung</h2>
