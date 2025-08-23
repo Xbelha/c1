@@ -78,18 +78,15 @@ function triggerFloatingBadgeAnimation() {
     const cartButton = document.getElementById('cartButton');
     if (!cartButton) return;
 
-    // Create the badge element
     const badge = document.createElement('div');
     badge.className = 'floating-badge';
     badge.textContent = '+1';
     
-    // Append to the button
     cartButton.appendChild(badge);
 
-    // Remove the badge after the animation finishes
     setTimeout(() => {
         badge.remove();
-    }, 1500); // Matches the animation duration
+    }, 1500);
 }
 
 // --- ORDER HISTORY FUNCTIONS ---
@@ -228,13 +225,13 @@ function displayProducts() {
                 let dietaryClasses = '';
                 switch (p.dietary.toLowerCase()) {
                     case 'vegan':
-                        dietaryClasses = 'bg-lime-500 text-white'; // Vibrant Lime Green
+                        dietaryClasses = 'bg-lime-500 text-white';
                         break;
                     case 'vegetarian':
-                        dietaryClasses = 'bg-green-500 text-white'; // Green
+                        dietaryClasses = 'bg-green-500 text-white';
                         break;
                     default:
-                        dietaryClasses = 'bg-sky-100 text-sky-800'; // Fallback for other tags
+                        dietaryClasses = 'bg-sky-100 text-sky-800';
                 }
                 dietaryHtml = `<div class="absolute bottom-3 right-3 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full z-10 ${dietaryClasses}">${p.dietary}</div>`;
             }
@@ -602,6 +599,39 @@ function updateSubmitButtonState() {
     if(submitBtn) submitBtn.disabled = isCartEmpty || !validateCartAgainstPickupDate();
 }
 
+function updateCartItemQuantity(itemIndex, change) {
+    if (!cart[itemIndex]) return;
+
+    const item = cart[itemIndex];
+    item.quantity += change;
+
+    if (item.quantity <= 0) {
+        removeFromCart(itemIndex);
+    } else {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCartItems();
+        updateCartCount();
+        updateProductCardUI(item.product.id);
+    }
+}
+
+function emptyCart() {
+    const productIdsToUpdate = [...new Set(cart.map(item => item.product.id))];
+    
+    cart = [];
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCartItems();
+    updateCartCount();
+    
+    productIdsToUpdate.forEach(id => updateProductCardUI(id));
+    showSimpleToast(currentLang === 'de' ? 'Warenkorb geleert' : 'Cart emptied');
+}
+
+
+// =================================================================================
+// --- MODIFIED FUNCTION TO PREVENT HORIZONTAL SCROLLING ---
+// =================================================================================
 function renderCartItems() {
     const listEl = document.getElementById('selectedProductsList');
     const totalEl = document.getElementById('cartTotal');
@@ -619,7 +649,7 @@ function renderCartItems() {
 
             let optionsHtml = '';
             if (item.product.canBeHalved || item.product.category === 'bread') {
-                optionsHtml += '<div class="flex items-center gap-2 mt-1.5">';
+                optionsHtml += '<div class="flex items-center gap-2 flex-wrap">'; // Added flex-wrap for safety
                 if (item.product.canBeHalved) {
                     optionsHtml += `
                         <div>
@@ -636,26 +666,40 @@ function renderCartItems() {
                 }
                 optionsHtml += '</div>';
             }
-
+            
             const itemRow = document.createElement('div');
-            itemRow.className = 'flex items-start gap-4 py-3 border-b';
+            // Main container for each cart item
+            itemRow.className = 'flex items-start gap-3 sm:gap-4 py-4 border-b last:border-b-0';
             itemRow.innerHTML = `
-                <img src="${item.product.img}" class="w-20 h-20 rounded-md object-cover" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
-                <div class="flex-grow">
-                    <p class="font-semibold">${currentLang === 'de' ? item.product.name_de : item.product.name_en}</p>
-                    <p class="text-sm text-gray-600">${item.quantity} × ${pricePerItem.toFixed(2)} €</p>
-                    ${optionsHtml}
+                <img src="${item.product.img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shadow-sm flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
+                
+                <div class="flex-grow flex flex-col">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <p class="font-semibold leading-tight pr-2 flex-grow">${currentLang === 'de' ? item.product.name_de : item.product.name_en}</p>
+                            <p class="font-bold text-base sm:text-lg whitespace-nowrap flex-shrink-0">${itemPrice.toFixed(2)} €</p>
+                        </div>
+                        <p class="text-sm text-gray-500">${item.quantity} × ${pricePerItem.toFixed(2)} €</p>
+                    </div>
+
+                    <div class="flex items-end justify-between mt-2">
+                        <div class="flex-grow pr-2">${optionsHtml}</div>
+                        <div class="flex-shrink-0 flex items-center gap-2 border rounded-full p-1">
+                            <button type="button" onclick="updateCartItemQuantity(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">-</button>
+                            <span class="w-6 text-center font-semibold text-gray-800">${item.quantity}</span>
+                            <button type="button" onclick="updateCartItemQuantity(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">+</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-right flex flex-col items-end">
-                    <p class="font-bold">${itemPrice.toFixed(2)} €</p>
-                    <button type="button" onclick="removeFromCart(${index})" class="text-red-500 text-xs hover:underline mt-1">Entfernen</button>
-                </div>`;
+            `;
             listEl.appendChild(itemRow);
         });
     }
     totalEl.textContent = `${totalPrice.toFixed(2)} €`;
     updateSubmitButtonState();
 }
+// =================================================================================
+
 
 function removeFromCart(index) {
     if (!cart[index]) return;
@@ -837,6 +881,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('cartButton')?.addEventListener('click', openOrderForm);
     document.querySelector('.lang-switch')?.addEventListener('click', toggleLang);
+    document.getElementById('emptyCartBtn')?.addEventListener('click', emptyCart);
+
 
     // Filter and Search Controls
     document.getElementById('filterControls')?.addEventListener('click', (event) => {
