@@ -1,6 +1,6 @@
-// --- FULL SCRIPT ---
 
-// --- STATE MANAGEMENT ---
+
+
 let products = [];
 let currentLang = localStorage.getItem('bakeryLang') || 'de';
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -915,3 +915,23 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(parseInt(productCard.dataset.productId));
         }
     });
+
+    // Modals
+    document.querySelector('#modal .close-btn')?.addEventListener('click', closeModal);
+    document.querySelector('#modal button[data-action="addToCartFromModal"]')?.addEventListener('click', addToCartFromModal);
+
+    document.querySelector('#orderModal .close-btn')?.addEventListener('click', closeOrderForm);
+    document.getElementById('continueToOrderBtn')?.addEventListener('click', showOrderFormView);
+    document.querySelector('#formView button[data-action="showCartView"]')?.addEventListener('click', showCartView);
+    document.getElementById('pickupDate')?.addEventListener('change', handleDateChange);
+    document.getElementById('orderForm')?.addEventListener('submit', submitOrder);
+
+    document.querySelector('#orderHistoryModal .close-btn')?.addEventListener('click', closeOrderHistoryModal);
+    document.getElementById('orderHistoryList')?.addEventListener('click', (event) => {
+        const detailsBtn = event.target.closest('button[data-action="toggleDetails"]');
+        const reorderBtn = event.target.closest('button[data-action="reorder"]');
+
+        if (detailsBtn) { toggleOrderDetails(detailsBtn.dataset.orderId); }
+        if (reorderBtn) { reorderFromHistory(reorderBtn.dataset.orderId); }
+    });
+});
