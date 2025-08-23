@@ -73,6 +73,25 @@ const translations = {
     }
 };
 
+// --- FLOATING BADGE ANIMATION ---
+function triggerFloatingBadgeAnimation() {
+    const cartButton = document.getElementById('cartButton');
+    if (!cartButton) return;
+
+    // Create the badge element
+    const badge = document.createElement('div');
+    badge.className = 'floating-badge';
+    badge.textContent = '+1';
+    
+    // Append to the button
+    cartButton.appendChild(badge);
+
+    // Remove the badge after the animation finishes
+    setTimeout(() => {
+        badge.remove();
+    }, 1500); // Matches the animation duration
+}
+
 // --- ORDER HISTORY FUNCTIONS ---
 function openOrderHistoryModal() {
     const listEl = document.getElementById('orderHistoryList');
@@ -488,6 +507,7 @@ function updateCartQuantity(productId, change, size = 'whole') {
         } else if (change > 0) {
              const message = `${currentLang === 'de' ? product.name_de : product.name_en} ${translations[currentLang].addedToCartMessage}`;
              showSimpleToast(message);
+             triggerFloatingBadgeAnimation();
         }
     } else if (change > 0) {
         const newItem = { product, quantity: change, size: size };
@@ -495,6 +515,7 @@ function updateCartQuantity(productId, change, size = 'whole') {
         cart.push(newItem);
         const message = `${currentLang === 'de' ? product.name_de : product.name_en} ${translations[currentLang].addedToCartMessage}`;
         showSimpleToast(message);
+        triggerFloatingBadgeAnimation();
     }
     
     const cartButton = document.getElementById('cartButton');

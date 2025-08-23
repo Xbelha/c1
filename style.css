@@ -116,3 +116,72 @@ h1, h2, h3, .font-serif {
     max-height: 90vh;
     overflow-y: auto;
 }
+
+/* --- Mobile Cart Button Enhancements --- */
+@media (max-width: 639px) {
+  .cart-icon-container {
+    /* Overrides existing fixed positioning for consistency */
+    position: fixed;
+    bottom: 1rem; /* 16px */
+    right: 1rem;  /* 16px */
+    z-index: 50;
+  }
+
+  .cart-icon {
+    /* Reducing size for mobile */
+    width: 56px;  /* 3.5rem */
+    height: 56px; /* 3.5rem */
+    padding: 0;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .cart-icon svg {
+    /* Adjust icon size within the smaller button */
+    width: 20px;
+    height: 20px;
+  }
+
+  .cart-icon-text {
+    /* The text "Dein Warenkorb" is already hidden on small screens by Tailwind's `sm:inline` */
+    display: none;
+  }
+
+  .cart-count-text {
+    /* Reposition badge for the smaller, circular button */
+    top: -4px;
+    right: -4px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+}
+
+/* Floating Badge Animation */
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.8);
+  }
+}
+
+.floating-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #EF4444; /* red-500 */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: float-up 1.5s ease-out forwards;
+  z-index: 60;
+}
