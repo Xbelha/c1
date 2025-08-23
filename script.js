@@ -915,5 +915,3 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(parseInt(productCard.dataset.productId));
         }
     });
-
-    //
