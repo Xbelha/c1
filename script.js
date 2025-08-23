@@ -379,14 +379,16 @@ function closeOrderForm() {
     document.body.style.overflow = '';
 }
 
+// --- Change: Modified display style from 'block' to 'flex' ---
 function showCartView() {
-    cartView.style.display = 'block';
+    cartView.style.display = 'flex';
     formView.style.display = 'none';
 }
 
+// --- Change: Modified display style from 'block' to 'flex' ---
 function showOrderFormView() {
     cartView.style.display = 'none';
-    formView.style.display = 'block';
+    formView.style.display = 'flex';
 }
 
 // --- FILTER & SEARCH ---
@@ -628,10 +630,6 @@ function emptyCart() {
     showSimpleToast(currentLang === 'de' ? 'Warenkorb geleert' : 'Cart emptied');
 }
 
-
-// =================================================================================
-// --- MODIFIED FUNCTION TO PREVENT HORIZONTAL SCROLLING ---
-// =================================================================================
 function renderCartItems() {
     const listEl = document.getElementById('selectedProductsList');
     const totalEl = document.getElementById('cartTotal');
@@ -649,7 +647,7 @@ function renderCartItems() {
 
             let optionsHtml = '';
             if (item.product.canBeHalved || item.product.category === 'bread') {
-                optionsHtml += '<div class="flex items-center gap-2 flex-wrap">'; // Added flex-wrap for safety
+                optionsHtml += '<div class="flex items-center gap-2 flex-wrap">';
                 if (item.product.canBeHalved) {
                     optionsHtml += `
                         <div>
@@ -668,7 +666,6 @@ function renderCartItems() {
             }
             
             const itemRow = document.createElement('div');
-            // Main container for each cart item
             itemRow.className = 'flex items-start gap-3 sm:gap-4 py-4 border-b last:border-b-0';
             itemRow.innerHTML = `
                 <img src="${item.product.img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shadow-sm flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
@@ -698,8 +695,6 @@ function renderCartItems() {
     totalEl.textContent = `${totalPrice.toFixed(2)} €`;
     updateSubmitButtonState();
 }
-// =================================================================================
-
 
 function removeFromCart(index) {
     if (!cart[index]) return;
