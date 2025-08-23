@@ -379,13 +379,11 @@ function closeOrderForm() {
     document.body.style.overflow = '';
 }
 
-// --- Change: Modified display style from 'block' to 'flex' ---
 function showCartView() {
     cartView.style.display = 'flex';
     formView.style.display = 'none';
 }
 
-// --- Change: Modified display style from 'block' to 'flex' ---
 function showOrderFormView() {
     cartView.style.display = 'none';
     formView.style.display = 'flex';
@@ -630,6 +628,9 @@ function emptyCart() {
     showSimpleToast(currentLang === 'de' ? 'Warenkorb geleert' : 'Cart emptied');
 }
 
+// =================================================================================
+// --- MODIFIED FUNCTION TO PREVENT HORIZONTAL SCROLLING ---
+// =================================================================================
 function renderCartItems() {
     const listEl = document.getElementById('selectedProductsList');
     const totalEl = document.getElementById('cartTotal');
@@ -666,26 +667,25 @@ function renderCartItems() {
             }
             
             const itemRow = document.createElement('div');
-            itemRow.className = 'flex items-start gap-3 sm:gap-4 py-4 border-b last:border-b-0';
+            // This new structure uses CSS Grid for robust alignment
+            itemRow.className = 'grid grid-cols-[auto_1fr] gap-x-4 py-4 border-b last:border-b-0';
             itemRow.innerHTML = `
-                <img src="${item.product.img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shadow-sm flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
+                <img src="${item.product.img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shadow-sm row-span-2" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
                 
-                <div class="flex-grow flex flex-col">
+                <div class="flex justify-between items-start">
                     <div>
-                        <div class="flex justify-between items-start">
-                            <p class="font-semibold leading-tight pr-2 flex-grow">${currentLang === 'de' ? item.product.name_de : item.product.name_en}</p>
-                            <p class="font-bold text-base sm:text-lg whitespace-nowrap flex-shrink-0">${itemPrice.toFixed(2)} €</p>
-                        </div>
+                        <p class="font-semibold leading-tight">${currentLang === 'de' ? item.product.name_de : item.product.name_en}</p>
                         <p class="text-sm text-gray-500">${item.quantity} × ${pricePerItem.toFixed(2)} €</p>
                     </div>
+                    <p class="font-bold text-base sm:text-lg whitespace-nowrap pl-2">${itemPrice.toFixed(2)} €</p>
+                </div>
 
-                    <div class="flex items-end justify-between mt-2">
-                        <div class="flex-grow pr-2">${optionsHtml}</div>
-                        <div class="flex-shrink-0 flex items-center gap-2 border rounded-full p-1">
-                            <button type="button" onclick="updateCartItemQuantity(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">-</button>
-                            <span class="w-6 text-center font-semibold text-gray-800">${item.quantity}</span>
-                            <button type="button" onclick="updateCartItemQuantity(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">+</button>
-                        </div>
+                <div class="flex items-center justify-between mt-2">
+                    <div>${optionsHtml}</div>
+                    <div class="flex items-center gap-2 border rounded-full p-1">
+                        <button type="button" onclick="updateCartItemQuantity(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">-</button>
+                        <span class="w-6 text-center font-semibold text-gray-800">${item.quantity}</span>
+                        <button type="button" onclick="updateCartItemQuantity(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full text-lg font-bold text-gray-600 hover:bg-gray-100 transition">+</button>
                     </div>
                 </div>
             `;
@@ -916,22 +916,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Modals
-    document.querySelector('#modal .close-btn')?.addEventListener('click', closeModal);
-    document.querySelector('#modal button[data-action="addToCartFromModal"]')?.addEventListener('click', addToCartFromModal);
-
-    document.querySelector('#orderModal .close-btn')?.addEventListener('click', closeOrderForm);
-    document.getElementById('continueToOrderBtn')?.addEventListener('click', showOrderFormView);
-    document.querySelector('#formView button[data-action="showCartView"]')?.addEventListener('click', showCartView);
-    document.getElementById('pickupDate')?.addEventListener('change', handleDateChange);
-    document.getElementById('orderForm')?.addEventListener('submit', submitOrder);
-
-    document.querySelector('#orderHistoryModal .close-btn')?.addEventListener('click', closeOrderHistoryModal);
-    document.getElementById('orderHistoryList')?.addEventListener('click', (event) => {
-        const detailsBtn = event.target.closest('button[data-action="toggleDetails"]');
-        const reorderBtn = event.target.closest('button[data-action="reorder"]');
-
-        if (detailsBtn) { toggleOrderDetails(detailsBtn.dataset.orderId); }
-        if (reorderBtn) { reorderFromHistory(reorderBtn.dataset.orderId); }
-    });
-});
+    //
