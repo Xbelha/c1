@@ -14,7 +14,7 @@ Here are the key improvements made in this version:
 /* --- CSS Custom Properties (Variables) --- */
 :root {
     --accent-color: #58753a;
-    --accent-color-hover: #4a6332;
+    --accent-color-hover: #4a6322;
     --main-bg: #F9FAFB;
     --card-bg: #ffffff;
     --text-color: #1a1a1a;
@@ -105,6 +105,16 @@ UI COMPONENTS
     stroke: var(--danger-color);
 }
 
+/* --- Order History Button --- */
+#orderHistoryBtn {
+    width: 3.5rem;  /* 56px */
+    height: 3.5rem; /* 56px */
+}
+
+#orderHistoryBtn i {
+    font-size: 1.5rem; /* 24px */
+}
+
 /* --- Cart Button (Desktop) --- */
 .cart-icon-container {
     position: fixed;
@@ -131,10 +141,11 @@ UI COMPONENTS
     box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
-.cart-icon svg {
-    width: 24px;
-    height: 24px;
+.cart-icon i {
+    font-size: 24px;
     color: var(--text-color);
+    width: 24px;
+    text-align: center;
 }
 
 .cart-icon-text {
@@ -283,44 +294,51 @@ MOBILE-SPECIFIC ENHANCEMENTS (max-width: 639px)
 */
 @media (max-width: 639px) {
   .cart-icon-container {
-    /* Position is already correct from desktop, no change needed */
+    bottom: 1rem;
+    right: 1rem;
   }
 
   .cart-icon {
-    /* Mobile-specific sizing and styling */
-    width: 80px;
-    height: 80px;
-    padding: 0;
-    background-color: var(--accent-color);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 0; /* Remove gap on mobile */
+    width: 64px;
+    height: 64px;
+    border-radius: 20px !important;
+    background-color: var(--accent-color);
+    box-shadow: var(--standard-box-shadow);
+    padding: 0;
+    gap: 0;
   }
 
   .cart-icon:hover {
-      transform: scale(1.1);
-      background-color: var(--accent-color-hover);
+    transform: scale(1.05) translateY(-2px);
+    background-color: var(--accent-color-hover);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  .cart-icon svg {
-    width: 48px;
-    height: 48px;
-    transform: translateX(2px);
+  .cart-icon:active {
+    transform: scale(0.98);
+  }
+
+  .cart-icon i {
+    font-size: 32px;
     color: white;
+    width: auto;
   }
 
   .cart-icon-text {
-    display: none; /* Hide text on mobile */
+    display: none;
   }
 
   .cart-count-text {
-    position: absolute; /* Position relative to the container */
-    top: -4px;
-    right: -4px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
     width: 24px;
     height: 24px;
     font-size: 12px;
     background-color: var(--danger-color);
-    border: 2px solid white;
+    border: 2px solid var(--card-bg);
   }
 }
