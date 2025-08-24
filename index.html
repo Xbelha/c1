@@ -134,27 +134,38 @@
                 <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Dialog schließen">×</button>
 
                 <!-- CART VIEW -->
-                <div id="cartView" class="flex flex-col flex-grow min-h-0">
-                    <!-- header -->
-                    <div class="p-4 sm:p-6 border-b flex-shrink-0">
-                        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">Dein Warenkorb</h2>
-                    </div>
-                    <!-- scrollable product list -->
-                    <div class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom" id="selectedProductsContainer">
-                        <div id="selectedProductsList" class="space-y-4"></div>
-                    </div>
-                    <!-- sticky footer with total + cta -->
-                    <div class="p-4 sm:p-6 border-t sticky-footer">
-                        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
-                            <span data-lang-key="totalText">Gesamt:</span>
-                            <span id="cartTotal">0.00 €</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                            <button id="emptyCartBtn" class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-700 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">Warenkorb leeren</button>
-                            <button id="continueToOrderBtn" class="w-full sm:flex-grow bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">Weiter zur Bestellung</button>
-                        </div>
-                    </div>
-                </div>
+              <div id="cartView" class="flex flex-col flex-grow min-h-0">
+    <!-- header -->
+    <div class="p-4 sm:p-6 border-b flex-shrink-0">
+        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">
+            Dein Warenkorb
+        </h2>
+    </div>
+
+    <!-- scrollable product list -->
+    <div class="p-4 sm:p-6 flex-grow overflow-y-auto pb-32" id="selectedProductsContainer">
+        <div id="selectedProductsList" class="space-y-4"></div>
+    </div>
+
+    <!-- sticky footer -->
+    <div class="p-4 sm:p-6 bg-gray-50 border-t flex-shrink-0 sticky bottom-0">
+        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
+            <span data-lang-key="totalText">Gesamt:</span>
+            <span id="cartTotal">0.00 €</span>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+            <button id="emptyCartBtn"
+                class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">
+                Warenkorb leeren
+            </button>
+            <button id="continueToOrderBtn"
+                class="w-full sm:flex-grow bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">
+                Weiter zur Bestellung
+            </button>
+        </div>
+    </div>
+</div>
+
 
                 <!-- FORM VIEW -->
                 <div id="formView" class="flex flex-col flex-grow min-h-0 hidden">
