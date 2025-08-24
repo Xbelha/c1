@@ -628,10 +628,6 @@ function emptyCart() {
     showSimpleToast(currentLang === 'de' ? 'Warenkorb geleert' : 'Cart emptied');
 }
 
-
-// =================================================================================
-// --- MODIFIED FUNCTION TO PREVENT HORIZONTAL SCROLLING ---
-// =================================================================================
 function renderCartItems() {
     const listEl = document.getElementById('selectedProductsList');
     const totalEl = document.getElementById('cartTotal');
@@ -649,7 +645,7 @@ function renderCartItems() {
 
             let optionsHtml = '';
             if (item.product.canBeHalved || item.product.category === 'bread') {
-                optionsHtml += '<div class="flex items-center gap-2 flex-wrap">'; // Added flex-wrap for safety
+                optionsHtml += '<div class="flex items-center gap-2 flex-wrap">';
                 if (item.product.canBeHalved) {
                     optionsHtml += `
                         <div>
@@ -668,7 +664,6 @@ function renderCartItems() {
             }
             
             const itemRow = document.createElement('div');
-            // Main container for each cart item
             itemRow.className = 'flex items-start gap-3 sm:gap-4 py-4 border-b last:border-b-0';
             itemRow.innerHTML = `
                 <img src="${item.product.img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shadow-sm flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/80x80/e2e8f0/475569?text=...';">
@@ -698,8 +693,6 @@ function renderCartItems() {
     totalEl.textContent = `${totalPrice.toFixed(2)} €`;
     updateSubmitButtonState();
 }
-// =================================================================================
-
 
 function removeFromCart(index) {
     if (!cart[index]) return;
@@ -855,7 +848,6 @@ ${userMessage || '-'}`;
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial setup
     productGrid.innerHTML = '<div class="loading-spinner col-span-full"></div>';
     fetch('Products.json')
         .then(res => res.json())
@@ -874,7 +866,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EVENT LISTENERS ---
     
-    // Header and Cart
     document.getElementById('orderHistoryBtn')?.addEventListener('click', openOrderHistoryModal);
     document.getElementById('installAppBtn')?.addEventListener('click', () => {
         if (deferredInstallPrompt) { deferredInstallPrompt.prompt(); }
@@ -883,8 +874,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.lang-switch')?.addEventListener('click', toggleLang);
     document.getElementById('emptyCartBtn')?.addEventListener('click', emptyCart);
 
-
-    // Filter and Search Controls
     document.getElementById('filterControls')?.addEventListener('click', (event) => {
         const btn = event.target.closest('.filter-btn');
         if (!btn) return;
@@ -899,7 +888,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('searchInput')?.addEventListener('keyup', debouncedSearch);
     document.getElementById('clearSearchBtn')?.addEventListener('click', clearSearch);
 
-    // Product Grid (using event delegation)
     productGrid.addEventListener('click', (event) => {
         const target = event.target;
         const favoriteButton = target.closest('.favorite-btn');
@@ -921,7 +909,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Modals
     document.querySelector('#modal .close-btn')?.addEventListener('click', closeModal);
     document.querySelector('#modal button[data-action="addToCartFromModal"]')?.addEventListener('click', addToCartFromModal);
 
