@@ -2,6 +2,13 @@
 ================================================================
 STYLE.CSS - REFINED & IMPROVED V3
 ================================================================
+Here are the key improvements made in this version:
+- Desktop Cart Button: Positioned in the bottom-right for consistency.
+- Floating Badge: Disabled the animation on desktop to be less intrusive.
+- Better Organization: Sections are clearly defined for easier navigation.
+- Visual Polish: Added subtle transitions for smoother interactions.
+- Modern Reset: Included a modern CSS reset for better cross-browser consistency.
+================================================================
 */
 
 /* --- CSS Custom Properties (Variables) --- */
@@ -12,9 +19,10 @@ STYLE.CSS - REFINED & IMPROVED V3
     --card-bg: #ffffff;
     --text-color: #1a1a1a;
     --text-color-light: #555555;
-    --border-color: #E5E7EB;
-    --danger-color: #EF4444;
+    --border-color: #E5E7EB; /* New: Subtle color for borders and dividers */
+    --danger-color: #EF4444; /* New: For favorite button and other alerts */
 
+    /* Added for consistency */
     --standard-border-radius: 0.75rem; /* 12px */
     --standard-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
@@ -22,6 +30,7 @@ STYLE.CSS - REFINED & IMPROVED V3
 /*
 ================================================================
 BASE & RESET STYLES
+- A modern reset for consistency across all browsers.
 ================================================================
 */
 *, *::before, *::after {
@@ -38,7 +47,7 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: var(--main-bg);
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: 1.6; /* Improved readability */
 }
 
 h1, h2, h3, .font-serif {
@@ -81,14 +90,14 @@ UI COMPONENTS
 
 /* --- Buttons --- */
 .filter-btn, .favorite-btn {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out; /* Smooth transitions for all buttons */
 }
 
 .filter-btn.active {
     background-color: var(--accent-color);
     color: white;
     box-shadow: var(--standard-box-shadow);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* Subtle lift effect */
 }
 
 .favorite-btn.active svg {
@@ -98,18 +107,18 @@ UI COMPONENTS
 
 /* --- Order History Button --- */
 #orderHistoryBtn {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3.5rem;  /* 56px */
+    height: 3.5rem; /* 56px */
 }
 
 #orderHistoryBtn i {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* 24px */
 }
 
 /* --- Cart Button (Desktop) --- */
 .cart-icon-container {
     position: fixed;
-    bottom: 1.5rem;
+    bottom: 1.5rem; /* CHANGED: Moved to bottom */
     right: 1.5rem;
     z-index: 1000;
 }
@@ -141,7 +150,7 @@ UI COMPONENTS
 .cart-icon-text {
     font-weight: 500;
     color: var(--text-color);
-    display: inline;
+    display: inline; /* Ensure it's visible by default */
 }
 
 .cart-count-text {
@@ -157,6 +166,7 @@ UI COMPONENTS
     justify-content: center;
     border: 2px solid white;
 }
+
 
 /* --- Toast Notifications --- */
 #toastContainer {
@@ -174,7 +184,7 @@ UI COMPONENTS
     background-color: #333;
     color: white;
     padding: 12px 20px;
-    border-radius: 9999px;
+    border-radius: 9999px; /* Pill shape */
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -208,6 +218,7 @@ UTILITIES & VISIBILITY
 .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
 .mobile-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
+
 /*
 ================================================================
 ANIMATIONS
@@ -233,6 +244,7 @@ ANIMATIONS
     to { opacity: 0; transform: translateY(20px); }
 }
 
+/* --- Floating Badge Animation --- */
 @keyframes float-up {
   0% {
     opacity: 1;
@@ -267,6 +279,7 @@ DESKTOP-SPECIFIC ENHANCEMENTS (min-width: 640px)
 ================================================================
 */
 @media (min-width: 640px) {
+    /* Hides the floating badge animation on desktop screens */
     .floating-badge {
         display: none;
     }

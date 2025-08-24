@@ -17,19 +17,24 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+    <!-- Minimal hardening for mobile layout and sticky footers -->
     <style>
       :root { --safe-bottom: env(safe-area-inset-bottom, 0px); }
+      /* Make sticky footers feel elevated and account for notches */
       .sticky-footer {
         position: sticky;
         bottom: 0;
-        background: rgba(249, 250, 251, 0.96);
+        background: rgba(249, 250, 251, 0.96); /* gray-50/95 */
         backdrop-filter: saturate(120%) blur(6px);
         -webkit-backdrop-filter: saturate(120%) blur(6px);
         box-shadow: 0 -6px 18px rgba(0,0,0,.06);
         padding-bottom: calc(1rem + var(--safe-bottom));
       }
+      /* Ensure last list items don't hide behind sticky areas */
       .scroll-padded-bottom { padding-bottom: calc(8rem + var(--safe-bottom)); }
+      /* Prevent body bounce inside modals on iOS */
       .overscroll-contain { overscroll-behavior: contain; }
+      /* Hide ugly horizontal scrollbar on filters on mobile */
       .mobile-scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
       .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
@@ -38,6 +43,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
+    <!-- Hero/Header (avoid bg-fixed jank on small screens) -->
     <header id="mainHeader" class="relative text-white text-center flex flex-col items-center justify-center min-h-[55vh] sm:min-h-[60vh] bg-cover bg-center md:bg-fixed">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex justify-between items-center z-10">
@@ -61,6 +67,7 @@
         </div>
     </header>
 
+    <!-- Floating Cart Button -->
     <div class="cart-icon-container fixed bottom-6 right-6 z-50">
         <button class="cart-icon relative flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full pl-6 pr-8 py-4 shadow-xl transition-transform hover:scale-105" id="cartButton" aria-label="Warenkorb öffnen">
             <i class="fa-solid fa-cart-shopping"></i>
@@ -96,6 +103,7 @@
     </main>
 
     <div id="modalsContainer">
+        <!-- Product Details Modal -->
         <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="modal" role="dialog" aria-modal="true">
             <div class="modal-content bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-lg w-full relative max-h-[100dvh] overflow-auto">
                 <button class="close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" aria-label="Dialog schließen">×</button>
@@ -120,17 +128,22 @@
             </div>
         </div>
 
+        <!-- Cart / Order Modal -->
         <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="orderModal" role="dialog" aria-modal="true">
             <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[100dvh] flex flex-col shadow-2xl overflow-hidden">
                 <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Dialog schließen">×</button>
 
+                <!-- CART VIEW -->
                 <div id="cartView" class="flex flex-col flex-grow min-h-0">
+                    <!-- header -->
                     <div class="p-4 sm:p-6 border-b flex-shrink-0">
                         <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">Dein Warenkorb</h2>
                     </div>
+                    <!-- scrollable product list -->
                     <div class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom" id="selectedProductsContainer">
                         <div id="selectedProductsList" class="space-y-4"></div>
                     </div>
+                    <!-- sticky footer with total + cta -->
                     <div class="p-4 sm:p-6 border-t sticky-footer">
                         <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
                             <span data-lang-key="totalText">Gesamt:</span>
@@ -143,12 +156,14 @@
                     </div>
                 </div>
 
+                <!-- FORM VIEW -->
                 <div id="formView" class="flex flex-col flex-grow min-h-0 hidden">
                     <div class="p-4 sm:p-6 border-b flex items-center">
                         <button data-action="showCartView" class="text-gray-600 hover:text-black mr-2 sm:mr-4" aria-label="Zurück zum Warenkorb"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
                         <h2 data-lang-key="orderTitle" class="text-2xl sm:text-3xl font-serif text-center flex-grow">Bestellung</h2>
                     </div>
 
+                    <!-- scrollable form fields (no button here) -->
                     <div class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom">
                         <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
                             <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
@@ -182,6 +197,7 @@
                         </form>
                     </div>
 
+                    <!-- sticky submit footer outside scroll area -->
                     <div class="p-4 sm:p-6 border-t sticky-footer">
                         <button type="submit" form="orderForm" class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
                     </div>
@@ -189,6 +205,7 @@
             </div>
         </div>
 
+        <!-- Order History Modal -->
         <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="orderHistoryModal" role="dialog" aria-modal="true">
             <div class="bg-white rounded-2xl max-w-2xl w-full relative max-h-[90vh] flex flex-col">
                 <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Dialog schließen">×</button>
