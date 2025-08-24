@@ -40,14 +40,17 @@ if (installAppBtn) {
         if (deferredInstallPrompt) {
             deferredInstallPrompt.prompt();
             deferredInstallPrompt.userChoice.then((choiceResult) => {
-                console.log('User choice:', choiceResult.outcome);
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
                 deferredInstallPrompt = null;
                 installAppBtn.style.display = 'none';
             });
         }
     });
 }
-
 // --- TRANSLATIONS ---
 const translations = {
     de: {

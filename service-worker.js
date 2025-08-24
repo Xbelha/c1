@@ -5,7 +5,6 @@ const CACHE_NAME = 'macis-bakery-cache-v2';
 const essentialUrlsToCache = [
   '.',
   'index.html',
-  'style.css',
   'script.js',
   'Products.json',
   'thank-you.html',
