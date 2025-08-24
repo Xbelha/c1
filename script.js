@@ -26,6 +26,27 @@ const cartView = document.getElementById('cartView');
 const formView = document.getElementById('formView');
 const orderNowLink = document.getElementById('orderNowLink');
 const orderHistoryBtn = document.getElementById('orderHistoryBtn');
+// --- PWA INSTALL PROMPT HANDLING ---
+window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installAppBtn) {
+        installAppBtn.style.display = 'inline-flex';
+    }
+});
+
+if (installAppBtn) {
+    installAppBtn.addEventListener('click', () => {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then((choiceResult) => {
+                console.log('User choice:', choiceResult.outcome);
+                deferredInstallPrompt = null;
+                installAppBtn.style.display = 'none';
+            });
+        }
+    });
+}
 
 // --- TRANSLATIONS ---
 const translations = {
