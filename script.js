@@ -27,6 +27,52 @@ const formView = document.getElementById('formView');
 const orderNowLink = document.getElementById('orderNowLink');
 const orderHistoryBtn = document.getElementById('orderHistoryBtn');
 
+// ===================================
+// --- PWA Installation Logic ---
+let deferredInstallPrompt = null;
+
+// The button is visible from the HTML, so we just manage its state
+if (installAppBtn) {
+    installAppBtn.disabled = true;
+    installAppBtn.style.cursor = 'not-allowed';
+    installAppBtn.style.opacity = '0.7';
+}
+
+window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installAppBtn) {
+        installAppBtn.disabled = false;
+        installAppBtn.style.cursor = 'pointer';
+        installAppBtn.style.opacity = '1';
+    }
+});
+
+if (installAppBtn) {
+    installAppBtn.addEventListener('click', () => {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                deferredInstallPrompt = null;
+                installAppBtn.style.display = 'none';
+            });
+        }
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (installAppBtn) {
+    installAppBtn.style.display = 'none';
+  }
+});
+// ===================================
+
+
 // --- TRANSLATIONS ---
 const translations = {
     de: {
@@ -203,7 +249,7 @@ function displayProducts() {
 
     if (currentFilteredProducts.length === 0) {
         const query = document.getElementById('searchInput').value;
-        const message = query 
+        const message = query
             ? `${currentLang === 'de' ? 'Keine Ergebnisse für' : 'No results for'} "<strong>${query}</strong>"`
             : `${currentLang === 'de' ? 'Keine Produkte in dieser Kategorie gefunden.' : 'No products found in this category.'}`;
         productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-lg">${message}</p>`;
@@ -346,7 +392,7 @@ function openModal(productId) {
 
     if (p.nutrition) {
         const nutritionTable = document.getElementById('modalNutritionTable');
-        nutritionTable.innerHTML = Object.entries(p.nutrition).map(([key, value]) => 
+        nutritionTable.innerHTML = Object.entries(p.nutrition).map(([key, value]) =>
             `<div class="flex justify-between py-1 border-b border-gray-100 last:border-b-0">
                 <span class="capitalize text-gray-600">${key.replace(/_/g, ' ')}</span>
                 <span class="font-semibold text-gray-800">${value}</span>
@@ -559,7 +605,7 @@ function updateSizePreference(itemIndex, isChecked) {
         const oldItem = cart[itemIndex];
         const newSize = isChecked ? 'half' : 'whole';
         
-        const existingItemWithNewSize = cart.find((item, index) => 
+        const existingItemWithNewSize = cart.find((item, index) =>
             item.product.id === oldItem.product.id && item.size === newSize && index !== itemIndex
         );
 
@@ -744,7 +790,7 @@ function validateCartAgainstPickupDate() {
     const messageContainer = document.getElementById('date-validation-message');
     if (!pickupDateInput.value) {
         messageContainer.textContent = '';
-        return true; 
+        return true;
     }
     const hasHolidayItem = cart.some(item => item.product.availability === 'holiday');
     const selectedDate = new Date(`${pickupDateInput.value}T00:00:00`);
@@ -819,7 +865,7 @@ Bestelldetails:
 ${cartSummary}
 Gesamt: ${total} €
 --------------------------------
-Nachricht: 
+Nachricht:
 ${userMessage || '-'}`;
     
     const dataToSend = new FormData();
@@ -876,9 +922,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Header and Cart
     document.getElementById('orderHistoryBtn')?.addEventListener('click', openOrderHistoryModal);
-    document.getElementById('installAppBtn')?.addEventListener('click', () => {
-        if (deferredInstallPrompt) { deferredInstallPrompt.prompt(); }
-    });
     document.getElementById('cartButton')?.addEventListener('click', openOrderForm);
     document.querySelector('.lang-switch')?.addEventListener('click', toggleLang);
     document.getElementById('emptyCartBtn')?.addEventListener('click', emptyCart);
