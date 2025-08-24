@@ -10,7 +10,7 @@ let currentProductInModal = null;
 let currentPage = 1;
 const productsPerPage = 12;
 let currentFilteredProducts = [];
-let deferredInstallPrompt = null;
+let deferredInstallPrompt = null; // Single declaration for the install prompt
 
 // --- DOM ELEMENT REFERENCES ---
 const modal = document.getElementById('modal');
@@ -28,9 +28,7 @@ const orderNowLink = document.getElementById('orderNowLink');
 const orderHistoryBtn = document.getElementById('orderHistoryBtn');
 
 // ===================================
-// --- PWA Installation Logic ---
-let deferredInstallPrompt = null;
-
+// --- PWA Installation Logic (Corrected) ---
 // The button is visible from the HTML, so we just manage its state
 if (installAppBtn) {
     installAppBtn.disabled = true;
@@ -71,7 +69,6 @@ window.addEventListener('appinstalled', () => {
   }
 });
 // ===================================
-
 
 // --- TRANSLATIONS ---
 const translations = {
@@ -249,7 +246,7 @@ function displayProducts() {
 
     if (currentFilteredProducts.length === 0) {
         const query = document.getElementById('searchInput').value;
-        const message = query
+        const message = query 
             ? `${currentLang === 'de' ? 'Keine Ergebnisse für' : 'No results for'} "<strong>${query}</strong>"`
             : `${currentLang === 'de' ? 'Keine Produkte in dieser Kategorie gefunden.' : 'No products found in this category.'}`;
         productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-lg">${message}</p>`;
@@ -392,7 +389,7 @@ function openModal(productId) {
 
     if (p.nutrition) {
         const nutritionTable = document.getElementById('modalNutritionTable');
-        nutritionTable.innerHTML = Object.entries(p.nutrition).map(([key, value]) =>
+        nutritionTable.innerHTML = Object.entries(p.nutrition).map(([key, value]) => 
             `<div class="flex justify-between py-1 border-b border-gray-100 last:border-b-0">
                 <span class="capitalize text-gray-600">${key.replace(/_/g, ' ')}</span>
                 <span class="font-semibold text-gray-800">${value}</span>
