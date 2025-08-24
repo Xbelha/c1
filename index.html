@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bäckerei Leipzig – Frische & Genuss</title>
-    
+
     <link rel="icon" type="image/jpeg" href="https://macis-leipzig.de/wp-content/uploads/2019/03/cropped-macis_Logo_Leipzig_Druck_4c-192x192.jpg">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4D7C0F">
@@ -14,18 +14,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Minimal hardening for mobile layout and sticky footers -->
+    <style>
+      :root { --safe-bottom: env(safe-area-inset-bottom, 0px); }
+      /* Make sticky footers feel elevated and account for notches */
+      .sticky-footer {
+        position: sticky;
+        bottom: 0;
+        background: rgba(249, 250, 251, 0.96); /* gray-50/95 */
+        backdrop-filter: saturate(120%) blur(6px);
+        -webkit-backdrop-filter: saturate(120%) blur(6px);
+        box-shadow: 0 -6px 18px rgba(0,0,0,.06);
+        padding-bottom: calc(1rem + var(--safe-bottom));
+      }
+      /* Ensure last list items don't hide behind sticky areas */
+      .scroll-padded-bottom { padding-bottom: calc(8rem + var(--safe-bottom)); }
+      /* Prevent body bounce inside modals on iOS */
+      .overscroll-contain { overscroll-behavior: contain; }
+      /* Hide ugly horizontal scrollbar on filters on mobile */
+      .mobile-scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+      .mobile-scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
 
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <header id="mainHeader" class="relative text-white text-center flex flex-col items-center justify-center min-h-[55vh] sm:min-h-[60vh] bg-cover bg-center bg-fixed">
+    <!-- Hero/Header (avoid bg-fixed jank on small screens) -->
+    <header id="mainHeader" class="relative text-white text-center flex flex-col items-center justify-center min-h-[55vh] sm:min-h-[60vh] bg-cover bg-center md:bg-fixed">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex justify-between items-center z-10">
             <div class="flex items-center gap-2 sm:gap-4">
-                <button id="orderHistoryBtn" title="Meine Bestellungen" class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-full w-10 h-10 flex items-center justify-center text-lg font-semibold transition hover:bg-white/30" data-lang-title="myOrdersBtnTitle">
+                <button id="orderHistoryBtn" title="Meine Bestellungen" class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-full w-10 h-10 flex items-center justify-center text-lg font-semibold transition hover:bg-white/30" data-lang-title="myOrdersBtnTitle" aria-label="Bestellverlauf öffnen">
                     <i class="fas fa-receipt"></i>
                 </button>
             </div>
@@ -44,8 +67,9 @@
         </div>
     </header>
 
+    <!-- Floating Cart Button -->
     <div class="cart-icon-container fixed bottom-6 right-6 z-50">
-        <button class="cart-icon relative flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full pl-6 pr-8 py-4 shadow-xl transition-transform hover:scale-105" id="cartButton">
+        <button class="cart-icon relative flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full pl-6 pr-8 py-4 shadow-xl transition-transform hover:scale-105" id="cartButton" aria-label="Warenkorb öffnen">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="cart-icon-text hidden sm:inline" data-lang-key="yourCart">Dein Warenkorb</span>
             <span class="cart-count-text absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold border-2 border-white transform scale-0 transition-transform" id="cartCount"></span>
@@ -67,21 +91,22 @@
             </nav>
             <div id="searchBarContainer" class="relative max-w-lg mx-auto">
                 <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" class="w-full pl-5 pr-12 py-3 rounded-full border-2 border-gray-200 focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-shadow duration-300" />
-                <button id="clearSearchBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-2xl" aria-label="Clear search text">×</button>
+                <button id="clearSearchBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-2xl" aria-label="Suchtext löschen">×</button>
             </div>
         </div>
 
         <section class="products grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="productGrid">
             <div class="loading-spinner border-4 border-gray-200 border-t-green-600 rounded-full w-12 h-12 animate-spin absolute top-1/2 left-1/2 -mt-6 -ml-6"></div>
         </section>
-        
+
         <div id="paginationContainer" class="flex justify-center items-center space-x-2 mt-12"></div>
     </main>
 
     <div id="modalsContainer">
-        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="modal">
-            <div class="modal-content bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-lg w-full relative">
-                <button class="close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" aria-label="Close product details dialog">×</button>
+        <!-- Product Details Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="modal" role="dialog" aria-modal="true">
+            <div class="modal-content bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-lg w-full relative max-h-[100dvh] overflow-auto">
+                <button class="close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90" aria-label="Dialog schließen">×</button>
                 <div class="text-center">
                     <img id="modalImg" src="" alt="" loading="lazy" class="w-full h-48 sm:h-64 object-cover rounded-xl mb-4 shadow-md" onerror="this.onerror=null; this.src='https://placehold.co/400x250/e2e8f0/475569?text=Image+Missing';">
                     <h3 id="modalTitle" class="text-2xl sm:text-3xl font-serif mb-2"></h3>
@@ -103,74 +128,89 @@
             </div>
         </div>
 
-        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderModal">
-            <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-                <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Close order form dialog">×</button>
-                
-  <div id="cartView" class="flex flex-col flex-grow min-h-0">
-    <!-- header -->
-    <div class="p-4 sm:p-6 border-b flex-shrink-0">
-        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">
-            Dein Warenkorb
-        </h2>
-    </div>
+        <!-- Cart / Order Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="orderModal" role="dialog" aria-modal="true">
+            <div class="bg-white rounded-2xl max-w-xl w-full relative max-h-[100dvh] flex flex-col shadow-2xl overflow-hidden">
+                <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Dialog schließen">×</button>
 
-    <!-- scrollable product list -->
-    <div class="p-4 sm:p-6 flex-grow overflow-y-auto pb-32" id="selectedProductsContainer">
-        <div id="selectedProductsList" class="space-y-4"></div>
-    </div>
+                <!-- CART VIEW -->
+                <div id="cartView" class="flex flex-col flex-grow min-h-0">
+                    <!-- header -->
+                    <div class="p-4 sm:p-6 border-b flex-shrink-0">
+                        <h2 data-lang-key="yourCart" class="text-2xl sm:text-3xl font-serif text-center">Dein Warenkorb</h2>
+                    </div>
+                    <!-- scrollable product list -->
+                    <div class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom" id="selectedProductsContainer">
+                        <div id="selectedProductsList" class="space-y-4"></div>
+                    </div>
+                    <!-- sticky footer with total + cta -->
+                    <div class="p-4 sm:p-6 border-t sticky-footer">
+                        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
+                            <span data-lang-key="totalText">Gesamt:</span>
+                            <span id="cartTotal">0.00 €</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                            <button id="emptyCartBtn" class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-700 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">Warenkorb leeren</button>
+                            <button id="continueToOrderBtn" class="w-full sm:flex-grow bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">Weiter zur Bestellung</button>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- sticky footer -->
-    <div class="p-4 sm:p-6 bg-gray-50 border-t flex-shrink-0 sticky bottom-0">
-        <div class="flex justify-between items-center font-bold text-lg sm:text-xl mb-4">
-            <span data-lang-key="totalText">Gesamt:</span>
-            <span id="cartTotal">0.00 €</span>
-        </div>
-        <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-            <button id="emptyCartBtn"
-                class="w-full sm:w-auto bg-transparent border-2 border-gray-300 text-gray-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition">
-                Warenkorb leeren
-            </button>
-            <button id="continueToOrderBtn"
-                class="w-full sm:flex-grow bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed">
-                Weiter zur Bestellung
-            </button>
-        </div>
-    </div>
-</div>
-
-
-        
-                <div id="formView" class="flex flex-col flex-grow min-h-0">
+                <!-- FORM VIEW -->
+                <div id="formView" class="flex flex-col flex-grow min-h-0 hidden">
                     <div class="p-4 sm:p-6 border-b flex items-center">
-                        <button data-action="showCartView" class="text-gray-600 hover:text-black mr-2 sm:mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
+                        <button data-action="showCartView" class="text-gray-600 hover:text-black mr-2 sm:mr-4" aria-label="Zurück zum Warenkorb"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
                         <h2 data-lang-key="orderTitle" class="text-2xl sm:text-3xl font-serif text-center flex-grow">Bestellung</h2>
                     </div>
-                    <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+
+                    <!-- scrollable form fields (no button here) -->
+                    <div class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom">
                         <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
                             <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
-                            <div><label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label><input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
-                            <div><label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label><input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
-                            <div><label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label><input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label><input type="date" id="pickupDate" name="pickupDate" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"></div>
-                                <div><label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label><select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select></div>
+                            <div>
+                                <label for="nameInput" data-lang-key="yourName" class="block text-sm font-medium text-gray-700 mb-1">Dein Name</label>
+                                <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
                             </div>
-                            <div><label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label><textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea></div>
+                            <div>
+                                <label for="phoneInput" data-lang-key="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
+                                <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required pattern="[0-9\s+]*" data-lang-title="phoneHint" inputmode="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label for="emailInput" data-lang-key="emailOptional" class="block text-sm font-medium text-gray-700 mb-1">E-Mail (optional)</label>
+                                <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="pickupDate" data-lang-key="pickupDateLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholdatum:</label>
+                                    <input type="date" id="pickupDate" name="pickupDate" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                                </div>
+                                <div>
+                                    <label for="pickupTime" data-lang-key="pickupTimeLabel" class="block text-sm font-medium text-gray-700 mb-1">Abholzeit:</label>
+                                    <select id="pickupTime" name="pickupTime" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 bg-white"></select>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="message" data-lang-key="messageOptional" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
+                                <textarea id="message" name="message" data-lang-placeholder="messageOptional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 min-h-[80px]"></textarea>
+                            </div>
                             <div id="date-validation-message" class="text-red-600 text-sm font-semibold min-h-[2.5rem]"></div>
-                            <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
                         </form>
+                    </div>
+
+                    <!-- sticky submit footer outside scroll area -->
+                    <div class="p-4 sm:p-6 border-t sticky-footer">
+                        <button type="submit" form="orderForm" class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center" data-lang-key="submitBtn" id="submitOrderBtn" disabled>Absenden</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" id="orderHistoryModal">
+        <!-- Order History Modal -->
+        <div class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 overscroll-contain" id="orderHistoryModal" role="dialog" aria-modal="true">
             <div class="bg-white rounded-2xl max-w-2xl w-full relative max-h-[90vh] flex flex-col">
-                <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Close order history dialog">×</button>
+                <button class="close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl transition-transform hover:rotate-90 z-10" aria-label="Dialog schließen">×</button>
                 <div class="p-6 border-b"><h2 data-lang-key="orderHistoryTitle" class="text-2xl sm:text-3xl font-serif text-center">Bestellverlauf</h2></div>
-                <div id="orderHistoryList" class="p-4 sm:p-6 flex-grow overflow-y-auto">
-                    </div>
+                <div id="orderHistoryList" class="p-4 sm:p-6 flex-grow overflow-y-auto scroll-padded-bottom"></div>
             </div>
         </div>
     </div>
@@ -196,7 +236,7 @@
 
     <footer class="text-center py-8 bg-gray-100 border-t border-gray-200">
         <div class="social-buttons flex justify-center gap-4 mb-4">
-            <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md text-gray-600 hover:text-green-700 hover:shadow-lg transition-all" target="_blank" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372.527-.205.973-.478 1.417-.923.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.231 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>
+            <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md text-gray-600 hover:text-green-700 hover:shadow-lg transition-all" target="_blank" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372.527-.205.973-.478 1.417-.923.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.38-.843-.046-1.096-.046-3.231 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>
             <a href="https://www.facebook.com/macisleipzig" class="social-icon w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md text-gray-600 hover:text-green-700 hover:shadow-lg transition-all" target="_blank" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg></a>
         </div>
         <div class="mb-4">
