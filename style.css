@@ -1187,6 +1187,10 @@ main {
     .products { grid-template-columns: 1fr; padding: 0 15px; }
     .product-info h3 { font-size: 1.3rem; }
     .product-price { font-size: 1.2rem; }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
 }
 .search-bar-wrapper {
   position: relative;
