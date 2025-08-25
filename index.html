@@ -79,48 +79,45 @@
     </section>
   <div id="paginationContainer"></div>
 
+    <!-- NEW PRODUCT DETAIL MODAL STRUCTURE -->
     <div class="modal" id="modal">
-        <div class="modal-content card-style">
-            <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-            </button>
-            <div class="modal-body-grid">
-                <div class="modal-image-column">
-                    <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x250?text=Image+Missing';">
+        <div class="modal-content-new">
+            <div class="modal-image-wrapper">
+                <img id="modalImg" src="" alt="" class="modal-image">
+                <button class="modal-close-btn" onclick="closeModal()" aria-label="Close modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                </button>
+            </div>
+            <div class="modal-details-wrapper">
+                <div class="modal-details-header">
+                    <h2 id="modalTitle" class="modal-title"></h2>
+                    <button id="modalFavoriteBtn" class="modal-favorite-btn" aria-label="Add to favorites">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                    </button>
                 </div>
-                <div class="modal-details-column">
-                    <h3 id="modalTitle"></h3>
-                    <div id="modalRating" class="star-rating-modal"></div>
-                    <div id="modalDietary"></div>
-                    <p id="modalPrice"></p>
-
-                    <div class="accordion-item" id="ingredientsAccordion">
-                        <button class="accordion-header">
-                            <span data-lang-key="ingredientsTitle">Zutaten & Allergene</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <p id="modalIngredientsText"></p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" id="nutritionAccordion">
-                        <button class="accordion-header">
-                            <span data-lang-key="nutritionTitle">Nährwertangaben</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <div id="modalNutritionTable"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-add-to-cart">
-                        <div class="modal-action-row">
-                          <input type="number" id="modalProductQuantity" value="1" min="1" aria-label="Quantity">
-                          <button class="order-btn" onclick="addToCartFromModal()" data-lang-key="addToCartBtn">Zum Warenkorb</button>
-                        </div>
-                    </div>
+                <div id="modalDietary" class="modal-dietary-badge"></div>
+                <div id="modalPrice" class="modal-price"></div>
+                
+                <div id="modalDescriptionContainer" class="modal-info-section">
+                    <p id="modalDescription"></p>
                 </div>
+
+                <div id="modalIngredientsContainer" class="modal-info-section">
+                    <h3 class="modal-section-title" data-lang-key="ingredientsTitle">Zutaten</h3>
+                    <p id="modalIngredientsText"></p>
+                </div>
+
+                <div id="modalNutritionContainer" class="modal-info-section">
+                    <h3 class="modal-section-title" data-lang-key="nutritionTitle">Nährwerte</h3>
+                    <div id="modalNutritionTable" class="modal-nutrition-grid"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="number" min="1" class="modal-quantity-input" id="modalProductQuantity" value="1">
+                <button class="modal-add-to-cart-btn" onclick="addToCartFromModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+                    <span data-lang-key="addToCartBtn">Zum Warenkorb</span>
+                </button>
             </div>
         </div>
     </div>

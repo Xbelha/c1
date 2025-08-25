@@ -90,39 +90,6 @@ function debounce(func, delay = 300) {
     };
 }
 
-/* // FLY TO CART ANIMATION - REMOVED AS REQUESTED
-function flyToCartAnimation(startElement) {
-    const flyingImage = startElement.cloneNode(true);
-    const startRect = startElement.getBoundingClientRect();
-    const cartIcon = document.getElementById('cartButton');
-    if (!cartIcon) return;
-    const endRect = cartIcon.getBoundingClientRect();
-
-    flyingImage.classList.add('fly-to-cart');
-    document.body.appendChild(flyingImage);
-
-    flyingImage.style.top = `${startRect.top}px`;
-    flyingImage.style.left = `${startRect.left}px`;
-    flyingImage.style.width = `${startRect.width}px`;
-    flyingImage.style.height = `${startRect.height}px`;
-
-    requestAnimationFrame(() => {
-        flyingImage.style.top = `${endRect.top + endRect.height / 2}px`;
-        flyingImage.style.left = `${endRect.left + endRect.width / 2}px`;
-        flyingImage.style.width = '30px';
-        flyingImage.style.height = '30px';
-        flyingImage.style.opacity = '0.5';
-    });
-
-    flyingImage.addEventListener('transitionend', () => {
-        flyingImage.remove();
-        cartIcon.classList.remove('jiggle');
-        void cartIcon.offsetWidth;
-        cartIcon.classList.add('jiggle');
-    });
-}
-*/
-
 // ===================================
 // Translations and Data
 // ===================================
@@ -350,44 +317,40 @@ function changePage(page) {
     }, 100);
 }
 
-function renderStars(rating, reviewCount) {
-    let starsHtml = '';
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
-    for (let i = 0; i < fullStars; i++) starsHtml += '<i class="fas fa-star"></i>';
-    if (halfStar) starsHtml += '<i class="fas fa-star-half-alt"></i>';
-    for (let i = 0; i < emptyStars; i++) starsHtml += '<i class="far fa-star"></i>';
-    if(reviewCount) starsHtml += `<span class="review-count">(${reviewCount})</span>`;
-    return starsHtml;
-}
-
-// --- UPDATED openModal FUNCTION ---
 function openModal(productId) {
     const p = products.find(prod => prod.id === productId);
     if (!p) return;
     currentProductInModal = p;
 
-    // Reset accordion states
-    document.querySelectorAll('.accordion-header').forEach(header => header.classList.remove('active'));
-    document.querySelectorAll('.accordion-content').forEach(content => content.style.maxHeight = null);
-
-    document.getElementById('modalProductQuantity').value = 1;
+    // --- Populate New Modal Elements ---
     document.getElementById('modalImg').src = p.img;
     document.getElementById('modalTitle').textContent = currentLang === 'de' ? p.name_de : p.name_en;
+    document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
     
-    const modalRatingContainer = document.getElementById('modalRating');
-    if (p.rating && p.reviewCount) {
-        modalRatingContainer.innerHTML = renderStars(p.rating, p.reviewCount);
-        modalRatingContainer.style.display = 'block';
+    // Description
+    const descriptionContainer = document.getElementById('modalDescriptionContainer');
+    const descriptionText = document.getElementById('modalDescription');
+    const desc = currentLang === 'de' ? p.description_de : p.description_en;
+    if (desc) {
+        descriptionText.textContent = desc;
+        descriptionContainer.style.display = 'block';
     } else {
-        modalRatingContainer.style.display = 'none';
+        descriptionContainer.style.display = 'none';
     }
 
-    const ingredientsAccordion = document.getElementById('ingredientsAccordion');
-    const ingredientsTextElement = document.getElementById('modalIngredientsText');
+    // Dietary Badge
+    const dietaryContainer = document.getElementById('modalDietary');
+    if (p.dietary) {
+        dietaryContainer.innerHTML = `<span class="badge-${p.dietary}">${p.dietary}</span>`;
+        dietaryContainer.style.display = 'block';
+    } else {
+        dietaryContainer.style.display = 'none';
+    }
+
+    // Ingredients
+    const ingredientsContainer = document.getElementById('modalIngredientsContainer');
+    const ingredientsText = document.getElementById('modalIngredientsText');
     let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
-    
     if (ingredientsString) {
         let allergens = (currentLang === 'de' ? p.allergen_de : p.allergen_en).split(', ');
         const allergenMap = {'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],'Soja': ['Soja', 'Soy'],'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],'Sesam': ['Sesam', 'Sesame'],'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']};
@@ -399,33 +362,34 @@ function openModal(productId) {
                 });
             }
         });
-        ingredientsTextElement.innerHTML = ingredientsString;
-        ingredientsAccordion.style.display = 'block';
+        ingredientsText.innerHTML = ingredientsString;
+        ingredientsContainer.style.display = 'block';
     } else {
-        ingredientsAccordion.style.display = 'none';
+        ingredientsContainer.style.display = 'none';
     }
 
-    const nutritionAccordion = document.getElementById('nutritionAccordion');
+    // Nutrition
+    const nutritionContainer = document.getElementById('modalNutritionContainer');
+    const nutritionTable = document.getElementById('modalNutritionTable');
     if (p.nutrition) {
-        const nutritionTable = document.getElementById('modalNutritionTable');
         nutritionTable.innerHTML = '';
         for (const [key, value] of Object.entries(p.nutrition)) {
-            nutritionTable.innerHTML += `<div class="nutrition-row"><span>${key.replace(/_/g, ' ')}:</span> <span>${value}</span></div>`;
+            nutritionTable.innerHTML += `<div><span>${key.replace(/_/g, ' ')}:</span> <span>${value}</span></div>`;
         }
-        nutritionAccordion.style.display = 'block';
+        nutritionContainer.style.display = 'block';
     } else {
-        nutritionAccordion.style.display = 'none';
-    }
-
-    const modalDietary = document.getElementById('modalDietary');
-    if (p.dietary) {
-        modalDietary.innerHTML = `<span class="dietary-badge badge-${p.dietary}">${p.dietary}</span>`;
-        modalDietary.style.display = 'block';
-    } else {
-        modalDietary.style.display = 'none';
+        nutritionContainer.style.display = 'none';
     }
     
-    document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
+    // Favorite Button
+    const favBtn = document.getElementById('modalFavoriteBtn');
+    favBtn.classList.toggle('active', favorites.includes(p.id));
+    favBtn.onclick = () => {
+        toggleFavorite(p.id);
+        favBtn.classList.toggle('active');
+    };
+
+    document.getElementById('modalProductQuantity').value = 1;
     modal.style.display = 'flex';
     applyLanguage();
 }
@@ -666,7 +630,6 @@ function updateCartQuantity(productId, change) {
         const productName = currentLang === 'de' ? product.name_de : product.name_en;
         showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
         
-        // Animation removed, but we keep the cart jiggle for feedback.
         const cartIcon = document.getElementById('cartButton');
         if (cartIcon) {
             cartIcon.classList.remove('jiggle');
@@ -700,7 +663,6 @@ function addToCartFromModal() {
   const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
   showToast(`${quantity} x ${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
   
-  // Animation removed, but we keep the cart jiggle for feedback.
   const cartIcon = document.getElementById('cartButton');
   if (cartIcon) {
       cartIcon.classList.remove('jiggle');
@@ -1086,23 +1048,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-    
-    // --- NEW Accordion Logic ---
-    const modalContent = document.getElementById('modal');
-    modalContent.addEventListener('click', function(event) {
-        const header = event.target.closest('.accordion-header');
-        if (!header) return;
-
-        const content = header.nextElementSibling;
-        header.classList.toggle('active');
-
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            // Set max-height to the scroll height for a smooth animation
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    });
     
     applyLanguage();
     updateCartCount();

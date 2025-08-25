@@ -1,6 +1,7 @@
 /*
  * SUPERIOR THEME V4: Bio Bakery Theme
  * This version implements a natural, earthy color palette of greens and creams.
+ * It also includes the new product modal design and restores all original styles.
 */
 :root {
     --main-bg: #FDFDFC;
@@ -107,14 +108,13 @@ header p {
 }
 .back-btn {
     background: var(--text-color-light);
-    color: var(--main-bg);
 }
 .back-btn:hover {
     background: var(--text-color);
 }
 
 
-/* === UPDATED Filter Control Styling === */
+/* Filter Button Styling */
 .filter-controls-container {
     display: flex;
     justify-content: center;
@@ -135,7 +135,6 @@ header p {
 }
 .desktop-filters {
     display: flex;
-    gap: 5px; /* Spacing between desktop buttons */
 }
 .filter-btn {
     background: transparent;
@@ -164,25 +163,24 @@ header p {
     background-color: var(--accent-color);
     color: #fff;
 }
-.desktop-only { display: inline-flex; } /* Use flex for alignment */
+.desktop-only { display: inline; }
 
-/* Mobile Filter Dropdown */
+/* Styles for the mobile filter dropdown */
 .mobile-filter-dropdown {
     display: none; 
     position: relative;
-    flex-grow: 1; /* Allows it to take up space */
 }
 .dropdown-menu {
     display: none;
     position: absolute;
-    top: calc(100% + 8px); /* More spacing */
+    top: calc(100% + 5px);
     left: 0;
-    right: 0; /* Make it full width of its container */
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     box-shadow: 0 5px 15px var(--shadow);
     z-index: 100;
+    width: 250px;
     overflow: hidden;
     opacity: 0;
     transform: translateY(10px);
@@ -206,11 +204,9 @@ header p {
 }
 .dropdown-option.active {
     background-color: var(--accent-color);
-    color: #fff;
+    color: white;
     font-weight: 600;
 }
-/* ==================================== */
-
 
 /* Search Bar Styling */
 #searchBarContainer {
@@ -233,7 +229,7 @@ header p {
 }
 #searchInput:focus {
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 4px rgba(88, 117, 58, 0.2);
+    box-shadow: 0 4px 15px var(--shadow-hover);
 }
 #searchInput::placeholder {
     color: var(--text-color-light);
@@ -267,11 +263,9 @@ header p {
     border-radius: 30px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    transition: background-color: 0.3s ease;
 }
-.lang-switch:hover { 
-    background: rgba(255, 255, 255, 0.35);
-}
+.lang-switch:hover { background: rgba(255, 255, 255, 0.35); }
 
 /* Install App Button - Initially Hidden */
 #installAppBtn {
@@ -337,7 +331,7 @@ header p {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--card-bg);
+    border: 2px solid white;
     transform: scale(0);
     transform-origin: center;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -348,11 +342,10 @@ header p {
     animation: jiggle 0.5s ease-in-out;
 }
 @keyframes jiggle {
-    0% { transform: scale(1.1) rotate(0); }
-    25% { transform: scale(1.1) translate(2px, -2px) rotate(3deg); }
-    50% { transform: scale(1.1) translate(-2px, 2px) rotate(-3deg); }
-    75% { transform: scale(1.1) translate(1px, -1px) rotate(1deg); }
-    100% { transform: scale(1.1) rotate(0); }
+    0%, 100% { transform: scale(1.1) rotate(0); }
+    25% { transform: scale(1.1) translate(1px, -1px) rotate(1.5deg); }
+    50% { transform: scale(1.1) translate(-1px, 1px) rotate(-1.5deg); }
+    75% { transform: scale(1.1) translate(0.5px, -0.5px) rotate(0.5deg); }
 }
 
 @keyframes fadeInUp {
@@ -397,7 +390,7 @@ main {
 }
 .product.in-cart {
     border-color: var(--accent-color);
-    box-shadow: 0 8px 20px var(--shadow);
+    box-shadow: 0 8px 20px rgba(88, 117, 58, 0.15);
 }
 
 .product-image-container {
@@ -505,10 +498,7 @@ main {
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 10;
 }
-.product-badge.new { 
-    background-color: var(--accent-color);
-    color: #fff;
-}
+.product-badge.new { background-color: var(--accent-color); }
 
 .dietary-badge-card {
     position: absolute;
@@ -568,7 +558,7 @@ main {
 
 /* Skeleton Loader Styles */
 .skeleton {
-    background-color: var(--card-bg);
+    background-color: #fff;
     border: 1px solid var(--border-color);
     overflow: hidden;
 }
@@ -629,22 +619,213 @@ main {
     transform: translateY(0);
 }
 
-/* Modals (Product Details & Order) */
+/* === MODAL STYLES (GLOBAL) === */
 .modal {
     display: none;
     position: fixed;
     top: 0; bottom: 0; left: 0; right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 20px;
+    padding: 16px;
 }
-.modal-content {
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* === NEW PRODUCT MODAL STYLES === */
+.modal-content-new {
+    background: var(--card-bg);
+    border-radius: 16px;
+    max-width: 550px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.modal-image-wrapper {
+    position: relative;
+    height: 250px;
+}
+.modal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-close-btn:hover {
+    background: #fff;
+    transform: rotate(90deg);
+}
+.modal-close-btn svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-color);
+}
+.modal-details-wrapper {
+    padding: 24px;
+    overflow-y: auto;
+}
+.modal-details-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+.modal-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-color);
+    font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+}
+.modal-favorite-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--section-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.modal-favorite-btn:hover {
+    background: #f0f0f0;
+}
+.modal-favorite-btn svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-color-light);
+    transition: all 0.2s ease;
+}
+.modal-favorite-btn.active svg {
+    fill: var(--favorite-color);
+    color: var(--favorite-color);
+}
+.modal-dietary-badge {
+    margin-bottom: 16px;
+}
+.modal-dietary-badge .badge-vegan,
+.modal-dietary-badge .badge-vegetarian {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+.badge-vegan { background: linear-gradient(45deg, var(--accent-color), #698c49); }
+.badge-vegetarian { background: linear-gradient(45deg, #c7d36f, #a4c639); }
+.modal-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 24px;
+}
+.modal-info-section {
+    margin-bottom: 24px;
+}
+.modal-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+.modal-info-section p {
+    color: var(--text-color-light);
+    line-height: 1.7;
+}
+.modal-nutrition-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    font-size: 0.9rem;
+}
+.modal-nutrition-grid > div {
+    display: flex;
+    justify-content: space-between;
+}
+.modal-nutrition-grid span:first-child {
+    color: var(--text-color-light);
+}
+.modal-nutrition-grid span:last-child {
+    font-weight: 600;
+}
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+}
+.modal-quantity-input {
+    width: 80px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.modal-quantity-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(88, 117, 58, 0.2);
+}
+.modal-add-to-cart-btn {
+    flex-grow: 1;
+    background: var(--accent-color);
+    color: #fff;
+    padding: 14px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-add-to-cart-btn:hover {
+    background: var(--accent-color-hover);
+    transform: translateY(-2px);
+}
+
+/* === ORDER FORM MODAL STYLES (RESTORED & SIZED) === */
+#orderModal .modal-content {
     background: var(--main-bg);
     padding: 30px;
-    max-width: 800px; /* Increased max-width for two-column layout */
+    max-width: 550px; /* <-- CHANGED FROM 800px to 550px */
     width: 95%;
     text-align: center;
     position: relative;
@@ -652,20 +833,15 @@ main {
     box-shadow: 0 5px 20px var(--shadow-hover);
     max-height: 90vh;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    border-radius: 16px;
 }
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.close-btn {
+#orderModal .close-btn {
     position: absolute;
     top: 15px;
     right: 15px;
     width: 40px;
     height: 40px;
-    background-color: var(--input-bg);
+    background-color: var(--section-bg);
     border-radius: 50%;
     border: none;
     display: flex;
@@ -675,196 +851,15 @@ main {
     transition: background-color 0.2s, transform 0.2s;
     z-index: 10;
 }
-.close-btn:hover {
-    background-color: #444;
+#orderModal .close-btn:hover {
+    background-color: #e0e0e0;
     transform: rotate(90deg);
 }
-.close-btn svg {
+#orderModal .close-btn svg {
     width: 20px;
     height: 20px;
     stroke: var(--text-color-light);
 }
-
-#modalTitle {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    margin-bottom: 10px;
-}
-.star-rating-modal {
-    color: var(--star-color);
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-.star-rating-modal .fa-star-half-alt {
-    color: var(--star-color);
-}
-.star-rating-modal .far {
-    color: #444;
-}
-.review-count {
-    font-size: 0.9rem;
-    color: var(--text-color-light);
-    margin-left: 8px;
-}
-
-#modalPrice {
-    font-weight: bold;
-    color: var(--accent-color);
-    font-size: 1.5rem;
-    margin-top: 20px;
-    margin-bottom: 15px;
-}
-.dietary-badge {
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 5px 0;
-}
-.badge-vegan { background: linear-gradient(45deg, #58753a, #698c49); }
-.badge-vegetarian { background: linear-gradient(45deg, #c7d36f, #a4c639); }
-
-#modalProductQuantity {
-    width: 80px;
-    padding: 12px;
-    border-radius: 8px;
-    border: 2px solid var(--border-color);
-    font-size: 1.1rem;
-    text-align: center;
-    transition: border-color 0.2s;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-}
-#modalProductQuantity:focus {
-    outline: none;
-    border-color: var(--accent-color);
-}
-
-
-/* ================================================= */
-/* === NEW AND UPDATED STYLES FOR PRODUCT MODAL === */
-/* ================================================= */
-
-.modal-body-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column for mobile */
-    gap: 30px;
-    text-align: left; /* Override the centered text from the old modal */
-}
-
-/* On screens wider than 768px, switch to a two-column layout */
-@media (min-width: 768px) {
-    .modal-content {
-      max-width: 850px; /* A bit wider for better spacing */
-    }
-    .modal-body-grid {
-        grid-template-columns: 1fr 1.2fr; /* Ratio for image vs details */
-    }
-}
-
-.modal-image-column img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-    max-height: 450px;
-}
-
-.modal-details-column {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-details-column h3,
-.modal-details-column .star-rating-modal,
-.modal-details-column #modalPrice {
-    text-align: left;
-    margin-left: 0;
-}
-.modal-details-column #modalPrice {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-/* The "Add to Cart" section now lives at the bottom of the right column */
-.modal-details-column .modal-add-to-cart {
-    margin-top: auto; /* Pushes this section to the bottom */
-    padding-top: 20px;
-}
-.modal-add-to-cart .modal-action-row {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    width: 100%;
-}
-.modal-add-to-cart .modal-action-row .order-btn {
-    flex-grow: 1; /* Make button fill available space */
-    margin: 0;
-}
-.modal-add-to-cart .modal-action-row .order-btn:hover {
-    transform: scale(1.05); 
-}
-
-/* New Accordion Styles */
-.accordion-item {
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 10px;
-}
-#ingredientsAccordion, #nutritionAccordion {
-    display: none; /* Hide accordions by default, JS will show them if they have content */
-}
-
-.accordion-header {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 15px 5px;
-    font-size: 1.1rem;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    color: var(--text-color);
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.accordion-header i {
-    transition: transform 0.3s ease;
-    color: var(--text-color-light);
-}
-
-.accordion-header.active i {
-    transform: rotate(180deg);
-}
-
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    font-size: 0.95rem;
-    color: var(--text-color-light);
-}
-.accordion-content p, .accordion-content div {
-    padding: 0 5px 15px;
-}
-.nutrition-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.95rem;
-    color: var(--text-color-light);
-    padding: 3px 0;
-}
-.nutrition-row span:first-child {
-    text-transform: capitalize;
-    font-weight: 600;
-}
-
 
 /* Form Styles */
 #orderForm {
@@ -906,7 +901,7 @@ main {
     box-shadow: 0 0 0 3px rgba(88, 117, 58, 0.2);
 }
 #orderForm select {
-     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23E0E0E0%22%20d%3D%22M287%2C69.4L146.2%2C210.2L5.4%2C69.4L0%2C74.8L146.2%2C221L292.4%2C74.8z%22%2F%3E%3C%2Fsvg%3E');
+     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2C69.4L146.2%2C210.2L5.4%2C69.4L0%2C74.8L146.2%2C221L292.4%2C74.8z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
     background-position: right 15px top 50%;
     background-size: 14px auto;
@@ -965,7 +960,7 @@ main {
     padding: 5px 12px;
     font-size: 0.85rem;
     font-weight: 500;
-    background-color: var(--input-bg);
+    background-color: #f0f0f0;
     border: 1px solid var(--border-color);
     color: var(--text-color-light);
     border-radius: 20px;
@@ -976,7 +971,7 @@ main {
 .cart-item-option-group input[type="checkbox"]:checked + label {
     background-color: var(--accent-color) !important;
     border-color: var(--accent-color) !important;
-    color: #fff !important;
+    color: white !important;
     font-weight: 600;
 }
 .cart-item-option-group:hover label {
@@ -1062,7 +1057,7 @@ main {
 .social-icon {
     width: 48px;
     height: 48px;
-    background-color: #2A2A2A;
+    background-color: #e9e9f4;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1082,7 +1077,7 @@ main {
     box-shadow: 0 8px 15px var(--shadow-hover);
 }
 .social-icon:hover svg {
-    stroke: #fff;
+    stroke: white;
 }
 .footer-address {
     font-style: normal;
@@ -1139,41 +1134,37 @@ main {
     header p { font-size: 1.2rem; }
     .header-controls { left: 15px; top: 15px; right: 15px; }
     
-    /* === UPDATED Mobile Filter Controls === */
     .filter-controls {
         width: 100%;
+        box-shadow: none;
+        background: transparent;
+        border: none;
+        border-radius: 0;
         padding: 0;
-        gap: 0; /* Remove gap for seamless look */
-        border-radius: 12px; /* Rounded container */
-        box-shadow: 0 2px 8px var(--shadow);
-        /* REMOVED overflow: hidden to fix dropdown visibility */
+        justify-content: space-between;
     }
 
     .desktop-filters { display: none; }
-    .mobile-filter-dropdown { display: block; }
+    .mobile-filter-dropdown { display: block; flex-grow: 1; }
 
     #categoryDropdownBtn {
         width: 100%;
         justify-content: space-between;
-        padding: 12px 15px;
-        border-radius: 0;
-        text-align: left;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 5px var(--shadow);
     }
-    
     #filterFavoritesBtn, #toggleSearchBtn {
-        padding: 12px;
-        width: 52px; /* Square buttons */
-        height: 100%; /* Fill height of the bar */
-        border-radius: 0;
-        border-left: 1px solid var(--border-color); /* Separator line */
-        flex-shrink: 0; /* Prevent shrinking */
+        padding: 10px;
+        width: 46px;
+        height: 46px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 5px var(--shadow);
     }
     .desktop-only { display: none; }
-    /* ==================================== */
 
     .products { gap: 20px; margin: 40px auto; }
-    .modal-content { padding: 25px; }
-    #modalTitle { font-size: 1.8rem; }
 }
 
 @media (max-width: 480px) {
@@ -1196,26 +1187,6 @@ main {
     .products { grid-template-columns: 1fr; padding: 0 15px; }
     .product-info h3 { font-size: 1.3rem; }
     .product-price { font-size: 1.2rem; }
-    #modalTitle { font-size: 1.6rem; }
-    
-    .modal-add-to-cart .modal-action-row { 
-      flex-direction: column; 
-      gap: 12px; 
-      width: 100%;
-    }
-    .modal-add-to-cart .modal-action-row input, 
-    .modal-add-to-cart .modal-action-row button { 
-      width: 100%; 
-      max-width: 220px;
-      margin: 0 auto;
-    }
-
-    .modal-content {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-        max-height: 100vh;
-    }
 }
 .search-bar-wrapper {
   position: relative;
@@ -1232,15 +1203,15 @@ main {
   height: 28px;
   font-size: 20px;
   line-height: 26px;
-  background: #444;
+  background: #f0f0f0;
   border: none;
   border-radius: 50%;
-  color: var(--text-color-light);
+  color: #555;
   cursor: pointer;
   display: none;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-#clearSearchBtn:hover { background: #555; transform: translateY(-50%) scale(1.1); }
+#clearSearchBtn:hover { background: #e0e0e0; transform: translateY(-50%) scale(1.1); }
 
 
 /* Toast Notification System */
@@ -1263,7 +1234,7 @@ main {
     gap: 15px;
     padding: 12px 20px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.08);
     font-weight: 500;
     opacity: 0;
     transform: translateY(20px) scale(0.95);
@@ -1277,13 +1248,13 @@ main {
 }
 
 .toast {
-    background: #f5f5f5;
-    color: #121212;
+    background: #323232;
+    color: #f5f5f5;
 }
 
 .toast.success {
     background: linear-gradient(145deg, var(--accent-color), var(--accent-color-hover));
-    color: #fff;
+    color: white;
 }
 
 .toast.error {
@@ -1320,7 +1291,7 @@ main {
 
 .form-actions .next, .form-actions button[type="submit"] {
     background-color: var(--accent-color);
-    color: #fff;
+    color: white;
 }
 
 .form-actions .next:hover, .form-actions button[type="submit"]:hover {
@@ -1510,7 +1481,7 @@ main {
 .progress-step.active .step-number {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
-    color: #fff;
+    color: white;
 }
 
 #orderForm fieldset {
@@ -1518,7 +1489,7 @@ main {
     border-radius: 12px;
     padding: 20px;
     margin-top: 25px;
-    background-color: var(--card-bg);
+    background-color: var(--section-bg);
 }
 
 #orderForm legend {
@@ -1605,7 +1576,7 @@ main {
     max-width: 160px;
     height: 42px;
     background-color: var(--accent-color);
-    color: #fff;
+    color: white;
     border: 2px solid var(--accent-color);
     font-size: 0.9rem;
     font-weight: 600;
@@ -1661,4 +1632,5 @@ main {
     font-weight: bold;
     color: var(--text-color);
     min-width: 40px;
-    text-align: center
+    text-align: center;
+}
