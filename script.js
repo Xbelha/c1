@@ -360,11 +360,15 @@ function renderStars(rating, reviewCount) {
     return starsHtml;
 }
 
-
+// --- UPDATED openModal FUNCTION ---
 function openModal(productId) {
     const p = products.find(prod => prod.id === productId);
     if (!p) return;
     currentProductInModal = p;
+
+    // Reset accordion states
+    document.querySelectorAll('.accordion-header').forEach(header => header.classList.remove('active'));
+    document.querySelectorAll('.accordion-content').forEach(content => content.style.maxHeight = null);
 
     document.getElementById('modalProductQuantity').value = 1;
     document.getElementById('modalImg').src = p.img;
@@ -378,11 +382,10 @@ function openModal(productId) {
         modalRatingContainer.style.display = 'none';
     }
 
-    const ingredientsContainer = document.getElementById('modalIngredients');
-    const nutritionContainer = document.getElementById('modalNutrition');
+    const ingredientsAccordion = document.getElementById('ingredientsAccordion');
     const ingredientsTextElement = document.getElementById('modalIngredientsText');
-
     let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
+    
     if (ingredientsString) {
         let allergens = (currentLang === 'de' ? p.allergen_de : p.allergen_en).split(', ');
         const allergenMap = {'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],'Soja': ['Soja', 'Soy'],'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],'Sesam': ['Sesam', 'Sesame'],'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']};
@@ -395,20 +398,21 @@ function openModal(productId) {
             }
         });
         ingredientsTextElement.innerHTML = ingredientsString;
-        ingredientsContainer.style.display = 'block';
+        ingredientsAccordion.style.display = 'block';
     } else {
-        ingredientsContainer.style.display = 'none';
+        ingredientsAccordion.style.display = 'none';
     }
 
+    const nutritionAccordion = document.getElementById('nutritionAccordion');
     if (p.nutrition) {
         const nutritionTable = document.getElementById('modalNutritionTable');
         nutritionTable.innerHTML = '';
         for (const [key, value] of Object.entries(p.nutrition)) {
             nutritionTable.innerHTML += `<div class="nutrition-row"><span>${key.replace(/_/g, ' ')}:</span> <span>${value}</span></div>`;
         }
-        nutritionContainer.style.display = 'block';
+        nutritionAccordion.style.display = 'block';
     } else {
-        nutritionContainer.style.display = 'none';
+        nutritionAccordion.style.display = 'none';
     }
 
     const modalDietary = document.getElementById('modalDietary');
@@ -423,6 +427,7 @@ function openModal(productId) {
     modal.style.display = 'flex';
     applyLanguage();
 }
+
 
 function closeModal() {
   modal.style.display = 'none';
@@ -1060,7 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyCartButton.addEventListener('click', emptyCart);
     }
 
-    // Event listener for the new footer favorites link
     const footerFavoritesLink = document.getElementById('footerFavoritesLink');
     if(footerFavoritesLink) {
         footerFavoritesLink.addEventListener('click', (e) => {
@@ -1069,6 +1073,23 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
+    
+    // --- NEW Accordion Logic ---
+    const modalContent = document.getElementById('modal');
+    modalContent.addEventListener('click', function(event) {
+        const header = event.target.closest('.accordion-header');
+        if (!header) return;
+
+        const content = header.nextElementSibling;
+        header.classList.toggle('active');
+
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            // Set max-height to the scroll height for a smooth animation
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
     
     applyLanguage();
     updateCartCount();

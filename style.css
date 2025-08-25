@@ -632,7 +632,7 @@ main {
 .modal-content {
     background: var(--main-bg);
     padding: 30px;
-    max-width: 550px;
+    max-width: 800px; /* Increased max-width for two-column layout */
     width: 95%;
     text-align: center;
     position: relative;
@@ -672,14 +672,6 @@ main {
     stroke: var(--text-color-light);
 }
 
-#modalImg {
-    width: 100%;
-    border-radius: 12px;
-    max-height: 250px;
-    object-fit: cover;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 12px var(--shadow);
-}
 #modalTitle {
     font-family: 'Playfair Display', serif;
     font-size: 2.2rem;
@@ -702,11 +694,6 @@ main {
     margin-left: 8px;
 }
 
-#modalDietary {
-    margin-bottom: 10px;
-    font-size: 1.1rem;
-    color: var(--text-color-light);
-}
 #modalPrice {
     font-weight: bold;
     color: var(--accent-color);
@@ -728,22 +715,6 @@ main {
 .badge-vegan { background: linear-gradient(45deg, var(--accent-color), #698c49); }
 .badge-vegetarian { background: linear-gradient(45deg, #c7d36f, #a4c639); }
 
-.modal-add-to-cart {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    align-items: center;
-    justify-content: center;
-}
-.modal-action-row {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
 #modalProductQuantity {
     width: 80px;
     padding: 12px;
@@ -757,23 +728,128 @@ main {
     outline: none;
     border-color: var(--accent-color);
 }
-.modal-add-to-cart .modal-action-row button {
-    padding: 12px 25px;
-    border-radius: 25px;
-    background: var(--accent-color);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    flex-grow: 1;
-    max-width: 200px;
+
+
+/* ================================================= */
+/* === NEW AND UPDATED STYLES FOR PRODUCT MODAL === */
+/* ================================================= */
+
+.modal-body-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 30px;
+    text-align: left; /* Override the centered text from the old modal */
 }
-.modal-add-to-cart .modal-action-row button:hover { 
-    background: var(--accent-color-hover); 
+
+/* On screens wider than 768px, switch to a two-column layout */
+@media (min-width: 768px) {
+    .modal-content {
+      max-width: 850px; /* A bit wider for better spacing */
+    }
+    .modal-body-grid {
+        grid-template-columns: 1fr 1.2fr; /* Ratio for image vs details */
+    }
+}
+
+.modal-image-column img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    max-height: 450px;
+}
+
+.modal-details-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-details-column h3,
+.modal-details-column .star-rating-modal,
+.modal-details-column #modalPrice {
+    text-align: left;
+    margin-left: 0;
+}
+.modal-details-column #modalPrice {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* The "Add to Cart" section now lives at the bottom of the right column */
+.modal-details-column .modal-add-to-cart {
+    margin-top: auto; /* Pushes this section to the bottom */
+    padding-top: 20px;
+}
+.modal-add-to-cart .modal-action-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+}
+.modal-add-to-cart .modal-action-row .order-btn {
+    flex-grow: 1; /* Make button fill available space */
+    margin: 0;
+}
+.modal-add-to-cart .modal-action-row .order-btn:hover {
     transform: scale(1.05); 
 }
+
+/* New Accordion Styles */
+.accordion-item {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+#ingredientsAccordion, #nutritionAccordion {
+    display: none; /* Hide accordions by default, JS will show them if they have content */
+}
+
+.accordion-header {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 15px 5px;
+    font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-header i {
+    transition: transform 0.3s ease;
+    color: var(--text-color-light);
+}
+
+.accordion-header.active i {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+}
+.accordion-content p, .accordion-content div {
+    padding: 0 5px 15px;
+}
+.nutrition-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+    padding: 3px 0;
+}
+.nutrition-row span:first-child {
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
 
 /* Form Styles */
 #orderForm {
@@ -1104,9 +1180,18 @@ main {
     .product-info h3 { font-size: 1.3rem; }
     .product-price { font-size: 1.2rem; }
     #modalTitle { font-size: 1.6rem; }
-    .modal-add-to-cart { flex-direction: column; gap: 15px; }
-    .modal-add-to-cart .modal-action-row { flex-direction: column; gap: 12px; width: 100%;}
-    .modal-add-to-cart input, .modal-add-to-cart button { width: 100%; max-width: 220px; }
+    
+    .modal-add-to-cart .modal-action-row { 
+      flex-direction: column; 
+      gap: 12px; 
+      width: 100%;
+    }
+    .modal-add-to-cart .modal-action-row input, 
+    .modal-add-to-cart .modal-action-row button { 
+      width: 100%; 
+      max-width: 220px;
+      margin: 0 auto;
+    }
 
     .modal-content {
         width: 100%;
@@ -1187,48 +1272,6 @@ main {
 .toast.error {
     background: #d32f2f;
     color: white;
-}
-
-/* Styles for new modal sections */
-.modal-details-section {
-    text-align: left;
-    margin: 20px 0;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.modal-details-section h4 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 5px;
-}
-
-.modal-details-section p {
-    font-size: 0.95rem;
-    color: var(--text-color-light);
-    line-height: 1.5;
-}
-
-.modal-details-section p strong {
-    font-weight: 700;
-    color: var(--text-color);
-}
-
-.nutrition-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.95rem;
-    color: var(--text-color-light);
-    padding: 3px 0;
-}
-
-.nutrition-row span:first-child {
-    text-transform: capitalize;
-    font-weight: 600;
 }
 
 .validation-message {

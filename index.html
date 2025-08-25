@@ -80,34 +80,51 @@
   <div id="paginationContainer"></div>
 
     <div class="modal" id="modal">
-    <div class="modal-content card-style">
-      <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-      </button>
-      <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x250?text=Image+Missing';">
-      <h3 id="modalTitle"></h3>
-      <div id="modalRating" class="star-rating-modal"></div>
-      <p id="modalDietary"></p>
-      
-      <p id="modalPrice"></p>
+        <div class="modal-content card-style">
+            <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+            <div class="modal-body-grid">
+                <div class="modal-image-column">
+                    <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x250?text=Image+Missing';">
+                </div>
+                <div class="modal-details-column">
+                    <h3 id="modalTitle"></h3>
+                    <div id="modalRating" class="star-rating-modal"></div>
+                    <div id="modalDietary"></div>
+                    <p id="modalPrice"></p>
 
-      <div id="modalIngredients" class="modal-details-section">
-          <h4 data-lang-key="ingredientsTitle">Zutaten</h4>
-          <p id="modalIngredientsText"></p>
-      </div>
-      <div id="modalNutrition" class="modal-details-section">
-          <h4 data-lang-key="nutritionTitle">Nährwertangaben</h4>
-          <div id="modalNutritionTable"></div>
-      </div>
+                    <div class="accordion-item" id="ingredientsAccordion">
+                        <button class="accordion-header">
+                            <span data-lang-key="ingredientsTitle">Zutaten & Allergene</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p id="modalIngredientsText"></p>
+                        </div>
+                    </div>
 
-      <div class="modal-add-to-cart">
-        <div class="modal-action-row">
-          <input type="number" id="modalProductQuantity" value="1" min="1">
-          <button onclick="addToCartFromModal()" data-lang-key="addToCartBtn"></button>
+                    <div class="accordion-item" id="nutritionAccordion">
+                        <button class="accordion-header">
+                            <span data-lang-key="nutritionTitle">Nährwertangaben</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <div id="modalNutritionTable"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-add-to-cart">
+                        <div class="modal-action-row">
+                          <input type="number" id="modalProductQuantity" value="1" min="1" aria-label="Quantity">
+                          <button class="order-btn" onclick="addToCartFromModal()" data-lang-key="addToCartBtn">Zum Warenkorb</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+
 
     <div class="modal" id="orderModal">
         <div class="modal-content card-style">
