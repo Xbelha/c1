@@ -90,6 +90,7 @@ function debounce(func, delay = 300) {
     };
 }
 
+/* // FLY TO CART ANIMATION - REMOVED AS REQUESTED
 function flyToCartAnimation(startElement) {
     const flyingImage = startElement.cloneNode(true);
     const startRect = startElement.getBoundingClientRect();
@@ -120,6 +121,7 @@ function flyToCartAnimation(startElement) {
         cartIcon.classList.add('jiggle');
     });
 }
+*/
 
 // ===================================
 // Translations and Data
@@ -637,7 +639,7 @@ function toggleFavorite(productId) {
     }
 }
 
-function updateCartQuantity(productId, change, startElement) {
+function updateCartQuantity(productId, change) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
     
@@ -663,7 +665,14 @@ function updateCartQuantity(productId, change, startElement) {
     if (itemAdded) {
         const productName = currentLang === 'de' ? product.name_de : product.name_en;
         showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
-        if (startElement) flyToCartAnimation(startElement);
+        
+        // Animation removed, but we keep the cart jiggle for feedback.
+        const cartIcon = document.getElementById('cartButton');
+        if (cartIcon) {
+            cartIcon.classList.remove('jiggle');
+            void cartIcon.offsetWidth; // Force reflow
+            cartIcon.classList.add('jiggle');
+        }
     }
 
     updateCartCount();
@@ -691,8 +700,13 @@ function addToCartFromModal() {
   const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
   showToast(`${quantity} x ${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
   
-  const modalImage = document.getElementById('modalImg');
-  if(modalImage) flyToCartAnimation(modalImage);
+  // Animation removed, but we keep the cart jiggle for feedback.
+  const cartIcon = document.getElementById('cartButton');
+  if (cartIcon) {
+      cartIcon.classList.remove('jiggle');
+      void cartIcon.offsetWidth; // Force reflow
+      cartIcon.classList.add('jiggle');
+  }
   
   updateCartCount();
   closeModal();
@@ -1021,8 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (button) {
                 const action = button.dataset.action;
                 const change = (action === 'decrease') ? -1 : 1;
-                const imageToAnimate = productContainer.querySelector('.product-image-container img');
-                updateCartQuantity(productId, change, imageToAnimate);
+                updateCartQuantity(productId, change);
             }
             return;
         }
