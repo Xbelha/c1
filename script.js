@@ -68,6 +68,7 @@ function showToast(message, type = '', duration = 3000) {
 
     toast.innerHTML = `${iconHtml} <span>${message}</span>`;
     container.appendChild(toast);
+    container.style.bottom = '40px';
 
     setTimeout(() => {
         toast.classList.add('show');
@@ -89,16 +90,46 @@ function debounce(func, delay = 300) {
     };
 }
 
+function flyToCartAnimation(startElement) {
+    const flyingImage = startElement.cloneNode(true);
+    const startRect = startElement.getBoundingClientRect();
+    const cartIcon = document.getElementById('cartButton');
+    if (!cartIcon) return;
+    const endRect = cartIcon.getBoundingClientRect();
+
+    flyingImage.classList.add('fly-to-cart');
+    document.body.appendChild(flyingImage);
+
+    flyingImage.style.top = `${startRect.top}px`;
+    flyingImage.style.left = `${startRect.left}px`;
+    flyingImage.style.width = `${startRect.width}px`;
+    flyingImage.style.height = `${startRect.height}px`;
+
+    requestAnimationFrame(() => {
+        flyingImage.style.top = `${endRect.top + endRect.height / 2}px`;
+        flyingImage.style.left = `${endRect.left + endRect.width / 2}px`;
+        flyingImage.style.width = '30px';
+        flyingImage.style.height = '30px';
+        flyingImage.style.opacity = '0.5';
+    });
+
+    flyingImage.addEventListener('transitionend', () => {
+        flyingImage.remove();
+        cartIcon.classList.remove('jiggle');
+        void cartIcon.offsetWidth;
+        cartIcon.classList.add('jiggle');
+    });
+}
+
 // ===================================
 // Translations and Data
 // ===================================
-
 const translations = {
   de: {
     langSwitch: 'Deutsch', mainTitle: 'Macis Biobäckerei in Leipzig', subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
     orderNowBtn: 'Jetzt bestellen', allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: 'Suche',
     holidaySpecials: 'Sonn- & Feiertags', favorites: 'Favoriten', continueToOrder: 'Weiter zur Bestellung', backToCart: 'Zurück zum Warenkorb',
-    orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
+    orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
     openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
     selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.', noProductsAddedAlert: 'Dein Warenkorb ist leer.',
     addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.', providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
@@ -107,7 +138,7 @@ const translations = {
     pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
     pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).', pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
     addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
-    emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: '-', totalText: 'Gesamt:',
+    emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: '-', totalText: 'Gesamt:',
     prevPage: 'Zurück', nextPage: 'Weiter',
     holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
     phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
@@ -132,7 +163,7 @@ const translations = {
     langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
     orderNowBtn: 'Order Now', allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: 'Search',
     holidaySpecials: 'Sundays & Holidays', favorites: 'Favorites', continueToOrder: 'Continue to Order', backToCart: 'Back to Cart',
-    orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
+    orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
     openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
     selectProductQuantityAlert: 'Please enter a valid quantity.', noProductsAddedAlert: 'Your cart is empty.',
     addAtLeastOneProductAlert: 'Please add at least one product to the cart.', providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
@@ -187,6 +218,22 @@ function isPublicHoliday(date) {
 // ===================================
 // Application Logic
 // ===================================
+function showSkeletonLoaders() {
+    productGrid.innerHTML = '';
+    paginationContainer.innerHTML = '';
+    for (let i = 0; i < productsPerPage; i++) {
+        const skeletonCard = document.createElement('div');
+        skeletonCard.className = 'product card-style skeleton';
+        skeletonCard.innerHTML = `
+            <div class="skeleton-img"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-text"></div>
+                <div class="skeleton-text"></div>
+            </div>
+        `;
+        productGrid.appendChild(skeletonCard);
+    }
+}
 
 function displayProducts() {
     productGrid.innerHTML = "";
@@ -197,7 +244,7 @@ function displayProducts() {
     if (currentFilteredProducts.length === 0) {
         let message = '';
         const activeFilter = document.querySelector('.filter-category-btn.active');
-        const isFavorites = activeFilter && activeFilter.getAttribute('onclick').includes('favorites');
+        const isFavorites = activeFilter && activeFilter.id === 'filterFavoritesBtn';
         
         if (isFavorites) {
             message = translations[currentLang].noFavorites;
@@ -240,9 +287,11 @@ function displayProducts() {
                     <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
                     <p class="product-price">${p.price.toFixed(2)} €</p>
                 </div>
-                <div class="card-cart-controls">
-                    <button class="add-to-cart-initial-btn" data-product-id="${p.id}" data-lang-key="add">${translations[currentLang].add}</button>
-                    <div class="quantity-selector" data-product-id="${p.id}" style="display: none;">
+                <div class="card-cart-controls" data-product-id="${p.id}">
+                    <button class="add-to-cart-initial-btn" data-action="increase">
+                        <span data-lang-key="add">${translations[currentLang].add}</span>
+                    </button>
+                    <div class="quantity-selector" style="display: none;">
                         <button class="quantity-btn" aria-label="Decrease quantity" data-action="decrease">-</button>
                         <span class="quantity-display" aria-live="polite">0</span>
                         <button class="quantity-btn" aria-label="Increase quantity" data-action="increase">+</button>
@@ -291,7 +340,8 @@ function renderPaginationControls() {
 function changePage(page) {
     if (page < 1 || page > Math.ceil(currentFilteredProducts.length / productsPerPage)) return;
     currentPage = page;
-    displayProducts();
+    showSkeletonLoaders();
+    setTimeout(displayProducts, 300);
     setTimeout(() => {
         const productGridTop = productGrid.getBoundingClientRect().top + window.pageYOffset - 100;
         window.scrollTo({ top: productGridTop, behavior: 'smooth' });
@@ -379,17 +429,13 @@ function closeModal() {
   currentProductInModal = null;
 }
 
-// ===============================================
-// === ORDER FORM LOGIC & NAVIGATION ===
-// ===============================================
-
 function openOrderForm() {
   orderModal.style.display = 'flex';
-  showCartView(); // This ensures it starts on the cart view
+  showCartView();
   renderCartItems();
   setMinimumDateTime();
   populatePickupHours();
-  validateCartAgainstPickupDate(); // Initial validation
+  validateCartAgainstPickupDate();
 }
 
 function closeOrderForm() {
@@ -399,10 +445,9 @@ function closeOrderForm() {
 function showCartView() {
     document.getElementById('cartView').style.display = 'block';
     document.getElementById('formView').style.display = 'none';
-    // Update progress stepper
     document.getElementById('stepCart').classList.add('active');
     document.getElementById('stepForm').classList.remove('active');
-    renderCartItems(); // Re-render cart to update total and item list
+    renderCartItems();
 }
 
 function showOrderFormView() {
@@ -412,15 +457,26 @@ function showOrderFormView() {
     }
     document.getElementById('cartView').style.display = 'none';
     document.getElementById('formView').style.display = 'block';
-    // Update progress stepper
     document.getElementById('stepCart').classList.remove('active');
     document.getElementById('stepForm').classList.add('active');
 }
+function filterProducts(event, cat, element) {
+    if (event) event.preventDefault();
 
-function filterProducts(cat, element) {
-    document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
-    if (element) element.classList.add('active');
+    document.querySelectorAll('.filter-category-btn, .dropdown-option').forEach(btn => btn.classList.remove('active'));
     
+    if (element) {
+        element.classList.add('active');
+    }
+    
+    if(element && element.classList.contains('dropdown-option')) {
+        const selectedCategoryText = element.textContent;
+        document.getElementById('selectedCategory').textContent = selectedCategoryText;
+        const dropdownMenu = document.getElementById('categoryDropdownMenu');
+        dropdownMenu.classList.remove('is-open');
+        document.getElementById('categoryDropdownBtn').classList.remove('active');
+    }
+
     if (cat === 'all') {
         currentFilteredProducts = [...products];
     } else if (cat === 'favorites') {
@@ -432,7 +488,8 @@ function filterProducts(cat, element) {
     }
     
     currentPage = 1;
-    displayProducts();
+    showSkeletonLoaders();
+    setTimeout(displayProducts, 300);
 }
 
 
@@ -451,15 +508,21 @@ function clearSearch() {
   document.getElementById('clearSearchBtn').style.display = 'none';
   const activeFilter = document.querySelector('.filter-category-btn.active') || document.querySelector('.filter-category-btn');
   const category = activeFilter.getAttribute('onclick').match(/'([^']+)'/)[1];
-  filterProducts(category, activeFilter);
+  filterProducts(null, category, activeFilter);
 }
 
 function toggleSearch() {
   const searchBarContainer = document.getElementById('searchBarContainer');
   const isHidden = searchBarContainer.style.display === 'none' || !searchBarContainer.style.display;
-  if (isHidden) document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
+  if (isHidden) {
+      document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
+      setTimeout(() => {
+          searchBarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('searchInput').focus();
+      }, 100);
+  }
   searchBarContainer.style.display = isHidden ? 'block' : 'none';
-  if (isHidden) document.getElementById('searchInput').focus(); else clearSearch();
+  if (!isHidden) clearSearch();
 }
 
 function applyLanguage() {
@@ -469,7 +532,7 @@ function applyLanguage() {
     const translation = translations[currentLang][key];
     if (translation) {
       const icon = el.querySelector('i');
-      const textSpan = el.querySelector('span');
+      const textSpan = el.querySelector('span:not(.cart-count-text)');
 
       if (key === 'searchBtn' && icon) el.title = translation;
       else if (key === 'yourCart') {
@@ -477,8 +540,13 @@ function applyLanguage() {
         if (cartTextSpan) cartTextSpan.textContent = translation;
       } else if (key === 'installApp' && textSpan) {
         textSpan.textContent = translation;
-      } else if (icon && !el.classList.contains('social-icon')) el.innerHTML = `${icon.outerHTML} ${translation}`;
-      else el.textContent = translation;
+      } else if (textSpan) {
+        textSpan.textContent = translation;
+      } else if (icon && !el.classList.contains('social-icon')) {
+        el.innerHTML = `${icon.outerHTML} ${translation}`;
+      } else {
+        el.textContent = translation;
+      }
     }
   });
   document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
@@ -505,7 +573,8 @@ function toggleLang() {
 
 function updateCartCount() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  cartCountSpan.textContent = totalItems > 0 ? totalItems : '';
+  const countText = totalItems > 0 ? totalItems : '';
+  cartCountSpan.textContent = countText;
   cartCountSpan.classList.toggle('visible', totalItems > 0);
   localStorage.setItem('cart', JSON.stringify(cart));
 
@@ -558,15 +627,16 @@ function toggleFavorite(productId) {
     updateProductCardUI(productId);
 
     const activeFilter = document.querySelector('.filter-category-btn.active');
-    if (activeFilter && activeFilter.getAttribute('onclick').includes('favorites')) {
-        filterProducts('favorites', activeFilter);
+    if (activeFilter && activeFilter.id === 'filterFavoritesBtn') {
+        filterProducts(null, 'favorites', activeFilter);
     }
 }
 
-function updateCartQuantity(productId, change, size = 'whole') {
+function updateCartQuantity(productId, change, startElement) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
     
+    const size = 'whole'; 
     let existingItem = cart.find(item => item.product.id === productId && item.size === size);
     let itemAdded = false;
 
@@ -588,10 +658,7 @@ function updateCartQuantity(productId, change, size = 'whole') {
     if (itemAdded) {
         const productName = currentLang === 'de' ? product.name_de : product.name_en;
         showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
-        const cartButton = document.getElementById('cartButton');
-        cartButton.classList.remove('jiggle');
-        void cartButton.offsetWidth;
-        cartButton.classList.add('jiggle');
+        if (startElement) flyToCartAnimation(startElement);
     }
 
     updateCartCount();
@@ -618,10 +685,9 @@ function addToCartFromModal() {
 
   const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
   showToast(`${quantity} x ${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
-  const cartButton = document.getElementById('cartButton');
-  cartButton.classList.remove('jiggle');
-  void cartButton.offsetWidth;
-  cartButton.classList.add('jiggle');
+  
+  const modalImage = document.getElementById('modalImg');
+  if(modalImage) flyToCartAnimation(modalImage);
   
   updateCartCount();
   closeModal();
@@ -656,10 +722,6 @@ function updateSizePreference(itemIndex, isChecked) {
         updateCartCount();
     }
 }
-
-// =======================================================
-// === NEW AND MODIFIED CART MANAGEMENT FUNCTIONS ===
-// =======================================================
 
 function emptyCart() {
     cart = [];
@@ -735,7 +797,9 @@ function renderCartItems() {
       }
       
       const productName = currentLang === 'de' ? item.product.name_de : item.product.name_en;
-      
+      const isTrash = item.quantity === 1 ? 'is-trash' : '';
+      const decreaseIcon = item.quantity === 1 ? 'fa-times' : 'fa-minus';
+
       selectedProductsList.innerHTML += `
         <div class="cart-item-row">
             <img src="${item.product.img}" alt="${productName}" class="cart-item-image">
@@ -748,11 +812,14 @@ function renderCartItems() {
             </div>
             <div class="cart-item-controls">
                 <div class="cart-quantity-selector">
-                    <button class="quantity-btn-cart" aria-label="Decrease quantity" onclick="adjustCartQuantity(${index}, -1)">-</button>
+                    <button class="quantity-btn-cart ${isTrash}" aria-label="Decrease quantity" onclick="adjustCartQuantity(${index}, -1)">
+                        <i class="fas ${decreaseIcon}"></i>
+                    </button>
                     <span class="quantity-display-cart">${item.quantity}</span>
-                    <button class="quantity-btn-cart" aria-label="Increase quantity" onclick="adjustCartQuantity(${index}, 1)">+</button>
+                    <button class="quantity-btn-cart" aria-label="Increase quantity" onclick="adjustCartQuantity(${index}, 1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
                 </div>
-                <button type="button" class="remove-from-cart-btn" aria-label="Remove item" onclick="removeFromCart(${index})"><i class="fas fa-trash-alt"></i></button>
             </div>
         </div>`;
     });
@@ -761,12 +828,6 @@ function renderCartItems() {
   validateCartAgainstPickupDate();
 }
 
-function removeFromCart(index) {
-  if (!cart[index]) return;
-  cart.splice(index, 1);
-  renderCartItems();
-  updateCartCount();
-}
 
 function setMinimumDateTime() {
     const now = new Date();
@@ -928,12 +989,14 @@ Nachricht: ${userMessage}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    productGrid.innerHTML = '<div class="loading-spinner"></div>';
+    showSkeletonLoaders();
     fetch('Products.json')
         .then(response => response.ok ? response.json() : Promise.reject(`HTTP error! status: ${response.status}`))
         .then(data => {
             products = data;
-            filterProducts('all', document.querySelector('.filter-category-btn'));
+            setTimeout(() => {
+                filterProducts(null, 'all', document.querySelector('.filter-category-btn'));
+            }, 500);
         })
         .catch(error => {
             console.error('Could not load products:', error);
@@ -942,15 +1005,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     productGrid.addEventListener('click', (event) => {
         const target = event.target;
-        const productId = parseInt(target.closest('[data-product-id]').dataset.productId);
+        const productContainer = target.closest('.product[data-product-id]');
+        if (!productContainer) return;
 
-        if (target.matches('.add-to-cart-initial-btn') || target.matches('.quantity-btn')) {
-            const action = target.dataset.action;
-            const change = (action === 'decrease') ? -1 : 1;
-            updateCartQuantity(productId, change);
+        const productId = parseInt(productContainer.dataset.productId);
+
+        const controlsContainer = target.closest('.card-cart-controls');
+        if (controlsContainer) {
+            const button = target.closest('[data-action]');
+            if (button) {
+                const action = button.dataset.action;
+                const change = (action === 'decrease') ? -1 : 1;
+                const imageToAnimate = productContainer.querySelector('.product-image-container img');
+                updateCartQuantity(productId, change, imageToAnimate);
+            }
             return;
         }
-
+        
         const favButton = target.closest('.favorite-btn');
         if (favButton) {
             toggleFavorite(productId);
@@ -963,6 +1034,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const categoryDropdownBtn = document.getElementById('categoryDropdownBtn');
+    const categoryDropdownMenu = document.getElementById('categoryDropdownMenu');
+
+    categoryDropdownBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        categoryDropdownMenu.classList.toggle('is-open');
+        categoryDropdownBtn.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!categoryDropdownBtn.contains(event.target)) {
+            categoryDropdownMenu.classList.remove('is-open');
+            categoryDropdownBtn.classList.remove('active');
+        }
+    });
+
     const orderForm = document.getElementById('orderForm');
     if (orderForm) {
         orderForm.addEventListener('submit', submitOrder);
@@ -971,6 +1058,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyCartButton = document.getElementById('emptyCartBtn');
     if(emptyCartButton) {
         emptyCartButton.addEventListener('click', emptyCart);
+    }
+
+    // Event listener for the new footer favorites link
+    const footerFavoritesLink = document.getElementById('footerFavoritesLink');
+    if(footerFavoritesLink) {
+        footerFavoritesLink.addEventListener('click', (e) => {
+            const favFilterBtn = document.getElementById('filterFavoritesBtn');
+            filterProducts(e, 'favorites', favFilterBtn);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
     
     applyLanguage();

@@ -35,25 +35,40 @@
 </header>
 
 <div class="cart-icon-container">
-    <button class="cart-icon" id="cartButton" onclick="openOrderForm()">
-      <i class="fas fa-shopping-basket"></i>
-      <span class="cart-icon-text" data-lang-key="yourCart">Dein Warenkorb</span>
-      <span class="cart-count-text" id="cartCount"></span>
+    <button class="cart-icon" id="cartButton" onclick="openOrderForm()" aria-label="Dein Warenkorb">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+        <span class="cart-count-text" id="cartCount"></span>
     </button>
 </div>
 
 <main>
   <div class="filter-controls-container">
     <nav class="filter-controls" aria-label="Product categories">
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('all', this)" data-lang-key="allBakedGoods"><i class="fas fa-grip-horizontal"></i> Alle Backwaren</button>
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('bread', this)" data-lang-key="bread"><i class="fas fa-bread-slice"></i> Brot</button>
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('broetchen', this)" data-lang-key="rolls"><i class="fas fa-cookie"></i> Brötchen</button>
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('sweet', this)" data-lang-key="sweets"><i class="fas fa-birthday-cake"></i> Süßes</button>
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('holiday', this)" data-lang-key="holidaySpecials"><i class="fas fa-calendar-day"></i> Sonn- & Feiertags</button>
-        <button class="filter-btn filter-category-btn" onclick="filterProducts('favorites', this)" data-lang-key="favorites"><i class="fas fa-heart"></i> Favoriten</button>
-        <button class="filter-btn" onclick="toggleSearch()" data-lang-key="searchBtn" title="Suche" aria-label="Toggle search bar"><i class="fas fa-search"></i></button>
+        <div class="desktop-filters">
+            <button class="filter-btn filter-category-btn" onclick="filterProducts(event, 'all', this)" data-lang-key="allBakedGoods"><i class="fas fa-grip-horizontal"></i> Alle Backwaren</button>
+            <button class="filter-btn filter-category-btn" onclick="filterProducts(event, 'bread', this)" data-lang-key="bread"><i class="fas fa-bread-slice"></i> Brot</button>
+            <button class="filter-btn filter-category-btn" onclick="filterProducts(event, 'broetchen', this)" data-lang-key="rolls"><i class="fas fa-cookie"></i> Brötchen</button>
+            <button class="filter-btn filter-category-btn" onclick="filterProducts(event, 'sweet', this)" data-lang-key="sweets"><i class="fas fa-birthday-cake"></i> Süßes</button>
+            <button class="filter-btn filter-category-btn" onclick="filterProducts(event, 'holiday', this)" data-lang-key="holidaySpecials"><i class="fas fa-calendar-day"></i> Sonn- & Feiertags</button>
+        </div>
+        <div class="mobile-filter-dropdown">
+            <button id="categoryDropdownBtn" class="filter-btn">
+                <span id="selectedCategory" data-lang-key="allBakedGoods">Alle Backwaren</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div id="categoryDropdownMenu" class="dropdown-menu">
+                <a href="#" class="dropdown-option" onclick="filterProducts(event, 'all', this)" data-category="all" data-lang-key="allBakedGoods">Alle Backwaren</a>
+                <a href="#" class="dropdown-option" onclick="filterProducts(event, 'bread', this)" data-category="bread" data-lang-key="bread">Brot</a>
+                <a href="#" class="dropdown-option" onclick="filterProducts(event, 'broetchen', this)" data-category="broetchen" data-lang-key="rolls">Brötchen</a>
+                <a href="#" class="dropdown-option" onclick="filterProducts(event, 'sweet', this)" data-category="sweet" data-lang-key="sweets">Süßes</a>
+                <a href="#" class="dropdown-option" onclick="filterProducts(event, 'holiday', this)" data-category="holiday" data-lang-key="holidaySpecials">Sonn- & Feiertags</a>
+            </div>
+        </div>
+        <button class="filter-btn filter-category-btn" id="filterFavoritesBtn" onclick="filterProducts(event, 'favorites', this)" data-lang-key="favorites"><i class="fas fa-heart"></i> <span class="desktop-only">Favoriten</span></button>
+        <button class="filter-btn" id="toggleSearchBtn" onclick="toggleSearch()" data-lang-key="searchBtn" title="Suche" aria-label="Toggle search bar"><i class="fas fa-search"></i> <span class="desktop-only">Suche</span></button>
     </nav>
   </div>
+
 
 <div id="searchBarContainer" class="search-bar-wrapper" style="display:none;">
   <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" onkeyup="debouncedSearch()" />
@@ -61,14 +76,15 @@
 </div>
 
   <section class="products" id="productGrid">
-    <div class="loading-spinner"></div>
-  </section>
+    </section>
   <div id="paginationContainer"></div>
 
     <div class="modal" id="modal">
     <div class="modal-content card-style">
-      <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">×</button>
-      <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Missing';">
+      <button class="close-btn" onclick="closeModal()" aria-label="Close product details dialog">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+      </button>
+      <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x250?text=Image+Missing';">
       <h3 id="modalTitle"></h3>
       <div id="modalRating" class="star-rating-modal"></div>
       <p id="modalDietary"></p>
@@ -95,7 +111,9 @@
 
     <div class="modal" id="orderModal">
         <div class="modal-content card-style">
-            <button class="close-btn" onclick="closeOrderForm()" aria-label="Close order form dialog">×</button>
+            <button class="close-btn" onclick="closeOrderForm()" aria-label="Close order form dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
 
             <div class="progress-bar">
                 <div class="progress-step active" id="stepCart">
@@ -161,42 +179,53 @@
                     </div>
                 </form>
             </div>
-            </div>
+        </div>
     </div>
-
-
-  <section id="contact-section">
-    <h2 data-lang-key="contactTitle">Kontakt & Öffnungszeiten</h2>
-    <address>
-        <p><strong data-lang-key="addressLabel">Adresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
-        <p><strong data-lang-key="phoneLabel">Telefon:</strong> <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
-        <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:baeckerei@macis-leipzig.de">baeckerei@macis-leipzig.de</a></p>
-    </address>
-    <div style="margin:30px auto; max-width:600px;">
-        <iframe 
-            title="Location of Macis Biobäckerei on Google Maps"
-            src="http://googleusercontent.com/maps.google.com/3" 
-            width="100%" 
-            height="350" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-    <h3 data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
-    <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
-    <p data-lang-key="openingHoursSunday">Sonntag: 8:00 – 12:00 Uhr</p>
-  </section>
 </main>
 
-<footer>
-  <div class="social-buttons">
-    <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon instagram" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-    <a href="https://www.facebook.com/macisleipzig" class="social-icon facebook" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-  </div>
-  Macis Bio Bäckerei © 2025 – Mit Liebe gebacken
+<footer class="site-footer">
+    <div class="footer-map-bg">
+       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.284414601398!2d12.37258357700201!3d51.34113391910629!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f81e330053ab%3A0x14034f555279018!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig%2C%20Germany!5e0!3m2!1sen!2sus!4v1724602234567!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Location of Macis Biobäckerei on Google Maps"></iframe>
+    </div>
+    <div class="footer-content-wrapper">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3 class="footer-heading">Macis Biobäckerei</h3>
+                    <p class="footer-tagline" data-lang-key="subTitle">Traditionelle Backkunst, jeden Tag frisch</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-heading" data-lang-key="contactTitle">Kontakt</h3>
+                    <address class="footer-address">
+                        Markgrafenstraße 10, 04109 Leipzig<br>
+                        <a href="tel:+4934122287523">+49 341 222 875 23</a><br>
+                        <a href="mailto:baeckerei@macis-leipzig.de">baeckerei@macis-leipzig.de</a>
+                    </address>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-heading" data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
+                    <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
+                    <p data-lang-key="openingHoursSunday">Sonntag: 8:00 – 12:00 Uhr</p>
+                </div>
+				
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon" target="_blank" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+                    </a>
+                    <a href="https://www.facebook.com/macisleipzig" class="social-icon" target="_blank" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </a>
+                </div>
+                <p>© 2025 Macis Bio Bäckerei – Mit Liebe gebacken</p>
+            </div>
+        </div>
+    </div>
 </footer>
+
 
 <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
