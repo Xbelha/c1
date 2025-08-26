@@ -20,9 +20,11 @@
 <header>
   <div class="header-controls">
       <div class="header-controls-left">
-        <button class="lang-switch" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+        <!-- The language button is now a circular icon-style button -->
+        <button id="langSwitchBtn" class="header-icon-btn" onclick="toggleLang()" aria-label="Toggle Language">
+            <span id="langIndicator">DE</span>
+        </button>
       </div>
-      <!-- This container now holds both right-aligned buttons -->
       <div class="header-controls-right">
         <button id="pastOrdersBtn" class="header-icon-btn" aria-label="Past Orders">
             <i class="fas fa-history"></i>

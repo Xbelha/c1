@@ -487,13 +487,9 @@ function filterProducts(event, cat, element) {
     if (element) {
         element.classList.add('active');
         
-        // *** THE FIX (for both mobile and desktop) ***
-        // Get the lang key from the clicked element (desktop button or mobile option)
         const langKey = element.dataset.langKey;
         const selectedCategorySpan = document.getElementById('selectedCategory');
         
-        // If they exist, update the mobile dropdown display span's key.
-        // `applyLanguage` will then use this correct key to show the right text.
         if (langKey && selectedCategorySpan) {
             selectedCategorySpan.dataset.langKey = langKey;
         }
@@ -501,7 +497,6 @@ function filterProducts(event, cat, element) {
     
     if(element && element.classList.contains('dropdown-option')) {
         const selectedCategoryText = element.textContent;
-        // This line provides an immediate visual update before the products reload, which is good UX.
         document.getElementById('selectedCategory').textContent = selectedCategoryText; 
         const dropdownMenu = document.getElementById('categoryDropdownMenu');
         dropdownMenu.classList.remove('is-open');
@@ -597,9 +592,16 @@ function applyLanguage() {
 function toggleLang() {
   currentLang = currentLang === 'de' ? 'en' : 'de';
   localStorage.setItem('bakeryLang', currentLang);
+  
+  // Update the indicator text if the new button exists
+  const langIndicator = document.getElementById('langIndicator');
+  if (langIndicator) {
+      langIndicator.textContent = currentLang.toUpperCase();
+  }
+
   const langName = currentLang === 'de' ? 'Deutsch' : 'English';
   showToast(langName);
-  displayProducts();
+  displayProducts(); // This will call applyLanguage and update everything else
 }
 
 function updateCartCount() {
@@ -1122,4 +1124,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     applyLanguage();
     updateCartCount();
+    // Set the initial state of the language indicator on page load
+    const langIndicator = document.getElementById('langIndicator');
+    if (langIndicator) {
+        langIndicator.textContent = currentLang.toUpperCase();
+    }
 });

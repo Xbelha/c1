@@ -254,31 +254,22 @@ header p {
     pointer-events: none;
 }
 
-/* This is the new/updated style for the right container */
 .header-controls-right {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.lang-switch, .header-controls-right, .header-icon-btn {
+.header-controls-right, .header-icon-btn {
     pointer-events: auto; 
 }
 
-.lang-switch {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px 18px;
+/* This is the new style for the language indicator text */
+#langIndicator {
     font-size: 1rem;
-    font-weight: 600;
-    border-radius: 30px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: background-color: 0.3s ease;
+    font-weight: 700;
+    line-height: 1;
 }
-.lang-switch:hover { background: rgba(255, 255, 255, 0.35); }
 
 .header-icon-btn {
     background: rgba(255, 255, 255, 0.2);
@@ -290,7 +281,7 @@ header p {
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: background-color: 0.3s ease;
+    transition: background-color 0.3s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
