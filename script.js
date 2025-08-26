@@ -478,6 +478,7 @@ function showOrderFormView() {
     document.getElementById('stepCart').classList.remove('active');
     document.getElementById('stepForm').classList.add('active');
 }
+
 function filterProducts(event, cat, element) {
     if (event) event.preventDefault();
 
@@ -485,11 +486,23 @@ function filterProducts(event, cat, element) {
     
     if (element) {
         element.classList.add('active');
+        
+        // *** THE FIX (for both mobile and desktop) ***
+        // Get the lang key from the clicked element (desktop button or mobile option)
+        const langKey = element.dataset.langKey;
+        const selectedCategorySpan = document.getElementById('selectedCategory');
+        
+        // If they exist, update the mobile dropdown display span's key.
+        // `applyLanguage` will then use this correct key to show the right text.
+        if (langKey && selectedCategorySpan) {
+            selectedCategorySpan.dataset.langKey = langKey;
+        }
     }
     
     if(element && element.classList.contains('dropdown-option')) {
         const selectedCategoryText = element.textContent;
-        document.getElementById('selectedCategory').textContent = selectedCategoryText;
+        // This line provides an immediate visual update before the products reload, which is good UX.
+        document.getElementById('selectedCategory').textContent = selectedCategoryText; 
         const dropdownMenu = document.getElementById('categoryDropdownMenu');
         dropdownMenu.classList.remove('is-open');
         document.getElementById('categoryDropdownBtn').classList.remove('active');
@@ -949,7 +962,10 @@ function submitOrder(event) {
     const orderId = generateOrderId();
     
     const newOrder = { orderId, name, phone, pickupDate, pickupTime, cart: [...cart] };
-	    localStorage.setItem('lastOrder', JSON.stringify(newOrder));
+    
+    // Save the current order for the thank-you page to read.
+    localStorage.setItem('lastOrder', JSON.stringify(newOrder));
+    
     pastOrders.push(newOrder);
     localStorage.setItem('pastOrders', JSON.stringify(pastOrders));
     

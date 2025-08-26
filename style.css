@@ -254,7 +254,14 @@ header p {
     pointer-events: none;
 }
 
-.lang-switch, .install-btn-container, .header-icon-btn {
+/* This is the new/updated style for the right container */
+.header-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lang-switch, .header-controls-right, .header-icon-btn {
     pointer-events: auto; 
 }
 
