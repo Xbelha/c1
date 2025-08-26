@@ -949,6 +949,7 @@ function submitOrder(event) {
     const orderId = generateOrderId();
     
     const newOrder = { orderId, name, phone, pickupDate, pickupTime, cart: [...cart] };
+	    localStorage.setItem('lastOrder', JSON.stringify(newOrder));
     pastOrders.push(newOrder);
     localStorage.setItem('pastOrders', JSON.stringify(pastOrders));
     
