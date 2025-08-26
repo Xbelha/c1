@@ -19,7 +19,12 @@
 
 <header>
   <div class="header-controls">
-      <button class="lang-switch" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+      <div class="header-controls-left">
+        <button class="lang-switch" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
+        <button id="pastOrdersBtn" class="header-icon-btn" aria-label="Past Orders">
+            <i class="fas fa-history"></i>
+        </button>
+      </div>
       <div class="install-btn-container">
         <button id="installAppBtn">
             <i class="fas fa-download"></i>
@@ -192,6 +197,19 @@
                         <button type="submit" class="order-link" id="submitOrderBtn" data-lang-key="submitBtn">Absenden</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAST ORDERS MODAL -->
+    <div class="modal" id="pastOrdersModal">
+        <div class="modal-content card-style">
+             <button class="close-btn" onclick="document.getElementById('pastOrdersModal').style.display='none'" aria-label="Close past orders dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+            <h2 data-lang-key="pastOrders">Frühere Bestellungen</h2>
+            <div id="pastOrdersListContainer">
+                <div id="pastOrdersList"></div>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@ let products = [];
 let currentLang = localStorage.getItem('bakeryLang') || 'de';
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let pastOrders = JSON.parse(localStorage.getItem('pastOrders')) || [];
 let currentProductInModal = null;
 let currentPage = 1;
 const productsPerPage = 12;
@@ -12,6 +13,7 @@ let deferredInstallPrompt = null; // For PWA installation
 // DOM element references
 const modal = document.getElementById('modal');
 const orderModal = document.getElementById('orderModal');
+const pastOrdersModal = document.getElementById('pastOrdersModal');
 const productGrid = document.getElementById('productGrid');
 const cartCountSpan = document.getElementById('cartCount');
 const pickupDateInput = document.getElementById('pickupDate');
@@ -126,7 +128,9 @@ const translations = {
     cartEmptied: "Warenkorb geleert",
     contactInfo: "Kontaktdaten",
     pickupDetails: "Abholdetails",
-    add: "Hinzufügen"
+    add: "Hinzufügen",
+    pastOrders: "Frühere Bestellungen",
+    noPastOrders: "Du hast noch keine Bestellungen aufgegeben."
   },
   en: {
     langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
@@ -160,7 +164,9 @@ const translations = {
     cartEmptied: "Cart emptied",
     contactInfo: "Contact Information",
     pickupDetails: "Pickup Details",
-    add: "Add"
+    add: "Add",
+    pastOrders: "Past Orders",
+    noPastOrders: "You have no past orders."
   }
 };
 
@@ -412,6 +418,47 @@ function openOrderForm() {
 function closeOrderForm() {
   orderModal.style.display = 'none';
 }
+
+function openPastOrdersModal() {
+    renderPastOrders();
+    pastOrdersModal.style.display = 'flex';
+}
+
+function renderPastOrders() {
+    const listContainer = document.getElementById('pastOrdersList');
+    if (!listContainer) return;
+
+    if (pastOrders.length === 0) {
+        listContainer.innerHTML = `<p>${translations[currentLang].noPastOrders}</p>`;
+        return;
+    }
+
+    let html = '';
+    pastOrders.forEach(order => {
+        const itemsHtml = order.cart.map(item => {
+            const productName = currentLang === 'de' ? item.product.name_de : item.product.name_en;
+            return `<li>${item.quantity} x ${productName}</li>`;
+        }).join('');
+
+        const total = order.cart.reduce((sum, item) => {
+            const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+            return sum + (pricePerItem * item.quantity);
+        }, 0).toFixed(2);
+
+        html += `
+            <div class="past-order-item">
+                <div class="past-order-header">
+                    <span>Order #${order.orderId}</span>
+                    <span>${order.pickupDate}</span>
+                </div>
+                <ul class="past-order-items">${itemsHtml}</ul>
+                <div class="past-order-total">${translations[currentLang].totalText} ${total} €</div>
+            </div>
+        `;
+    });
+    listContainer.innerHTML = html;
+}
+
 
 function showCartView() {
     document.getElementById('cartView').style.display = 'block';
@@ -900,8 +947,10 @@ function submitOrder(event) {
     const pickupTime = formData.get('pickupTime');
     const userMessage = formData.get('message');
     const orderId = generateOrderId();
-    const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart };
-    localStorage.setItem('lastOrder', JSON.stringify(lastOrder));
+    
+    const newOrder = { orderId, name, phone, pickupDate, pickupTime, cart: [...cart] };
+    pastOrders.push(newOrder);
+    localStorage.setItem('pastOrders', JSON.stringify(pastOrders));
     
     const cartSummary = cart.map(item => {
         let optionText = '';
@@ -1038,6 +1087,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyCartButton = document.getElementById('emptyCartBtn');
     if(emptyCartButton) {
         emptyCartButton.addEventListener('click', emptyCart);
+    }
+
+    const pastOrdersButton = document.getElementById('pastOrdersBtn');
+    if (pastOrdersButton) {
+        pastOrdersButton.addEventListener('click', openPastOrdersModal);
     }
 
     const footerFavoritesLink = document.getElementById('footerFavoritesLink');
